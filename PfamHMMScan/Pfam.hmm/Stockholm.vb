@@ -2,6 +2,9 @@
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Serialization
 
+''' <summary>
+''' Pfam-A.hmm.dat
+''' </summary>
 Public Class Stockholm : Implements sIdEnumerable
 
     ''' <summary>

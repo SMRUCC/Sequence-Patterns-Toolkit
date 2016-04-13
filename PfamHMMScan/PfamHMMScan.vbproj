@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CLI.vb" />
+    <Compile Include="Pfam.hmm\ActiveSite.vb" />
     <Compile Include="Pfam.hmm\Stockholm.vb" />
     <Compile Include="Pfam.hmm\HMMStruct.vb" />
     <Compile Include="Pfam.hmm\DBI.vb" />
