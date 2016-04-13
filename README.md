@@ -1,2 +1,1 @@
-# Pfam-hmm
-Hidden Markov Model for Pfam-A
+# Pfam-hmmHidden Markov Model for Pfam-AHMM data can be download from EMBL ftp website:ftp://ftp.ebi.ac.uk/pub/databases/Pfam/releases/Pfam29.0
