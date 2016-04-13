@@ -12,6 +12,10 @@ Public Class DBI
         Stockholm = PfamHMMScan.Stockholm.DocParser(PfamA).ToDictionary
     End Sub
 
+    Sub New(model As String)
+
+    End Sub
+
     ''' <summary>
     ''' Retrieve hidden Markov model (HMM) profile from PFAM database
     ''' </summary>
@@ -32,5 +36,9 @@ Public Class DBI
     ''' <returns></returns>
     Public Function GetHMMprof(PFAMNumber As Integer) As HMMStruct
 
+    End Function
+
+    Public Shared Function Compile(PfamA As String, activeSite As String, save As String) As Boolean
+        Dim db As New DBI(PfamA, activeSite)
     End Function
 End Class
