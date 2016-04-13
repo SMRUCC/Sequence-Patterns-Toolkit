@@ -2,7 +2,15 @@
 ''' <summary>
 ''' Retrieve hidden Markov model (HMM) profile from PFAM database
 ''' </summary>
-Public Module DBI
+Public Class DBI
+
+    Public ReadOnly Property Stockholm As Dictionary(Of Stockholm)
+    Public ReadOnly Property ActiveSites As Dictionary(Of ActiveSite)
+
+    Sub New(PfamA As String, activeSite As String)
+        ActiveSites = PfamHMMScan.ActiveSite.LoadStream(activeSite).ToDictionary
+        Stockholm = PfamHMMScan.Stockholm.DocParser(PfamA).ToDictionary
+    End Sub
 
     ''' <summary>
     ''' Retrieve hidden Markov model (HMM) profile from PFAM database
@@ -25,4 +33,4 @@ Public Module DBI
     Public Function GetHMMprof(PFAMNumber As Integer) As HMMStruct
 
     End Function
-End Module
+End Class
