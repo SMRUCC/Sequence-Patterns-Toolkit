@@ -96,7 +96,10 @@ Public Class HMMStruct : Inherits ClassObject
     '''   D1->D2 D2->D3 ... D[end-1]->Dend ]
     ''' </summary>
     ''' <returns></returns>
-    Public Property DeleteX As String
+    Public Property DeleteX As Double()()
+
+#Region "No idea"
+
     ''' <summary>
     ''' Flanking insert states (N And C) used For LOCAL profile alignment.
     ''' Format Is a 2-by-2 matrix
@@ -120,9 +123,7 @@ Public Class HMMStruct : Inherits ClassObject
     ''' </summary>
     ''' <returns></returns>
     Public Property NullX As String
-
-    Sub New()
-    End Sub
+#End Region
 
     Sub New(data As HMMParser)
         Me.Alphabet = If(data.ALPH = "amino", "AA", "NT")
@@ -141,5 +142,11 @@ Public Class HMMStruct : Inherits ClassObject
         ' The seven fields on this line are the transitions for node k, 
         ' in the order shown by the transition header line: 
         ' Mk->Mk+1; Ik; Dk+1; Ik->Mk+1; Ik; Dk->Mk+1; Dk+1.
+        ' 0         1   2     3         4   5         6
+
+        Me.DeleteX = {data.HMM.Nodes.ToArray(Function(x) x.StateTransitions(5))}
+    End Sub
+
+    Sub New()
     End Sub
 End Class
