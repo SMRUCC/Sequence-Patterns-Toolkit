@@ -181,6 +181,10 @@ Public Class COMPO
 
     Public Shared ReadOnly Property Residues As IReadOnlyCollection(Of String) =
         New String() {"A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y"}
+
+    Public Overrides Function ToString() As String
+        Return Nodes.GetJson
+    End Function
 End Class
 
 ''' <summary>

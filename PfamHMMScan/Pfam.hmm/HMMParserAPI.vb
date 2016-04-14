@@ -50,10 +50,18 @@ Public Module HMMParserAPI
 
         Dim blocks As String()() = stream.Skip(i).Split(3)
 
+        Return New HMMParser With {
+            .STATS = stats,
+            .COMPO = New COMPO With {
+                .Nodes = blocks.ToArray(Function(block) NodeParser(block))
+            }
+        }
     End Function
 
     Public Function NodeParser(block As String()) As Node
-
+        Dim m As String = block(0)
+        Dim i As String = block(1)
+        Dim s As String = block(2)
     End Function
 
     Public Function STATSParser(msv As String, viterbi As String, forwards As String) As STATS
