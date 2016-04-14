@@ -94,6 +94,7 @@
   <ItemGroup>
     <Compile Include="CLI.vb" />
     <Compile Include="Pfam.hmm\ActiveSite.vb" />
+    <Compile Include="Pfam.hmm\AAIndex.vb" />
     <Compile Include="Pfam.hmm\HMMParserAPI.vb" />
     <Compile Include="Pfam.hmm\HMMParser.vb" />
     <Compile Include="Pfam.hmm\Stockholm.vb" />

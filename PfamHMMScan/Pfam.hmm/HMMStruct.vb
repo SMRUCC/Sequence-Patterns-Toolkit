@@ -1,4 +1,5 @@
 ﻿Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Linq
 
 ''' <summary>
 ''' Structure containing information for an HMM profile retrieved from the PFAM database.
@@ -33,25 +34,36 @@ Public Class HMMStruct : Inherits ClassObject
     ''' </summary>
     ''' <returns></returns>
     Public Property Alphabet As String
+
+    Public ReadOnly Property AlphaLength As Integer
+        Get
+            If Alphabet = "AA" Then
+                Return 20
+            Else
+                Return 4
+            End If
+        End Get
+    End Property
+
     ''' <summary>
     ''' Symbol emission probabilities In the MATCH states.
-    ''' The format Is a matrix Of size ModelLength-by-AlphaLength, where Each row corresponds To the emission distribution For a specific MATCH state.
+    ''' The format Is a matrix Of size <see cref="ModelLength"/>-by-<see cref="AlphaLength"/>, where Each row corresponds To the emission distribution For a specific MATCH state.
     ''' </summary>
     ''' <returns></returns>
-    Public Property MatchEmission As String
+    Public Property MatchEmission As Double()()
     ''' <summary>
     ''' Symbol emission probabilities In the INSERT state.
     ''' The format Is a matrix Of size ModelLength-by-AlphaLength, where Each row corresponds To the emission distribution For a specific INSERT state.
     ''' </summary>
     ''' <returns></returns>
-    Public Property InsertEmission As String
+    Public Property InsertEmission As Double()()
     ''' <summary>
     ''' Symbol emission probabilities In the MATCH And INSERT states For the NULL model.
     ''' The format Is a 1-by-AlphaLength row vector.
     ''' Note: NULL probabilities are also known As the background probabilities.
     ''' </summary>
     ''' <returns></returns>
-    Public Property NullEmission As String
+    Public Property NullEmission As Double()
     ''' <summary>
     ''' BEGIN state transition probabilities.
     ''' Format Is a 1-by-(ModelLength + 1) row vector
@@ -109,4 +121,25 @@ Public Class HMMStruct : Inherits ClassObject
     ''' <returns></returns>
     Public Property NullX As String
 
+    Sub New()
+    End Sub
+
+    Sub New(data As HMMParser)
+        Me.Alphabet = If(data.ALPH = "amino", "AA", "NT")
+        Me.ModelDescription = data.DESC
+        Me.ModelLength = data.LENG
+        Me.Name = data.NAME
+        Me.PfamAccessionNumber = data.ACC
+        Me.MatchEmission = data.HMM.Nodes.ToArray(Function(x) x.Match)
+        Me.InsertEmission = data.HMM.Nodes.ToArray(Function(x) x.Insert)
+        Me.NullEmission = data.HMM.COMPO.Match
+
+        ' 最后一行数据之中：
+        ' These seven numbers are:
+        ' B->M1, B->I0, B->D1; I0->M1, I0->I0;
+
+        ' The seven fields on this line are the transitions for node k, 
+        ' in the order shown by the transition header line: 
+        ' Mk->Mk+1; Ik; Dk+1; Ik->Mk+1; Ik; Dk->Mk+1; Dk+1.
+    End Sub
 End Class

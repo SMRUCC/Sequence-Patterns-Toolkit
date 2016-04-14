@@ -170,13 +170,15 @@ Public Class HMMParser : Inherits ClassObject
     ''' residue in the appropriate biosequence alphabet's order. Optional.
     ''' </summary>
     ''' <returns></returns>
-    Public Property COMPO As COMPO
+    Public Property HMM As HMM
 End Class
 
 ''' <summary>
 ''' 
 ''' </summary>
-Public Class COMPO
+Public Class HMM
+
+    Public Property COMPO As Node
     Public Property Nodes As Node()
 
     Public Shared ReadOnly Property Residues As IReadOnlyCollection(Of String) =
