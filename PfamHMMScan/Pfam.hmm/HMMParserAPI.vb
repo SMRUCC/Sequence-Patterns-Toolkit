@@ -61,26 +61,26 @@ Public Module HMMParserAPI
                 .Nodes = blocks.ToArray(Function(block) NodeParser(block))
             },
             .ACC = fields.TryGetValue(NameOf(HMMParser.ACC)),
-            .ALPH = fields.TryGetValue(NameOf(HMMParser.ACC)),
-            .BM = fields.TryGetValue(NameOf(HMMParser.ACC)),
-            .CKSUM = CLng(fields.TryGetValue(NameOf(HMMParser.ACC))),
-            .COM = fields.TryGetValue(NameOf(HMMParser.ACC)),
-            .CONS = fields.TryGetValue(NameOf(HMMParser.ACC)),
-            .CS = fields.TryGetValue(NameOf(HMMParser.ACC)),
-            .DATE = fields.TryGetValue(NameOf(HMMParser.ACC)),
-            .DESC = fields.TryGetValue(NameOf(HMMParser.ACC)),
-            .EFFN = Val(fields.TryGetValue(NameOf(HMMParser.ACC))),
-            .GA = fields.TryGetValue(NameOf(HMMParser.ACC)).Split.TrimNull.ToArray(Function(sg) Val(sg)),
-            .LENG = CInt(fields.TryGetValue(NameOf(HMMParser.ACC))),
-            .MAP = fields.TryGetValue(NameOf(HMMParser.ACC)),
-            .MAXL = CInt(fields.TryGetValue(NameOf(HMMParser.ACC))),
-            .MM = fields.TryGetValue(NameOf(HMMParser.ACC)),
-            .NAME = fields.TryGetValue(NameOf(HMMParser.ACC)),
-            .NC = fields.TryGetValue(NameOf(HMMParser.ACC)).Split.TrimNull.ToArray(Function(sg) Val(sg)),
-            .NSEQ = CInt(fields.TryGetValue(NameOf(HMMParser.ACC))),
-            .RF = fields.TryGetValue(NameOf(HMMParser.ACC)),
-            .SM = fields.TryGetValue(NameOf(HMMParser.ACC)),
-            .TC = fields.TryGetValue(NameOf(HMMParser.ACC)).Split.TrimNull.ToArray(Function(sg) Val(sg))
+            .ALPH = fields.TryGetValue(NameOf(HMMParser.ALPH)),
+            .BM = fields.TryGetValue(NameOf(HMMParser.BM)),
+            .CKSUM = CLng(fields.TryGetValue(NameOf(HMMParser.CKSUM))),
+            .COM = fields.TryGetValue(NameOf(HMMParser.COM)),
+            .CONS = fields.TryGetValue(NameOf(HMMParser.CONS)),
+            .CS = fields.TryGetValue(NameOf(HMMParser.CS)),
+            .DATE = fields.TryGetValue(NameOf(HMMParser.DATE)),
+            .DESC = fields.TryGetValue(NameOf(HMMParser.DESC)),
+            .EFFN = Val(fields.TryGetValue(NameOf(HMMParser.EFFN))),
+            .GA = fields.TryGetValue(NameOf(HMMParser.GA)).Split.TrimNull.ToArray(Function(sg) Val(sg)),
+            .LENG = CInt(fields.TryGetValue(NameOf(HMMParser.LENG))),
+            .MAP = fields.TryGetValue(NameOf(HMMParser.MAP)),
+            .MAXL = CInt(fields.TryGetValue(NameOf(HMMParser.MAXL))),
+            .MM = fields.TryGetValue(NameOf(HMMParser.MM)),
+            .NAME = fields.TryGetValue(NameOf(HMMParser.NAME)),
+            .NC = fields.TryGetValue(NameOf(HMMParser.NC)).Split.TrimNull.ToArray(Function(sg) Val(sg)),
+            .NSEQ = CInt(fields.TryGetValue(NameOf(HMMParser.NSEQ))),
+            .RF = fields.TryGetValue(NameOf(HMMParser.RF)),
+            .SM = fields.TryGetValue(NameOf(HMMParser.SM)),
+            .TC = fields.TryGetValue(NameOf(HMMParser.TC)).Split.TrimNull.ToArray(Function(sg) Val(sg))
         }
     End Function
 
@@ -95,7 +95,7 @@ Public Module HMMParserAPI
         If x = "*" Then  ' The special Case Of a zero probability Is stored As '*’.
             Return 0R
         Else
-            Return Math.Pow(Math.E, Val(x))
+            Return Math.Log(Val(x))
         End If
     End Function
 
