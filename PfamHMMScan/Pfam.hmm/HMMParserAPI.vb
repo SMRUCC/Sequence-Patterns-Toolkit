@@ -58,10 +58,48 @@ Public Module HMMParserAPI
         }
     End Function
 
+    ''' <summary>
+    ''' All probability parameters are all stored As negative natural log probabilities With five digits Of precision To
+    ''' the right Of the Decimal point, rounded. For example, a probability Of 0:25 Is stored as 􀀀log 0:25 = 1:38629.
+    ''' The special Case Of a zero probability Is stored As '*’.
+    ''' </summary>
+    ''' <param name="x"></param>
+    ''' <returns></returns>
+    Private Function __probability(x As String) As Double
+        If x = "*" Then  ' The special Case Of a zero probability Is stored As '*’.
+            Return 0R
+        Else
+            Return Math.Pow(Math.E, Val(x))
+        End If
+    End Function
+
+    ''' <summary>
+    ''' 一个氨基酸残基
+    ''' </summary>
+    ''' <param name="block"></param>
+    ''' <returns></returns>
+    ''' <remarks>
+    ''' 因为ln1=0，有些时候是0概率的，ln0会计算不出来，这个时候使用*代替
+    ''' </remarks>
     Public Function NodeParser(block As String()) As Node
-        Dim m As String = block(0)
-        Dim i As String = block(1)
-        Dim s As String = block(2)
+        Dim m As String() = block(0).Split.TrimNull
+        Dim i As String() = block(1).Split.TrimNull
+        Dim s As String() = block(2).Split.TrimNull
+        Dim addr As Long = 0
+
+        If String.Equals(m(Scan0), "COMPO") Then
+            ' 后面没有东西的
+            Return New Node With {
+                .Address = 0,
+                .Match = m.Skip(1).ToArray(AddressOf __probability),
+                .Insert = i.ToArray(AddressOf __probability),
+                .StateTransitions = s.ToArray(AddressOf __probability)
+            }
+        Else
+            addr = Scripting.CTypeDynamic(Of Long)(m(Scan0))
+
+        End If
+
     End Function
 
     Public Function STATSParser(msv As String, viterbi As String, forwards As String) As STATS
