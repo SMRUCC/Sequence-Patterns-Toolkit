@@ -4,6 +4,11 @@ Imports Microsoft.VisualBasic.Linq
 
 Public Module HMMParserAPI
 
+    ''' <summary>
+    ''' 加载Pfam-A.hmm里面的隐马科夫模型数据
+    ''' </summary>
+    ''' <param name="path">Pfam-A.hmm</param>
+    ''' <returns></returns>
     Public Iterator Function LoadDoc(path As String) As IEnumerable(Of HMMParser)
         Dim reader As BufferedStream = New BufferedStream(path, maxBufferSize:=1024 * 1024 * 128)
         Dim last As List(Of String) = New List(Of String)
@@ -54,7 +59,28 @@ Public Module HMMParserAPI
             .STATS = stats,
             .COMPO = New COMPO With {
                 .Nodes = blocks.ToArray(Function(block) NodeParser(block))
-            }
+            },
+            .ACC = fields.TryGetValue(NameOf(HMMParser.ACC)),
+            .ALPH = fields.TryGetValue(NameOf(HMMParser.ACC)),
+            .BM = fields.TryGetValue(NameOf(HMMParser.ACC)),
+            .CKSUM = CLng(fields.TryGetValue(NameOf(HMMParser.ACC))),
+            .COM = fields.TryGetValue(NameOf(HMMParser.ACC)),
+            .CONS = fields.TryGetValue(NameOf(HMMParser.ACC)),
+            .CS = fields.TryGetValue(NameOf(HMMParser.ACC)),
+            .DATE = fields.TryGetValue(NameOf(HMMParser.ACC)),
+            .DESC = fields.TryGetValue(NameOf(HMMParser.ACC)),
+            .EFFN = Val(fields.TryGetValue(NameOf(HMMParser.ACC))),
+            .GA = fields.TryGetValue(NameOf(HMMParser.ACC)).Split.TrimNull.ToArray(Function(sg) Val(sg)),
+            .LENG = CInt(fields.TryGetValue(NameOf(HMMParser.ACC))),
+            .MAP = fields.TryGetValue(NameOf(HMMParser.ACC)),
+            .MAXL = CInt(fields.TryGetValue(NameOf(HMMParser.ACC))),
+            .MM = fields.TryGetValue(NameOf(HMMParser.ACC)),
+            .NAME = fields.TryGetValue(NameOf(HMMParser.ACC)),
+            .NC = fields.TryGetValue(NameOf(HMMParser.ACC)).Split.TrimNull.ToArray(Function(sg) Val(sg)),
+            .NSEQ = CInt(fields.TryGetValue(NameOf(HMMParser.ACC))),
+            .RF = fields.TryGetValue(NameOf(HMMParser.ACC)),
+            .SM = fields.TryGetValue(NameOf(HMMParser.ACC)),
+            .TC = fields.TryGetValue(NameOf(HMMParser.ACC)).Split.TrimNull.ToArray(Function(sg) Val(sg))
         }
     End Function
 
@@ -85,7 +111,6 @@ Public Module HMMParserAPI
         Dim m As String() = block(0).Split.TrimNull
         Dim i As String() = block(1).Split.TrimNull
         Dim s As String() = block(2).Split.TrimNull
-        Dim addr As Long = 0
 
         If String.Equals(m(Scan0), "COMPO") Then
             ' 后面没有东西的
@@ -96,10 +121,14 @@ Public Module HMMParserAPI
                 .StateTransitions = s.ToArray(AddressOf __probability)
             }
         Else
-            addr = Scripting.CTypeDynamic(Of Long)(m(Scan0))
-
+            Dim addr As Long = Scripting.CTypeDynamic(Of Long)(m(Scan0))
+            Return New Node With {
+                .Address = addr,
+                .Match = m.Skip(1).Take(20).ToArray(AddressOf __probability),
+                .Insert = i.ToArray(AddressOf __probability),
+                .StateTransitions = s.ToArray(AddressOf __probability)
+            }
         End If
-
     End Function
 
     Public Function STATSParser(msv As String, viterbi As String, forwards As String) As STATS
