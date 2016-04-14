@@ -1,6 +1,7 @@
 ﻿Imports Microsoft.VisualBasic.ComponentModel
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Serialization
+Imports Microsoft.VisualBasic
 
 ''' <summary>
 ''' HMMER3/f [3.1b2 | February 2015]
@@ -170,11 +171,6 @@ Public Class HMMParser : Inherits ClassObject
     ''' </summary>
     ''' <returns></returns>
     Public Property COMPO As COMPO
-
-    Public Shared Iterator Function LoadDoc(path As String) As IEnumerable(Of HMMParser)
-        Dim reader As BufferedStream = New BufferedStream(path)
-
-    End Function
 End Class
 
 ''' <summary>
