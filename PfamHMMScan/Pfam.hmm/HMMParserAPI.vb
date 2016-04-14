@@ -13,6 +13,8 @@ Public Module HMMParserAPI
         Dim reader As BufferedStream = New BufferedStream(path, maxBufferSize:=1024 * 1024 * 128)
         Dim last As List(Of String) = New List(Of String)
 
+        VBDebugger.Mute = True
+
         Do While Not reader.EndRead
             Dim lines As String() = reader.BufferProvider
             Dim blocks As String()() = lines.Split("//").ToArray
@@ -24,6 +26,8 @@ Public Module HMMParserAPI
                 Yield StreamParser(block)
             Next
         Loop
+
+        VBDebugger.Mute = False
     End Function
 
     Public Function StreamParser(stream As String()) As HMMParser
@@ -95,7 +99,7 @@ Public Module HMMParserAPI
         If x = "*" Then  ' The special Case Of a zero probability Is stored As '*’.
             Return 0R
         Else
-            Return Math.Log(Val(x))
+            Return Math.E ^ (-Val(x)) ' stored As negative natural log probabilities
         End If
     End Function
 
