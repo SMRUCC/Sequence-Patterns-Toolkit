@@ -5,6 +5,7 @@ Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
 Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Linq
+Imports Microsoft.VisualBasic.Language
 
 Namespace Motif
 
@@ -107,18 +108,19 @@ Namespace Motif
 
         Public Overloads Shared Function Scan(nt As String, pattern As String, strand As Char) As SimpleSegment()
             Dim ms As String() = Regex.Matches(nt, pattern).ToArray.Distinct.ToArray
-            Dim locis As SimpleSegment() = (From m As String
-                                            In ms
-                                            Let pos As Integer() = FindLocation(nt, m)
-                                            Let rc As String = New String(NucleicAcid.Complement(m).Reverse.ToArray)
-                                            Select pos.ToArray(
-                                                Function(ind) New SimpleSegment With {
-                                                    .Ends = ind + m.Length,
-                                                    .Start = ind,
-                                                    .SequenceData = m,
-                                                    .Strand = strand.ToString,
-                                                    .Complement = rc
-                                                })).MatrixToVector
+            Dim locis As SimpleSegment() =
+                Linq.Exec(Of SimpleSegment) <= From m As String
+                                               In ms
+                                               Let pos As Integer() = FindLocation(nt, m)
+                                               Let rc As String = New String(NucleicAcid.Complement(m).Reverse.ToArray)
+                                               Select LinqAPI.Exec(Of Integer, SimpleSegment)(pos) <=
+                                                   Function(ind) New SimpleSegment With {
+                                                        .Ends = ind + m.Length,
+                                                        .Start = ind,
+                                                        .SequenceData = m,
+                                                        .Strand = strand.ToString,
+                                                        .Complement = rc
+                                                   }
             Return locis
         End Function
     End Class

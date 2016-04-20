@@ -35,7 +35,9 @@ Namespace SequenceLogo
         ''' </summary>
         ''' <returns></returns>
         Public Function Hi() As Double
-            Dim LQuery = (From alphabet In Alphabets Select alphabet.RelativeFrequency * Math.Log(alphabet.RelativeFrequency, newBase:=2)).Sum
+            Dim LQuery As Double = (From alph As Alphabet
+                                    In Alphabets
+                                    Select alph.RelativeFrequency * Math.Log(alph.RelativeFrequency, newBase:=2)).Sum
             LQuery *= -1
             Return LQuery
         End Function

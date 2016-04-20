@@ -63,8 +63,8 @@ For example, we identified a new domain, likely to have a role downstream of the
         <ExportAPI("Drawing.Frequency")>
         Public Function DrawFrequency(Fasta As FastaFile) As Image
             Dim Bits = If(Fasta.First.IsProtSource, Math.Log(20, 2), 2)
-            Dim Frequency = LANS.SystemsBiology.BioAssemblyExtensions.Frequency(Fasta)
-            Dim Model As SequenceLogo.DrawingModel = New DrawingModel
+            Dim Frequency = BioAssemblyExtensions.Frequency(Fasta)
+            Dim Model As DrawingModel = New DrawingModel
             Model.ModelsId = $"{NameOf(DrawFrequency)} for {Fasta.NumberOfFasta} sequence."
             Model.Residues = Frequency.ToArray(Function(rsd) New Residue With {
                                                    .Bits = Bits,
@@ -147,7 +147,7 @@ For example, we identified a new domain, likely to have a role downstream of the
                 Y -= YHeight
             Next
 
-            Dim source As Generic.IEnumerable(Of Residue) = If(reverse, Model.Residues.Reverse, Model.Residues)
+            Dim source As IEnumerable(Of Residue) = If(reverse, Model.Residues.Reverse, Model.Residues)
 
             For Each residue As Residue In source
                 Dim order As Alphabet() = If(FrequencyOrder, (From rsd As Alphabet
