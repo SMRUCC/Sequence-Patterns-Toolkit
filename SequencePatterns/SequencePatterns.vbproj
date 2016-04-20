@@ -113,6 +113,10 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Motif\ResidueSite.vb" />
+    <Compile Include="SequenceLogo\ColorSchema.vb" />
+    <Compile Include="SequenceLogo\DrawingDevice.vb" />
+    <Compile Include="SequenceLogo\DrawingModel.vb" />
+    <Compile Include="SequenceLogo\Residue.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">

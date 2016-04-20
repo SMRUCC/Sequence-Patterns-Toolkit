@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+# SharpDevelop 4.4
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SequencePatterns", "SequencePatterns.vbproj", "{ABDCE82B-700E-4F70-A2F1-86B8054D0C8E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ABDCE82B-700E-4F70-A2F1-86B8054D0C8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABDCE82B-700E-4F70-A2F1-86B8054D0C8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABDCE82B-700E-4F70-A2F1-86B8054D0C8E}.Debug|x64.Build.0 = Debug|x64
+		{ABDCE82B-700E-4F70-A2F1-86B8054D0C8E}.Debug|x64.ActiveCfg = Debug|x64
+		{ABDCE82B-700E-4F70-A2F1-86B8054D0C8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABDCE82B-700E-4F70-A2F1-86B8054D0C8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABDCE82B-700E-4F70-A2F1-86B8054D0C8E}.Release|x64.Build.0 = Release|x64
+		{ABDCE82B-700E-4F70-A2F1-86B8054D0C8E}.Release|x64.ActiveCfg = Release|x64
+	EndGlobalSection
+EndGlobal
