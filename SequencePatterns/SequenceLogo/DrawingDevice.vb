@@ -2,10 +2,7 @@
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports System.Drawing
-Imports LANS.SystemsBiology.AnalysisTools.NBCR.Extensions.MEME_Suite.DocumentFormat.MEME.LDM
-Imports LANS.SystemsBiology.AnalysisTools.NBCR.Extensions.MEME_Suite.DocumentFormat
 Imports LANS.SystemsBiology.SequenceModel.FASTA
-Imports System.Runtime.CompilerServices
 
 Namespace SequenceLogo
 
