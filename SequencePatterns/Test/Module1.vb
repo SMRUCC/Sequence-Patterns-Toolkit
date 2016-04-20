@@ -1,7 +1,6 @@
 ﻿Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Motif
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Motif.Patterns
-Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SmithWaterman
 Imports LANS.SystemsBiology.SequenceModel.FASTA
 
 Module Module1
