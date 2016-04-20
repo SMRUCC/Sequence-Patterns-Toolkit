@@ -1,8 +1,12 @@
-﻿Imports LANS.SystemsBiology.AnalysisTools.NBCR.Extensions.MEME_Suite.ComponentModel
-Imports LANS.SystemsBiology.AnalysisTools.NBCR.Extensions.MEME_Suite.DocumentFormat
+﻿Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Motif
 Imports Microsoft.VisualBasic.Linq.Extensions
 
 Namespace SequenceLogo
+
+    Public Interface ILogoResidue
+        ReadOnly Property Bits As Double
+        Default ReadOnly Property Probability(c As Char) As Double
+    End Interface
 
     Public Class DrawingModel
 
@@ -14,57 +18,28 @@ Namespace SequenceLogo
             Return ModelsId
         End Function
 
-        ''' <summary>
-        ''' The approximation for the small-sample correction, en, Is given by
-        '''     en = 1/ln2 x (s-1)/2n
-        ''' 
-        ''' </summary>
-        ''' <param name="s">s Is 4 For nucleotides, 20 For amino acids</param>
-        ''' <param name="n">n Is the number Of sequences In the alignment</param>
-        ''' <returns></returns>
-        Public Shared Function Calculates_En(s As Integer, n As Integer) As Double
-            Dim result As Double = 1 / Math.Log(2)
-            result *= (s - 1) / 2 * n
-            Return result
-        End Function
-
-        Public Shared Function CreateObject(LDM As Analysis.MotifScans.AnnotationModel) As DrawingModel
-            Dim residues = LDM.PspMatrix.ToArray(Function(x) PspVectorToResidue(x))
-            Dim model As DrawingModel = New DrawingModel With {
-                .ModelsId = LDM.ToString,
-                .Residues = residues.AddHandle.ToArray
-            }
-            Return model
-        End Function
-
-        Public Shared Function GenerateFromMEMEMotif(Motif As MEME.LDM.Motif) As DrawingModel
-            Dim Alphabets As Char() = If(Motif.NtMolType,
-                ColorSchema.NucleotideSchema.Keys.ToArray,
-                ColorSchema.ProteinSchema.Keys.ToArray)
-            Dim En As Double = Calculates_En(s:=Alphabets.Count, n:=Motif.Sites.Length)
-            Dim rsd = (From residue As MotifPM
-                       In Motif.PspMatrix
-                       Select PspVectorToResidue(residue)).ToArray.AddHandle.ToArray
-            Dim Model As DrawingModel = New DrawingModel With {
-                .Residues = rsd,
-                .En = En,
-                .ModelsId = Motif.uid
+        Public Shared Function AAResidue(x As ILogoResidue) As Residue
+            Dim Residue As Residue = New Residue With {
+                .Alphabets = ColorSchema.AA.ToArray(
+                    Function(r) New Alphabet With {
+                        .Alphabet = r,
+                        .RelativeFrequency = x(r)}),
+                .Bits = x.Bits
             }
 
-            Return Model
+            Return Residue
         End Function
 
-        Private Shared Function PspVectorToResidue(x As MotifPM) As Residue
+        Public Shared Function NTResidue(x As ILogoResidue) As Residue
             Dim Residue As Residue = New Residue With {
                 .Alphabets = {
-                    New Alphabet With {.Alphabet = "A"c, .RelativeFrequency = x.A},
-                    New Alphabet With {.Alphabet = "T"c, .RelativeFrequency = x.T},
-                    New Alphabet With {.Alphabet = "G"c, .RelativeFrequency = x.G},
-                    New Alphabet With {.Alphabet = "C"c, .RelativeFrequency = x.C}
+                    New Alphabet With {.Alphabet = "A"c, .RelativeFrequency = x("A"c)},
+                    New Alphabet With {.Alphabet = "T"c, .RelativeFrequency = x("T"c)},
+                    New Alphabet With {.Alphabet = "G"c, .RelativeFrequency = x("G"c)},
+                    New Alphabet With {.Alphabet = "C"c, .RelativeFrequency = x("C"c)}
                 },
-                .Bits = x.Bits  ' = SequenceLogo.Residue.CalculatesBits(Residue, En, NtMol:=Alphabets.Count = 4)
+                .Bits = x.Bits
             }
-            '   Residue.Bits = x.Bits
 
             Return Residue
         End Function

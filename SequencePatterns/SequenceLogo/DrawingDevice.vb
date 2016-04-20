@@ -53,66 +53,6 @@ For example, we identified a new domain, likely to have a role downstream of the
     Public Module DrawingDevice
 
         ''' <summary>
-        ''' Load the motif data from the meme text format calculation result
-        ''' </summary>
-        ''' <param name="Path"></param>
-        ''' <returns></returns>
-        <ExportAPI("Load.MEME_Text.Motifs", Info:="Load the motif data from the meme text format calculation result")>
-        Public Function LoadMotif(Path As String) As Motif()
-            Dim data As Motif() = MEME.Text.Load(path:=Path)
-            Return data
-        End Function
-
-        ''' <summary>
-        ''' Create the sequence logo from the meme motif calculation reuslt.
-        ''' </summary>
-        ''' <param name="Motif"></param>
-        ''' <returns></returns>
-        <ExportAPI("Model.From.MEME_Motif", Info:="Create the sequence logo from the meme motif calculation reuslt.")>
-        Public Function GenerateModel(Motif As Motif) As SequenceLogo.DrawingModel
-            Return SequenceLogo.DrawingModel.GenerateFromMEMEMotif(Motif)
-        End Function
-
-        ''' <summary>
-        ''' 
-        ''' </summary>
-        ''' <param name="MEME_Text">file path of the meme.txt inputs</param>
-        ''' <param name="outDIR"></param>
-        ''' <returns></returns>
-        <ExportAPI("Invoke.Drawing.Batch", Info:="Drawing the sequence logo from all of the motifs in a meme.txt output file.")>
-        Public Function BatchDrawing(<Parameter("MEME_Text.Path")> MEME_Text As String,
-                                     <Parameter("Out.DIR")> Optional outDIR As String = "") As Boolean
-
-            Dim ID As String = IO.Path.GetFileNameWithoutExtension(MEME_Text)
-            Dim Motifs As Motif() = DocumentFormat.MEME.Text.Load(MEME_Text)
-
-            If String.IsNullOrEmpty(outDIR) Then
-                outDIR = FileIO.FileSystem.GetParentPath(MEME_Text)
-            End If
-
-            For Each Motif As Motif In Motifs
-                Dim Model As DrawingModel = DrawingModel.GenerateFromMEMEMotif(Motif)
-                Dim res As Image = DrawingDevice.InvokeDrawing(Model)
-                Dim Path As String = $"{outDIR}/{ID}.{Motif.Id}.png"
-
-                res = res.CorpBlank(25)
-
-                Call res.Save(Path, format:=Imaging.ImageFormat.Png)
-                Call $"{Path.ToFileURL} saved....".__DEBUG_ECHO
-            Next
-
-            Return True
-        End Function
-
-        <ExportAPI("Invoke.Drawing.Batch")>
-        Public Function BatchDrawingFromDirectory(inDIR As String) As Boolean
-            Dim LQuery = (From File As String
-                          In FileIO.FileSystem.GetFiles(inDIR, FileIO.SearchOption.SearchTopLevelOnly, "*.txt")
-                          Select BatchDrawing(MEME_Text:=File)).ToArray
-            Return Not LQuery.IsNullOrEmpty
-        End Function
-
-        ''' <summary>
         ''' 字符的宽度
         ''' </summary>
         Public Property WordSize As Integer = 80
@@ -138,15 +78,18 @@ For example, we identified a new domain, likely to have a role downstream of the
             Return InvokeDrawing(Model, False)
         End Function
 
-        <ExportAPI("Invoke.Drawing", Info:="Drawing a sequence logo from a generated sequence motif model.")>
-        <Extension>
-        Public Function DrawLogo(LDM As Analysis.MotifScans.AnnotationModel,
-                                 <Parameter("Order.Frequency", "Does the alphabets in a residue position will be ordered its drawing order based on their relative frequency in the residue site?")>
-                                 Optional FrequencyOrder As Boolean = True,
-                                 Optional Margin As Integer = 200,
-                                 Optional reverse As Boolean = False) As Image
-            Dim model As DrawingModel = DrawingModel.CreateObject(LDM)
-            Return InvokeDrawing(model, FrequencyOrder, Margin, reverse)
+        ''' <summary>
+        ''' The approximation for the small-sample correction, en, Is given by
+        '''     en = 1/ln2 x (s-1)/2n
+        ''' 
+        ''' </summary>
+        ''' <param name="s">s Is 4 For nucleotides, 20 For amino acids</param>
+        ''' <param name="n">n Is the number Of sequences In the alignment</param>
+        ''' <returns></returns>
+        Public Function E(s As Integer, n As Integer) As Double
+            Dim result As Double = 1 / Math.Log(2)
+            result *= (s - 1) / 2 * n
+            Return result
         End Function
 
         ''' <summary>

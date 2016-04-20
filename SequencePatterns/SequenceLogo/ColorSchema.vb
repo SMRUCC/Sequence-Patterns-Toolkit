@@ -26,6 +26,9 @@ Namespace SequenceLogo
             End Get
         End Property
 
+        Public ReadOnly Property NT As IReadOnlyCollection(Of Char) = {"A"c, "T"c, "G"c, "C"c}
+        Public ReadOnly Property AA As IReadOnlyCollection(Of Char) = {"A"c, "R"c, "N"c, "D"c, "C"c, "E"c, "Q"c, "G"c, "H"c, "I"c, "L"c, "K"c, "M"c, "F"c, "P"c, "S"c, "T"c, "W"c, "Y"c, "V"c}
+
         Private Function __getTexture(color As Color, alphabet As String) As Image
             Dim Bmp As New Bitmap(680, 680)
             Dim Font As New Font(FONT_FAMILY_MICROSOFT_YAHEI, 630, FontStyle.Bold)
