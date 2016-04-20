@@ -95,8 +95,10 @@
     <Compile Include="CLI.vb" />
     <Compile Include="Pfam.hmm\ActiveSite.vb" />
     <Compile Include="Pfam.hmm\AAIndex.vb" />
-    <Compile Include="Pfam.hmm\HMMParserAPI.vb" />
-    <Compile Include="Pfam.hmm\HMMParser.vb" />
+    <Compile Include="Pfam.hmm\HMMParser\HMM.vb" />
+    <Compile Include="Pfam.hmm\HMMParser\HMMParserAPI.vb" />
+    <Compile Include="Pfam.hmm\HMMParser\HMMParser.vb" />
+    <Compile Include="Pfam.hmm\HMMParser\HMMCompares.vb" />
     <Compile Include="Pfam.hmm\Stockholm.vb" />
     <Compile Include="Pfam.hmm\HMMStruct.vb" />
     <Compile Include="Pfam.hmm\DBI.vb" />
@@ -138,6 +140,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\GCModeller.Core\Bio.Assembly\Bio.Assembly.vbproj">
+      <Project>{c699d311-9923-4c19-bf70-5048d0e2cf5d}</Project>
+      <Name>Bio.Assembly</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\HMM\HMM\HMM.vbproj">
       <Project>{3b9edffd-67fc-41ce-b573-6e1291e88ec6}</Project>
       <Name>HMM</Name>

@@ -1,4 +1,8 @@
-﻿Public Enum AAIndex As Integer
+﻿
+''' <summary>
+''' The index of the residue in the Pfam HMM model 
+''' </summary>
+Public Enum AAIndex As Integer
     A = 0
     C
     D

@@ -131,8 +131,8 @@ Public Class HMMStruct : Inherits ClassObject
         Me.ModelLength = data.LENG
         Me.Name = data.NAME
         Me.PfamAccessionNumber = data.ACC
-        Me.MatchEmission = data.HMM.Nodes.ToArray(Function(x) x.Match)
-        Me.InsertEmission = data.HMM.Nodes.ToArray(Function(x) x.Insert)
+        Me.MatchEmission = data.HMM.nodes.ToArray(Function(x) x.Match)
+        Me.InsertEmission = data.HMM.nodes.ToArray(Function(x) x.Insert)
         Me.NullEmission = data.HMM.COMPO.Match
 
         ' 最后一行数据之中：
@@ -144,7 +144,7 @@ Public Class HMMStruct : Inherits ClassObject
         ' Mk->Mk+1; Ik; Dk+1; Ik->Mk+1; Ik; Dk->Mk+1; Dk+1.
         ' 0         1   2     3         4   5         6
 
-        Me.DeleteX = {data.HMM.Nodes.ToArray(Function(x) x.StateTransitions(5))}
+        Me.DeleteX = {data.HMM.nodes.ToArray(Function(x) x.StateTransitions(5))}
     End Sub
 
     Sub New()

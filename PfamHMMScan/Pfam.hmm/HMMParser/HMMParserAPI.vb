@@ -63,7 +63,7 @@ Public Module HMMParserAPI
             .STATS = stats,
             .HMM = New HMM With {
                 .COMPO = NodeParser(blocks(Scan0)),
-                .Nodes = blocks.Skip(1).ToArray(Function(block) NodeParser(block))
+                .nodes = blocks.Skip(1).ToArray(Function(block) NodeParser(block))
             },
             .ACC = fields.TryGetValue(NameOf(HMMParser.ACC)),
             .ALPH = fields.TryGetValue(NameOf(HMMParser.ALPH)),
