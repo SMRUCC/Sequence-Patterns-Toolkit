@@ -1,18 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{70640BD3-7F63-4B4D-9465-1F9FD1C5C965}</ProjectGuid>
+    <ProjectGuid>{6B8153AC-5CA3-4A8E-B841-6DF82373D03B}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <StartupObject>PfamHMMScan.Program</StartupObject>
-    <RootNamespace>PfamHMMScan</RootNamespace>
-    <AssemblyName>PfamHMMScan</AssemblyName>
+    <StartupObject>LANS.SystemsBiology.AnalysisTools.SequenceTools.Program</StartupObject>
+    <RootNamespace>LANS.SystemsBiology.AnalysisTools.SequenceTools</RootNamespace>
+    <AssemblyName>seqtools</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Console</MyType>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -21,9 +20,10 @@
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>PfamHMMScan.xml</DocumentationFile>
+    <OutputPath>..\..\..\bin-Debug\</OutputPath>
+    <DocumentationFile>seqtools.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,9 +31,10 @@
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>PfamHMMScan.xml</DocumentationFile>
+    <OutputPath>..\..\..\GCModeller\</OutputPath>
+    <DocumentationFile>seqtools.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
@@ -47,12 +48,15 @@
   <PropertyGroup>
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>DNA.ico</ApplicationIcon>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DocumentationFile>PfamHMMScan.xml</DocumentationFile>
+    <OutputPath>..\..\..\bin-Debug\</OutputPath>
+    <DocumentationFile>seqtools.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -61,24 +65,26 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DocumentationFile>PfamHMMScan.xml</DocumentationFile>
+    <OutputPath>..\..\..\GCModeller-x64\</OutputPath>
+    <DocumentationFile>seqtools.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -92,16 +98,30 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CLI.vb" />
-    <Compile Include="Pfam.hmm\ActiveSite.vb" />
-    <Compile Include="Pfam.hmm\AAIndex.vb" />
-    <Compile Include="Pfam.hmm\HMMParser\HMM.vb" />
-    <Compile Include="Pfam.hmm\HMMParser\HMMParserAPI.vb" />
-    <Compile Include="Pfam.hmm\HMMParser\HMMParser.vb" />
-    <Compile Include="Pfam.hmm\HMMParser\HMMCompares.vb" />
-    <Compile Include="Pfam.hmm\Stockholm.vb" />
-    <Compile Include="Pfam.hmm\HMMStruct.vb" />
-    <Compile Include="Pfam.hmm\DBI.vb" />
+    <Compile Include="CLI\Aligner.vb" />
+    <Compile Include="CLI\Repeats.vb" />
+    <Compile Include="CLI\FastaTools.vb" />
+    <Compile Include="CLI\Palindrome.vb" />
+    <Compile Include="CLI\ORF.vb" />
+    <Compile Include="Pattern\SegLoci.vb" />
+    <Compile Include="Topologically\Exactly\RepeatPlant.vb" />
+    <Compile Include="Topologically\Exactly\SearchReversedRepeats.vb" />
+    <Compile Include="Topologically\Exactly\RepeatsSearchs.vb" />
+    <Compile Include="Topologically\Palindrome\ImperfectPalindrome.vb" />
+    <Compile Include="Topologically\Palindrome\Imperfect.vb" />
+    <Compile Include="Topologically\Palindrome\PalindromeLoci.vb" />
+    <Compile Include="Topologically\Palindrome\SearchWorker.vb" />
+    <Compile Include="Topologically\SearchWorker.vb" />
+    <Compile Include="Topologically\Exactly\RepeatsLoci.vb" />
+    <Compile Include="Topologically\Seeds.vb" />
+    <Compile Include="Topologically\Palindrome\Palindrome.vb" />
+    <Compile Include="Topologically\Similarity\Blast.vb" />
+    <Compile Include="Topologically\Similarity\Loci.vb" />
+    <Compile Include="Topologically\Similarity\Repeats.vb" />
+    <Compile Include="Topologically\Exactly\RepeatsSearchAPI.vb" />
+    <Compile Include="ShellScriptAPI.vb" />
+    <Compile Include="Pattern\PatternSearch.vb" />
+    <Compile Include="CLI\Utilities.vb" />
     <Compile Include="Program.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -128,6 +148,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="SequenceTools.Designer.cd" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
@@ -140,21 +161,25 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\GCModeller.Core\Bio.Assembly\Bio.Assembly.vbproj">
+    <Content Include="DNA.ico" />
+    <Content Include="Terminal.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\GCModeller.Core\Bio.Assembly\Bio.Assembly.vbproj">
       <Project>{c699d311-9923-4c19-bf70-5048d0e2cf5d}</Project>
       <Name>Bio.Assembly</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\HMM\HMM\HMM.vbproj">
-      <Project>{3b9edffd-67fc-41ce-b573-6e1291e88ec6}</Project>
-      <Name>HMM</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\VisualBasic_AppFramework\DocumentFormats\DocumentFormat.Csv\DocumentFormat.Csv.vbproj">
+    <ProjectReference Include="..\..\..\..\VisualBasic_AppFramework\DocumentFormats\DocumentFormat.Csv\DocumentFormat.Csv.vbproj">
       <Project>{1d8910c2-ada2-4306-96dc-a61b494522ed}</Project>
       <Name>DocumentFormat.Csv</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\VisualBasic_AppFramework\Microsoft.VisualBasic.Architecture.Framework\+Microsoft.VisualBasic.Architecture.Framework.vbproj">
+    <ProjectReference Include="..\..\..\..\VisualBasic_AppFramework\Microsoft.VisualBasic.Architecture.Framework\+Microsoft.VisualBasic.Architecture.Framework.vbproj">
       <Project>{fecce1fd-e1d4-49e3-a668-60bb5e7aed99}</Project>
       <Name>+Microsoft.VisualBasic.Architecture.Framework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\GCModeller\LocalBLAST\SmithWaterman.vbproj">
+      <Project>{96973118-8964-49c4-b34f-086c4f9e2cdf}</Project>
+      <Name>SmithWaterman</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
