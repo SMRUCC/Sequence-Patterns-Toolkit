@@ -144,7 +144,7 @@
       <Project>{c699d311-9923-4c19-bf70-5048d0e2cf5d}</Project>
       <Name>Bio.Assembly</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\HMM\HMM\HMM.vbproj">
+    <ProjectReference Include="..\..\..\HMM\HMM\HMM.vbproj">
       <Project>{3b9edffd-67fc-41ce-b573-6e1291e88ec6}</Project>
       <Name>HMM</Name>
     </ProjectReference>

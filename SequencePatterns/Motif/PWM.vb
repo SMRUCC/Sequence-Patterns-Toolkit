@@ -4,21 +4,21 @@ Imports Microsoft.VisualBasic.Linq
 
 Namespace Motif
 
-    Public Class Motif
+    Public Class MotifPWM
         Public Property PWM As ResidueSite()
 
     End Class
 
     Public Module PWM
 
-        Public Function FromMla(fa As FastaFile) As Motif
+        Public Function FromMla(fa As FastaFile) As MotifPWM
             Dim f = LANS.SystemsBiology.BioAssemblyExtensions.Frequency(fa)
             Dim n As Integer = fa.NumberOfFasta
             Dim base As Integer = If(fa.First.IsProtSource, 20, 4)
             Dim en As Double = (1 / Math.Log(2)) * ((base - 1) / (2 * n))
             Dim H = f.ToArray(Function(x) x.Value.__hi)
             Dim PWM = (From x In f.Values.SeqIterator Select __residue(x.obj, H(x.Pos), en, base, x.Pos)).ToArray
-            Return New Motif With {.PWM = PWM}
+            Return New MotifPWM With {.PWM = PWM}
         End Function
 
         ''' <summary>

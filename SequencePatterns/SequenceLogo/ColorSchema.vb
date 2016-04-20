@@ -15,7 +15,7 @@ Namespace SequenceLogo
         ''' 核酸Motif的profiles
         ''' </summary>
         ''' <returns></returns>
-        Public ReadOnly Property NucleotideSchema As Dictionary(Of Char, System.Drawing.Image)
+        Public ReadOnly Property NucleotideSchema As Dictionary(Of Char, Image)
             Get
                 Return New Dictionary(Of Char, Image) From {
                     {"A"c, ColorSchema.__getTexture(Color.Green, "A")},
@@ -59,17 +59,17 @@ Namespace SequenceLogo
                     {"Q"c, ColorSchema.__getTexture(Color.LawnGreen, "Q")},      'Glutamine	     Gln	Q	polar	        neutral	       −3.5			146
                     {"G"c, ColorSchema.__getTexture(Color.DodgerBlue, "G")},     'Glycine	     Gly	G	nonpolar	    neutral	       −0.4			75
                     {"H"c, ColorSchema.__getTexture(Color.OrangeRed, "H")},      'Histidine	     His	H	Basic polar	    neutral(90%)   −3.2	211	
-                    {"I"c, ColorSchema.__getTexture(Color.Thistle, "I")},        'Isoleucine	     Ile	I	nonpolar	    neutral	        4.5			131
+                    {"I"c, ColorSchema.__getTexture(Color.Thistle, "I")},        'Isoleucine     Ile	I	nonpolar	    neutral	        4.5			131
                     {"L"c, ColorSchema.__getTexture(Color.SeaShell, "L")},       'Leucine	     Leu	L	nonpolar	    neutral	        3.8			131
-                    {"K"c, ColorSchema.__getTexture(Color.Yellow, "K")},         'Lysine	         Lys	K	Basic polar	    positive       −3.9			146
-                    {"M"c, ColorSchema.__getTexture(Color.Teal, "M")},           'Methionine	     Met	M	nonpolar	    neutral	        1.9			149
+                    {"K"c, ColorSchema.__getTexture(Color.Yellow, "K")},         'Lysine	     Lys	K	Basic polar	    positive       −3.9			146
+                    {"M"c, ColorSchema.__getTexture(Color.Teal, "M")},           'Methionine     Met	M	nonpolar	    neutral	        1.9			149
                     {"F"c, ColorSchema.__getTexture(Color.SaddleBrown, "F")},    'Phenylalanine	 Phe	F	nonpolar	    neutral	        2.8	257, 206, 188	0.2, 9.3, 60.0	165
                     {"P"c, ColorSchema.__getTexture(Color.Moccasin, "P")},       'Proline	     Pro	P	nonpolar	    neutral	       −1.6			115
-                    {"S"c, ColorSchema.__getTexture(Color.RoyalBlue, "S")},      'Serine	         Ser	S	polar	        neutral	       −0.8			105
+                    {"S"c, ColorSchema.__getTexture(Color.RoyalBlue, "S")},      'Serine	     Ser	S	polar	        neutral	       −0.8			105
                     {"T"c, ColorSchema.__getTexture(Color.Tomato, "T")},         'Threonine	     Thr	T	polar	        neutral	       −0.7			119
-                    {"W"c, ColorSchema.__getTexture(Color.MediumSeaGreen, "W")}, 'Tryptophan	     Trp	W	nonpolar	    neutral	       −0.9	280, 219	5.6, 47.0	204
+                    {"W"c, ColorSchema.__getTexture(Color.MediumSeaGreen, "W")}, 'Tryptophan     Trp	W	nonpolar	    neutral	       −0.9	280, 219	5.6, 47.0	204
                     {"Y"c, ColorSchema.__getTexture(Color.SkyBlue, "Y")},        'Tyrosine	     Tyr	Y	polar	        neutral	       −1.3	274, 222, 193	1.4, 8.0, 48.0	181
-                    {"V"c, ColorSchema.__getTexture(Color.Maroon, "V")}          'Valine	         Val	V	nonpolar	    neutral	        4.2			117
+                    {"V"c, ColorSchema.__getTexture(Color.Maroon, "V")}          'Valine	     Val	V	nonpolar	    neutral	        4.2			117
                 }
             End Get
         End Property
