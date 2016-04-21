@@ -68,7 +68,7 @@ Public Structure Node : Implements IAddressHandle
     ''' 残基编号
     ''' </summary>
     ''' <returns></returns>
-    Public Property Address As Long Implements IAddressHandle.AddrHwnd
+    Public Property Address As Integer Implements IAddressHandle.Address
 
     Public Overrides Function ToString() As String
         Return Me.GetJson

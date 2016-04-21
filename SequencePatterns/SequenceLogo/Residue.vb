@@ -18,7 +18,7 @@ Namespace SequenceLogo
         ''' 这个残基的位点编号
         ''' </summary>
         ''' <returns></returns>
-        Public Property AddrHwnd As Long Implements IAddressHandle.AddrHwnd
+        Public Property Address As Integer Implements IAddressHandle.Address
 
         Public Overrides Function ToString() As String
             Return $"{NameOf(Bits)}:= {Bits}"

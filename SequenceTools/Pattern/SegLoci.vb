@@ -27,7 +27,7 @@ Namespace Pattern
         ''' </summary>
         ''' <remarks></remarks>
         <XmlAttribute> Public Property Left As Long Implements ILocationComponent.Left
-        <XmlAttribute> Public Property Right As Long Implements ILocationComponent.Right
+        <XmlAttribute> Public Property Right As Long Implements ILocationComponent.Address
 
         Public Function ToRow() As RowObject
             Return New String() {Left, Right, Length, Sequence}

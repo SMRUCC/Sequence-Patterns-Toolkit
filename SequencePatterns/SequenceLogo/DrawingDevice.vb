@@ -73,7 +73,7 @@ For example, we identified a new domain, likely to have a role downstream of the
                 LinqAPI.Exec(Of ResidueSite, Residue)(PWM.PWM) <=
                     Function(rsd As ResidueSite) New Residue With {
                         .Bits = rsd.Bits,
-                        .AddrHwnd = rsd.Site,
+                        .Address = rsd.Site,
                         .Alphabets = LinqAPI.Exec(Of Alphabet) <= From x As SeqValue(Of Double)
                                                                   In rsd.PWM.SeqIterator
                                                                   Select New Alphabet With {
@@ -167,9 +167,9 @@ For example, we identified a new domain, likely to have a role downstream of the
                 Y = Gr.Height - Margin
                 YHeight = (n * DrawingDevice.Height) * (If(residue.Bits > MaxBits, MaxBits, residue.Bits) / MaxBits)
 
-                Dim idx As String = CStr(residue.AddrHwnd)
+                Dim idx As String = CStr(residue.Address)
                 sz = Gr.Gr_Device.MeasureString(idx, DrawingFont)
-                Call Gr.Gr_Device.DrawString(idx, DrawingFont, Brushes.Black, New Point(x:=X + sz.Width / If(Math.Abs(residue.AddrHwnd) < 10, 2, 5), y:=Y))
+                Call Gr.Gr_Device.DrawString(idx, DrawingFont, Brushes.Black, New Point(x:=X + sz.Width / If(Math.Abs(residue.Address) < 10, 2, 5), y:=Y))
 
                 For Each Alphabet As Alphabet In order
                     Dim H As Single = Alphabet.RelativeFrequency * YHeight

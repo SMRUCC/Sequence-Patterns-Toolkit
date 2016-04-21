@@ -11,7 +11,7 @@ Namespace Motif
     ''' </summary>
     Public Class ResidueSite : Implements IAddressHandle
 
-        <XmlAttribute> Public Property Site As Long Implements IAddressHandle.AddrHwnd
+        <XmlAttribute> Public Property Site As Integer Implements IAddressHandle.Address
         ''' <summary>
         ''' ATGC/
         ''' </summary>
