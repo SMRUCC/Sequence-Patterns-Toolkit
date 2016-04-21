@@ -98,6 +98,7 @@
     <Compile Include="Motif\Patterns\Ranges.vb" />
     <Compile Include="Motif\Patterns\PatternExpression.vb" />
     <Compile Include="Motif\Patterns\PatternParser.vb" />
+    <Compile Include="MultipleAlignment.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
