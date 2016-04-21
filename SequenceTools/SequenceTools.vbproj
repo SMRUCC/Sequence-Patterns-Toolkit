@@ -162,7 +162,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DNA.ico" />
-    <Content Include="Terminal.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\GCModeller.Core\Bio.Assembly\Bio.Assembly.vbproj">
