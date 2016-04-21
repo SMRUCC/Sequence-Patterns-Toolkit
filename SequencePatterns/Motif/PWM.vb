@@ -80,7 +80,7 @@ Namespace Motif
 
         <Extension>
         Private Function __hi(f As Dictionary(Of Char, Double)) As Double
-            Dim h As Double = f.Values.Sum(Function(n) n * Math.Log(n, 2))
+            Dim h As Double = f.Values.Sum(Function(n) If(n = 0R, 0, n * Math.Log(n, 2))) ' 零乘以任何数都是得结果零
             h = 0 - h
             Return h
         End Function
