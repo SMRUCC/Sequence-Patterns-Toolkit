@@ -23,3 +23,4 @@ Help for command '/logo':
 ''
 
 ![](https://raw.githubusercontent.com/SMRUCC/Sequence-Patterns-Toolkit/master/data/Xanthomonadales_MetR___Xanthomonadales.logo.png)
+![](https://raw.githubusercontent.com/SMRUCC/Sequence-Patterns-Toolkit/master/data/Xanthomonadales_MetR___Xanthomonadales.png)
