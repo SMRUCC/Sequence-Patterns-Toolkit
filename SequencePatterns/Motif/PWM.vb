@@ -1,25 +1,63 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.SequenceLogo
 Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports LANS.SystemsBiology.SequenceModel.Patterns
+Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 
 Namespace Motif
 
-    Public Class MotifPWM
-        Public Property PWM As ResidueSite()
+    Public Class MotifPWM : Inherits ClassObject
+        Implements IIterator(Of ResidueSite)
 
+        Public Property PWM As ResidueSite()
+        Public Property Alphabets As Char()
+
+        Public Iterator Function GetEnumerator() As IEnumerator(Of ResidueSite) Implements IIterator(Of ResidueSite).GetEnumerator
+            For Each x As ResidueSite In PWM
+                Yield x
+            Next
+        End Function
+
+        Public Iterator Function IGetEnumerator() As IEnumerator Implements IIterator(Of ResidueSite).IGetEnumerator
+            Yield GetEnumerator()
+        End Function
+
+        Public Shared Function NT_PWM(sites As IEnumerable(Of ResidueSite)) As MotifPWM
+            Return New MotifPWM With {
+                .Alphabets = ColorSchema.NT.ToArray,
+                .PWM = sites.ToArray
+            }
+        End Function
+
+        Public Shared Function AA_PWM(sites As IEnumerable(Of ResidueSite)) As MotifPWM
+            Return New MotifPWM With {
+                .Alphabets = ColorSchema.AA,
+                .PWM = sites.ToArray
+            }
+        End Function
     End Class
 
     Public Module PWM
 
+        ''' <summary>
+        ''' 从Clustal比对结果之中生成PWM用于SequenceLogo的绘制
+        ''' </summary>
+        ''' <param name="fa"></param>
+        ''' <returns></returns>
         Public Function FromMla(fa As FastaFile) As MotifPWM
-            Dim f = PatternsAPI.Frequency(fa)
+            Dim f As PatternModel = PatternsAPI.Frequency(fa)
             Dim n As Integer = fa.NumberOfFasta
             Dim base As Integer = If(fa.First.IsProtSource, 20, 4)
             Dim en As Double = (1 / Math.Log(2)) * ((base - 1) / (2 * n))
-            Dim H = f.ToArray(Function(x) x.Value.__hi)
-            Dim PWM = (From x In f.Values.SeqIterator Select __residue(x.obj, H(x.Pos), en, base, x.Pos)).ToArray
-            Return New MotifPWM With {.PWM = PWM}
+            Dim H As Double() = f.Residues.ToArray(Function(x) x.Alphabets.__hi)
+            Dim PWM = (From x In f.Residues.SeqIterator Select __residue(x.obj.Alphabets, H(x.Pos), en, base, x.Pos)).ToArray
+
+            If base = 20 Then
+                Return MotifPWM.AA_PWM(PWM)
+            Else
+                Return MotifPWM.NT_PWM(PWM)
+            End If
         End Function
 
         ''' <summary>

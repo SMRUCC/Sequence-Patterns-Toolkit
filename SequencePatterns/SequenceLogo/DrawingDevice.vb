@@ -1,9 +1,12 @@
-﻿Imports Microsoft.VisualBasic.Scripting.MetaData
-Imports Microsoft.VisualBasic.CommandLine.Reflection
-Imports Microsoft.VisualBasic.Linq.Extensions
+﻿Imports System.Runtime.CompilerServices
 Imports System.Drawing
+Imports Microsoft.VisualBasic.Scripting.MetaData
+Imports Microsoft.VisualBasic.CommandLine.Reflection
+Imports Microsoft.VisualBasic.Linq
+Imports Microsoft.VisualBasic.Language
 Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports LANS.SystemsBiology.SequenceModel.Patterns
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Motif
 
 Namespace SequenceLogo
 
@@ -63,16 +66,21 @@ For example, we identified a new domain, likely to have a role downstream of the
         ''' <returns></returns>
         <ExportAPI("Drawing.Frequency")>
         Public Function DrawFrequency(Fasta As FastaFile) As Image
-            Dim Bits = If(Fasta.First.IsProtSource, Math.Log(20, 2), 2)
-            Dim Frequency = PatternsAPI.Frequency(Fasta)
+            Dim PWM As MotifPWM = Motif.PWM.FromMla(Fasta)
             Dim Model As DrawingModel = New DrawingModel
             Model.ModelsId = $"{NameOf(DrawFrequency)} for {Fasta.NumberOfFasta} sequence."
-            Model.Residues = Frequency.ToArray(Function(rsd) New Residue With {
-                                                   .Bits = Bits,
-                                                   .Alphabets = rsd.Value.ToArray(Function(oa) New Alphabet With {
-                                                        .Alphabet = oa.Key,
-                                                        .RelativeFrequency = oa.Value}),
-                                                        .AddrHwnd = rsd.Key})
+            Model.Residues =
+                LinqAPI.Exec(Of ResidueSite, Residue)(PWM.PWM) <=
+                    Function(rsd As ResidueSite) New Residue With {
+                        .Bits = rsd.Bits,
+                        .AddrHwnd = rsd.Site,
+                        .Alphabets = LinqAPI.Exec(Of Alphabet) <= From x As SeqValue(Of Double)
+                                                                  In rsd.PWM.SeqIterator
+                                                                  Select New Alphabet With {
+                                                                      .Alphabet = PWM.Alphabets(x.Pos),
+                                                                      .RelativeFrequency = x.obj
+                                                                  }  ' alphabets
+            }  ' residues
             Return InvokeDrawing(Model, False)
         End Function
 
@@ -96,6 +104,7 @@ For example, we identified a new domain, likely to have a role downstream of the
         ''' <param name="Model"></param>
         ''' <returns></returns>
         <ExportAPI("Invoke.Drawing", Info:="Drawing a sequence logo from a generated sequence motif model.")>
+        <Extension>
         Public Function InvokeDrawing(Model As SequenceLogo.DrawingModel,
                                       <Parameter("Order.Frequency", "Does the alphabets in a residue position will be ordered its drawing order based on their relative frequency in the residue site?")>
                                       Optional FrequencyOrder As Boolean = True,
