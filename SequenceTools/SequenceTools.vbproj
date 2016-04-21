@@ -177,6 +177,10 @@
       <Project>{fecce1fd-e1d4-49e3-a668-60bb5e7aed99}</Project>
       <Name>+Microsoft.VisualBasic.Architecture.Framework</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SequencePatterns\SequencePatterns.vbproj">
+      <Project>{abdce82b-700e-4f70-a2f1-86b8054d0c8e}</Project>
+      <Name>SequencePatterns</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SmithWaterman\SmithWaterman.vbproj">
       <Project>{96973118-8964-49c4-b34f-086c4f9e2cdf}</Project>
       <Name>SmithWaterman</Name>

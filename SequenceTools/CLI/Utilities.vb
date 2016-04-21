@@ -6,6 +6,8 @@ Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports Microsoft.VisualBasic
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.Pattern
 Imports LANS.SystemsBiology.SequenceModel.FASTA.Reflection
+Imports System.Drawing
+Imports LANS.SystemsBiology.SequenceModel.FASTA
 
 ''' <summary>
 ''' Sequence Utilities
@@ -152,5 +154,14 @@ Public Module Utilities
         Call ComplementReverse.Save(OutputFolder & "/" & File & "_complement_reversed.csv", False)
 
         Return 0
+    End Function
+
+    <ExportAPI("/logo", Usage:="/logo /in <clustal.fasta> [/out <out.png>]")>
+    Public Function SequenceLogo(args As CommandLine) As Integer
+        Dim [in] As String = args - "/in"
+        Dim out As String = args.GetValue("/out", [in].TrimFileExt & ".logo.png")
+        Dim fa As New FastaFile([in])
+        Dim logo As Image = SequencePatterns.SequenceLogo.DrawFrequency(fa)
+        Return logo.SaveAs(out, ImageFormats.Png)
     End Function
 End Module
