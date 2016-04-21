@@ -1,5 +1,6 @@
 ﻿Imports System.Runtime.CompilerServices
 Imports LANS.SystemsBiology.SequenceModel.FASTA
+Imports LANS.SystemsBiology.SequenceModel.Patterns
 Imports Microsoft.VisualBasic.Linq
 
 Namespace Motif
@@ -12,7 +13,7 @@ Namespace Motif
     Public Module PWM
 
         Public Function FromMla(fa As FastaFile) As MotifPWM
-            Dim f = LANS.SystemsBiology.BioAssemblyExtensions.Frequency(fa)
+            Dim f = PatternsAPI.Frequency(fa)
             Dim n As Integer = fa.NumberOfFasta
             Dim base As Integer = If(fa.First.IsProtSource, 20, 4)
             Dim en As Double = (1 / Math.Log(2)) * ((base - 1) / (2 * n))

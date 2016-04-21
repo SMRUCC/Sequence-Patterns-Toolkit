@@ -1,12 +1,12 @@
 ﻿Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Motif
 Imports LANS.SystemsBiology.SequenceModel
+Imports LANS.SystemsBiology.SequenceModel.Patterns
 Imports Microsoft.VisualBasic.Linq.Extensions
 
 Namespace SequenceLogo
 
-    Public Interface ILogoResidue : Inherits IPatternProvider
+    Public Interface ILogoResidue : Inherits IPatternSite
         ReadOnly Property Bits As Double
-        Default ReadOnly Property Probability(c As Char) As Double
     End Interface
 
     Public Class DrawingModel

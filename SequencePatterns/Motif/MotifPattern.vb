@@ -4,6 +4,9 @@ Imports Microsoft.VisualBasic.Serialization
 
 Namespace Motif
 
+    ''' <summary>
+    ''' Regular expression model for the motifs
+    ''' </summary>
     Public Class MotifPattern : Implements sIdEnumerable
 
         Public Property Id As String Implements sIdEnumerable.Identifier

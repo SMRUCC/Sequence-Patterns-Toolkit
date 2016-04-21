@@ -3,6 +3,7 @@ Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports System.Drawing
 Imports LANS.SystemsBiology.SequenceModel.FASTA
+Imports LANS.SystemsBiology.SequenceModel.Patterns
 
 Namespace SequenceLogo
 
@@ -63,7 +64,7 @@ For example, we identified a new domain, likely to have a role downstream of the
         <ExportAPI("Drawing.Frequency")>
         Public Function DrawFrequency(Fasta As FastaFile) As Image
             Dim Bits = If(Fasta.First.IsProtSource, Math.Log(20, 2), 2)
-            Dim Frequency = BioAssemblyExtensions.Frequency(Fasta)
+            Dim Frequency = PatternsAPI.Frequency(Fasta)
             Dim Model As DrawingModel = New DrawingModel
             Model.ModelsId = $"{NameOf(DrawFrequency)} for {Fasta.NumberOfFasta} sequence."
             Model.Residues = Frequency.ToArray(Function(rsd) New Residue With {
