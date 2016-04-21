@@ -16,7 +16,7 @@ Imports Microsoft.VisualBasic.Scripting.MetaData
                     Description:="Data visualization for the Clustal multiple alignment output fasta file.",
                     Publisher:="amethyst.asuka@gcmodeller.org",
                     Url:="http://gcmodeller.org")>
-Public Module MultipleAlignment
+Public Module ClustalVisual
 
     <DataFrameColumn("MLA.Margin")> Dim Margin As Integer = 20
     ''' <summary>
@@ -30,20 +30,20 @@ Public Module MultipleAlignment
 
     <ExportAPI("DotSize.Set", Info:="Setups of the dot size for the residue plot.")>
     Public Sub SetDotSize(n As Integer)
-        MultipleAlignment.DotSize = n
+        ClustalVisual.DotSize = n
     End Sub
 
     Sub New()
-        MultipleAlignment.ColorProfiles = Polypeptides.MEGASchema.ToDictionary(Function(x) x.Key.ToString, Function(x) x.Value)
+        ClustalVisual.ColorProfiles = Polypeptides.MEGASchema.ToDictionary(Function(x) x.Key.ToString, Function(x) x.Value)
 
-        Call MultipleAlignment.ColorProfiles.Add("-", Color.FromArgb(0, 0, 0, 0))
-        Call MultipleAlignment.ColorProfiles.Add(".", Color.FromArgb(0, 0, 0, 0))
-        Call MultipleAlignment.ColorProfiles.Add("*", Color.FromArgb(0, 0, 0, 0))
-        Call MultipleAlignment.ColorProfiles.Add("A", Color.Green)
-        Call MultipleAlignment.ColorProfiles.Add("T", Color.Blue)
-        Call MultipleAlignment.ColorProfiles.Add("G", Color.Red)
-        Call MultipleAlignment.ColorProfiles.Add("C", Color.Brown)
-        Call MultipleAlignment.ColorProfiles.Add("U", Color.CadetBlue)
+        Call ClustalVisual.ColorProfiles.Add("-", Color.FromArgb(0, 0, 0, 0))
+        Call ClustalVisual.ColorProfiles.Add(".", Color.FromArgb(0, 0, 0, 0))
+        Call ClustalVisual.ColorProfiles.Add("*", Color.FromArgb(0, 0, 0, 0))
+        Call ClustalVisual.ColorProfiles.Add("A", Color.Green)
+        Call ClustalVisual.ColorProfiles.Add("T", Color.Blue)
+        Call ClustalVisual.ColorProfiles.Add("G", Color.Red)
+        Call ClustalVisual.ColorProfiles.Add("C", Color.Brown)
+        Call ClustalVisual.ColorProfiles.Add("U", Color.CadetBlue)
     End Sub
 
     <ExportAPI("Drawing.Clustal")>
@@ -70,7 +70,7 @@ Public Module MultipleAlignment
                            Order By l Descending).First
         Dim TitleDrawingFont As Font = New Font(FONT_FAMILY_UBUNTU, FontSize)
         Dim StringSize As Size = titleMaxLen.Title.MeasureString(TitleDrawingFont)
-        Dim DotSize As Integer = MultipleAlignment.DotSize
+        Dim DotSize As Integer = ClustalVisual.DotSize
 
         DotSize = Math.Max(DotSize, StringSize.Height) + 5
 
@@ -114,7 +114,7 @@ Public Module MultipleAlignment
 
             For Each ch As Char In fa.SequenceData
                 Dim s As String = ch.ToString
-                Dim br As New SolidBrush(MultipleAlignment.ColorProfiles(s))
+                Dim br As New SolidBrush(ClustalVisual.ColorProfiles(s))
 
                 Call Gr.Gr_Device.FillRectangle(br, New Rectangle(New Point(X, Y), New Size(DotSize, DotSize)))
                 Call Gr.Gr_Device.DrawString(s, DotFont, Brushes.Black, New Point(X, Y))

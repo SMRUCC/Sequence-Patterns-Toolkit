@@ -8,6 +8,9 @@ Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.Pattern
 Imports LANS.SystemsBiology.SequenceModel.FASTA.Reflection
 Imports System.Drawing
 Imports LANS.SystemsBiology.SequenceModel.FASTA
+Imports LANS.SystemsBiology.SequenceModel
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
+Imports LANS.SystemsBiology.Assembly.NCBI.GenBank
 
 ''' <summary>
 ''' Sequence Utilities
@@ -28,9 +31,9 @@ Public Module Utilities
         For i As Integer = 0 To Sequence.Length - 3 Step 3
             Call AA.Add(Mid(Sequence, i + 1, 3))
         Next
-        Dim LQuery = New String((From a As String In AA Select LANS.SystemsBiology.SequenceModel.Polypeptides.Abbreviate(a.ToUpper).First).ToArray)
-        Dim MW As Double = LANS.SystemsBiology.SequenceModel.CalcMW_Polypeptide(LQuery)
-        Dim Fasta As New LANS.SystemsBiology.SequenceModel.FASTA.FastaToken With {.SequenceData = LQuery, .Attributes = {$"MW={MW}"}}
+        Dim LQuery = New String((From a As String In AA Select Polypeptides.Abbreviate(a.ToUpper).First).ToArray)
+        Dim MW As Double = CalcMW_Polypeptide(LQuery)
+        Dim Fasta As New FastaToken With {.SequenceData = LQuery, .Attributes = {$"MW={MW}"}}
         Dim out As String = args("/out")
         If String.IsNullOrEmpty(out) Then
             out = [In] & ".fasta"
@@ -53,7 +56,7 @@ Public Module Utilities
                 Try
                     Dim FileInfo = FileIO.FileSystem.GetFileInfo(InputFasta)
                     OutputFasta = String.Format("{0}/{1}_reverse.fsa", FileInfo.Directory.FullName, FileInfo.Name)
-                    Call LANS.SystemsBiology.SequenceModel.FASTA.FastaFile.Read(InputFasta).Complement.Save(OutputFasta)
+                    Call FastaFile.Read(InputFasta).Complement.Save(OutputFasta)
                 Catch ex As Exception
                     Call Console.WriteLine(ex.ToString)
                     Return -1
@@ -80,7 +83,7 @@ Public Module Utilities
                 Try
                     Dim FileInfo = FileIO.FileSystem.GetFileInfo(InputFasta)
                     OutputFasta = String.Format("{0}/{1}_reverse.fsa", FileInfo.Directory.FullName, FileInfo.Name)
-                    Call LANS.SystemsBiology.SequenceModel.FASTA.FastaFile.Read(InputFasta).Reverse.Save(OutputFasta)
+                    Call FastaFile.Read(InputFasta).Reverse.Save(OutputFasta)
                 Catch ex As Exception
                     Call Console.WriteLine(ex.ToString)
                     Return -1
@@ -117,11 +120,11 @@ Public Module Utilities
                      " fsa - The input sequence data file is a FASTA format file;\n" &
                      " gbk - The input sequence data file is a NCBI genbank flat file.",
         Example:="fsa")>
-    Public Function PatternSearchA(argvs As Microsoft.VisualBasic.CommandLine.CommandLine) As Integer
+    Public Function PatternSearchA(argvs As CommandLine) As Integer
         Dim Format As String = argvs("-f")
         Dim Input As String = argvs("-i")
         Dim OutputFolder As String = argvs("-o")
-        Dim FASTA As LANS.SystemsBiology.SequenceModel.FASTA.FastaFile
+        Dim FASTA As FASTA.FastaFile
         Dim pattern As String = argvs("-p").Replace("N", "[ATGCU]")
 
         If String.IsNullOrEmpty(OutputFolder) Then
@@ -129,10 +132,9 @@ Public Module Utilities
         End If
 
         If String.IsNullOrEmpty(Format) OrElse String.Equals("fsa", Format, StringComparison.OrdinalIgnoreCase) Then 'fasta sequence
-            FASTA = LANS.SystemsBiology.SequenceModel.FASTA.FastaFile.Read(File:=Input)
+            FASTA = FastaFile.Read(File:=Input)
         Else 'gbk format
-            Dim GbkFile As LANS.SystemsBiology.Assembly.NCBI.GenBank.GBFF.File =
-                LANS.SystemsBiology.Assembly.NCBI.GenBank.GBFF.File.Read(Path:=Input)
+            Dim GbkFile As GBFF.File = GBFF.File.Read(Path:=Input)
             FASTA = GbkFile.ExportProteins
         End If
 
@@ -163,5 +165,16 @@ Public Module Utilities
         Dim fa As New FastaFile([in])
         Dim logo As Image = SequencePatterns.SequenceLogo.DrawFrequency(fa)
         Return logo.SaveAs(out, ImageFormats.Png)
+    End Function
+
+    <ExportAPI("--Drawing.ClustalW",
+           Usage:="--Drawing.ClustalW /in <align.fasta> [/out <out.png> /dot.Size 10]")>
+    Public Function DrawClustalW(args As CommandLine) As Integer
+        Dim inFile As String = args("/in")
+        Dim out As String = args.GetValue("/out", inFile.TrimFileExt & ".png")
+        Dim aln As New FASTA.FastaFile(inFile)
+        Call ClustalVisual.SetDotSize(args.GetValue("/dot.size", 10))
+        Dim res As Image = ClustalVisual.InvokeDrawing(aln)
+        Return res.SaveAs(out, ImageFormats.Png)
     End Function
 End Module
