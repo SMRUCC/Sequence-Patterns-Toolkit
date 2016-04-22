@@ -133,13 +133,13 @@ For example, we identified a new domain, likely to have a role downstream of the
             Dim Gr As GDIPlusDeviceHandle =
                 New Size(Model.Residues.Length * DrawingDevice.WordSize + 2 * Margin, 2 * Margin + n * Height).CreateGDIDevice
             Dim X, Y As Integer
-            Dim DrawingFont As Font = New Font(FONT_FAMILY_MICROSOFT_YAHEI, CInt(WordSize * 0.6), FontStyle.Bold)
+            Dim DrawingFont As Font = New Font(MicrosoftYaHei, CInt(WordSize * 0.6), FontStyle.Bold)
             Dim sz As SizeF
 
             sz = Gr.Gr_Device.MeasureString(Model.ModelsId, DrawingFont)
             Call Gr.Gr_Device.DrawString(Model.ModelsId, DrawingFont, Brushes.Black, New Point((Gr.Width - sz.Width) / 2, y:=Margin / 2.5))
 
-            DrawingFont = New Font(FONT_FAMILY_MICROSOFT_YAHEI, CInt(WordSize * 0.4), FontStyle.Bold)
+            DrawingFont = New Font(MicrosoftYaHei, CInt(WordSize * 0.4), FontStyle.Bold)
 
 #Region "画坐标轴"
 

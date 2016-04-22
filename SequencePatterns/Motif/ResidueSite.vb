@@ -96,7 +96,7 @@ Namespace Motif
 
         Public Overrides Function ToString() As String
             Dim ATGC As String = New String({__toChar("A"c, PWM(0)), __toChar("T"c, PWM(1)), __toChar("G"c, PWM(2)), __toChar("C"c, PWM(3))})
-            Return $"{ATGC}   //({Bits} bits) [{Math.Round(PWM(0), 2)}, {Math.Round(PWM(1), 2)}, {Math.Round(PWM(2), 2)}, {Math.Round(PWM(3), 2)}];"
+            Return $"{ATGC}   //({Math.Round(Bits, 2)} bits) [{Math.Round(PWM(0), 2)}, {Math.Round(PWM(1), 2)}, {Math.Round(PWM(2), 2)}, {Math.Round(PWM(3), 2)}];"
         End Function
 
         Public ReadOnly Property AsChar As Char

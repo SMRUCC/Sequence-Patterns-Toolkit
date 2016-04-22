@@ -39,7 +39,7 @@ Namespace SequenceLogo
 
         Private Function __getTexture(color As Color, alphabet As String) As Image
             Dim Bmp As New Bitmap(680, 680)
-            Dim Font As New Font(FONT_FAMILY_MICROSOFT_YAHEI, 630, FontStyle.Bold)
+            Dim Font As New Font(FontFace.TimesNewRoman, 630, FontStyle.Bold)
             Dim Gr As Graphics = Graphics.FromImage(Bmp)
 
             Gr.CompositingQuality = Drawing2D.CompositingQuality.HighQuality

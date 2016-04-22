@@ -68,7 +68,7 @@ Public Module ClustalVisual
                            Select l = Len(fa.Title),
                                fa.Title
                            Order By l Descending).First
-        Dim TitleDrawingFont As Font = New Font(FONT_FAMILY_UBUNTU, FontSize)
+        Dim TitleDrawingFont As Font = New Font(Ubuntu, FontSize)
         Dim StringSize As Size = titleMaxLen.Title.MeasureString(TitleDrawingFont)
         Dim DotSize As Integer = ClustalVisual.DotSize
 
@@ -82,7 +82,7 @@ Public Module ClustalVisual
 
         Call Gr.ImageAddFrame(offset:=1)
 
-        Dim DotFont As New Font(FONT_FAMILY_UBUNTU, FontSize + 1, FontStyle.Bold)
+        Dim DotFont As New Font(Ubuntu, FontSize + 1, FontStyle.Bold)
         Dim ConservedSites = (From site As SeqValue(Of SimpleSite)
                               In Patterns.Frequency(aln).Residues.SeqIterator
                               Where Not (From xs In site.obj.Alphabets Where xs.Value = 1.0R Select xs).IsNullOrEmpty
