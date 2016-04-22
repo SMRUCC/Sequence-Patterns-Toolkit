@@ -65,10 +65,25 @@ For example, we identified a new domain, likely to have a role downstream of the
         ''' <param name="Fasta"></param>
         ''' <returns></returns>
         <ExportAPI("Drawing.Frequency")>
-        Public Function DrawFrequency(Fasta As FastaFile) As Image
+        Public Function DrawFrequency(Fasta As FastaFile, Optional title As String = "") As Image
             Dim PWM As MotifPWM = Motif.PWM.FromMla(Fasta)
             Dim Model As DrawingModel = New DrawingModel
-            Model.ModelsId = $"{NameOf(DrawFrequency)} for {Fasta.NumberOfFasta} sequence."
+
+#If DEBUG Then
+            Dim m As String = New String(PWM.PWM.ToArray(Function(r) r.AsChar))
+            Call VBDebugger.WriteLine(m, ConsoleColor.Magenta)
+#End If
+
+            If String.IsNullOrEmpty(title) Then
+                If Not String.IsNullOrEmpty(Fasta.FileName) Then
+                    Model.ModelsId = Fasta.FileName.BaseName
+                Else
+                    Model.ModelsId = New String(PWM.PWM.ToArray(Function(r) r.AsChar))
+                End If
+            Else
+                Model.ModelsId = title
+            End If
+
             Model.Residues =
                 LinqAPI.Exec(Of ResidueSite, Residue)(PWM.PWM) <=
                     Function(rsd As ResidueSite) New Residue With {

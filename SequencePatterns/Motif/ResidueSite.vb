@@ -3,6 +3,7 @@ Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat
 Imports LANS.SystemsBiology.ComponentModel.Loci
 Imports Microsoft.VisualBasic.ComponentModel
 Imports Microsoft.VisualBasic.ComponentModel.Collection.Generic
+Imports Microsoft.VisualBasic.Language
 
 Namespace Motif
 
@@ -95,8 +96,15 @@ Namespace Motif
 
         Public Overrides Function ToString() As String
             Dim ATGC As String = New String({__toChar("A"c, PWM(0)), __toChar("T"c, PWM(1)), __toChar("G"c, PWM(2)), __toChar("C"c, PWM(3))})
-            Return $"{ATGC}   //({Bits} bits) A={Math.Round(PWM(0), 2)}, T={Math.Round(PWM(1), 2)}, G={Math.Round(PWM(2), 2)}, C={Math.Round(PWM(3), 2)};"
+            Return $"{ATGC}   //({Bits} bits) [{Math.Round(PWM(0), 2)}, {Math.Round(PWM(1), 2)}, {Math.Round(PWM(2), 2)}, {Math.Round(PWM(3), 2)}];"
         End Function
+
+        Public ReadOnly Property AsChar As Char
+            Get
+                Dim mxInd As Integer = PWM.MaxIndex
+                Return __toChar("ATGC"(mxInd), PWM(mxInd))
+            End Get
+        End Property
 
         ''' <summary>
         '''
