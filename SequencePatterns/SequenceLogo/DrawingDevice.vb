@@ -130,27 +130,27 @@ For example, we identified a new domain, likely to have a role downstream of the
             Dim ColorSchema As Dictionary(Of Char, Image) =
                 If(n = 4, SequenceLogo.ColorSchema.NucleotideSchema, SequenceLogo.ColorSchema.ProteinSchema)
 
-            Dim Gr As GDIPlusDeviceHandle =
+            Dim gdi As GDIPlusDeviceHandle =
                 New Size(Model.Residues.Length * DrawingDevice.WordSize + 2 * Margin, 2 * Margin + n * Height).CreateGDIDevice
             Dim X, Y As Integer
-            Dim DrawingFont As Font = New Font(MicrosoftYaHei, CInt(WordSize * 0.6), FontStyle.Bold)
-            Dim sz As SizeF
+            Dim DrawingFont As New Font(MicrosoftYaHei, CInt(WordSize * 0.6), FontStyle.Bold)
+            Dim size As SizeF
 
-            sz = Gr.Gr_Device.MeasureString(Model.ModelsId, DrawingFont)
-            Call Gr.Gr_Device.DrawString(Model.ModelsId, DrawingFont, Brushes.Black, New Point((Gr.Width - sz.Width) / 2, y:=Margin / 2.5))
+            size = gdi.Gr_Device.MeasureString(Model.ModelsId, DrawingFont)
+            Call gdi.Gr_Device.DrawString(Model.ModelsId, DrawingFont, Brushes.Black, New Point((gdi.Width - size.Width) / 2, y:=Margin / 2.5))
 
-            DrawingFont = New Font(MicrosoftYaHei, CInt(WordSize * 0.4), FontStyle.Bold)
+            DrawingFont = New Font(MicrosoftYaHei, CInt(WordSize * 0.4))
 
 #Region "画坐标轴"
 
             X = Margin
-            Y = Gr.Height - Margin  '坐标轴原点
+            Y = gdi.Height - Margin  '坐标轴原点
 
             Dim MaxBits As Double = Math.Log(n, newBase:=2)
             Dim YHeight As Integer = n * DrawingDevice.Height
 
-            Call Gr.Gr_Device.DrawLine(Pens.Black, New Point(X, Y - YHeight), New Point(X, Y))
-            Call Gr.Gr_Device.DrawLine(Pens.Black, New Point(X, Y), New Point(X + Model.Residues.Length * DrawingDevice.WordSize, y:=Y))
+            Call gdi.Gr_Device.DrawLine(Pens.Black, New Point(X, Y - YHeight), New Point(X, Y))
+            Call gdi.Gr_Device.DrawLine(Pens.Black, New Point(X, Y), New Point(X + Model.Residues.Length * DrawingDevice.WordSize, y:=Y))
 
             Dim ddddd As Integer = If(MaxBits = 2, 2, 5)
             Dim d As Double = MaxBits / ddddd
@@ -159,14 +159,14 @@ For example, we identified a new domain, likely to have a role downstream of the
             Dim YBits As Double = 0
 
             For j As Integer = 0 To ddddd
-                sz = Gr.Gr_Device.MeasureString(YBits, font:=DrawingFont)
+                size = gdi.Gr_Device.MeasureString(YBits, font:=DrawingFont)
 
-                Dim y1 = Y - sz.Height / 2
+                Dim y1 = Y - size.Height / 2
 
-                Gr.Gr_Device.DrawString(YBits, DrawingFont, Brushes.Black, New Point(x:=X - sz.Width, y:=y1))
+                gdi.Gr_Device.DrawString(YBits, DrawingFont, Brushes.Black, New Point(x:=X - size.Width, y:=y1))
 
                 y1 = Y '- sz.Height / 8
-                Gr.Gr_Device.DrawLine(Pens.Black, New Point(x:=X, y:=y1), New Point(x:=X + 10, y:=y1))
+                gdi.Gr_Device.DrawLine(Pens.Black, New Point(x:=X, y:=y1), New Point(x:=X + 10, y:=y1))
 
                 YBits += d
                 Y -= YHeight
@@ -179,18 +179,19 @@ For example, we identified a new domain, likely to have a role downstream of the
                                                               In residue.Alphabets
                                                               Select rsd
                                                               Order By rsd.RelativeFrequency Ascending).ToArray, residue.Alphabets)
-                Y = Gr.Height - Margin
+                Y = gdi.Height - Margin
                 YHeight = (n * DrawingDevice.Height) * (If(residue.Bits > MaxBits, MaxBits, residue.Bits) / MaxBits)
 
                 Dim idx As String = CStr(residue.Address)
-                sz = Gr.Gr_Device.MeasureString(idx, DrawingFont)
-                Call Gr.Gr_Device.DrawString(idx, DrawingFont, Brushes.Black, New Point(x:=X + sz.Width / If(Math.Abs(residue.Address) < 10, 2, 5), y:=Y))
+                Dim loci As New Point(X + size.Width / If(Math.Abs(residue.Address) < 10, 2, 5), Y)
+                size = gdi.Gr_Device.MeasureString(idx, DrawingFont)
+                Call gdi.Gr_Device.DrawString(idx, DrawingFont, Brushes.Black, loci)
 
                 For Each Alphabet As Alphabet In order
                     Dim H As Single = Alphabet.RelativeFrequency * YHeight
 
                     Y -= H
-                    Gr.Gr_Device.DrawImage(ColorSchema(Alphabet.Alphabet), CSng(X), CSng(Y), CSng(DrawingDevice.WordSize), H)
+                    gdi.Gr_Device.DrawImage(ColorSchema(Alphabet.Alphabet), CSng(X), CSng(Y), CSng(DrawingDevice.WordSize), H)
                 Next
 
                 X += DrawingDevice.WordSize
@@ -198,12 +199,12 @@ For example, we identified a new domain, likely to have a role downstream of the
 
             '绘制bits字符串
             DrawingFont = New Font(DrawingFont.Name, DrawingFont.Size / 2)
-            sz = Gr.Gr_Device.MeasureString("Bits", DrawingFont)
-            Call Gr.Gr_Device.RotateTransform(-90)
-            Call Gr.Gr_Device.DrawString("Bits", DrawingFont, Brushes.Black, New Point((Height - sz.Width) / 2, Margin / 3))
+            size = gdi.Gr_Device.MeasureString("Bits", DrawingFont)
+            Call gdi.Gr_Device.RotateTransform(-90)
+            Call gdi.Gr_Device.DrawString("Bits", DrawingFont, Brushes.Black, New Point((Height - size.Width) / 2, Margin / 3))
 
 #End Region
-            Return Gr.ImageResource
+            Return gdi.ImageResource
         End Function
     End Module
 End Namespace
