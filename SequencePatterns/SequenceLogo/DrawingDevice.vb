@@ -96,7 +96,7 @@ For example, we identified a new domain, likely to have a role downstream of the
                                                                       .RelativeFrequency = x.obj
                                                                   }  ' alphabets
             }  ' residues
-            Return InvokeDrawing(Model, False)
+            Return InvokeDrawing(Model, True)
         End Function
 
         ''' <summary>

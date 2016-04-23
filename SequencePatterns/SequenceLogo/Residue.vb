@@ -10,6 +10,7 @@ Namespace SequenceLogo
         Public Property Alphabets As Alphabet()
         ''' <summary>
         ''' The total height of the letters depicts the information content Of the position, In bits.
+        ''' (Bits的值是和比对的序列的数量是有关系的)
         ''' </summary>
         ''' <returns></returns>
         Public Property Bits As Double
