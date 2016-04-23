@@ -38,12 +38,17 @@ Namespace Motif
         End Function
     End Class
 
+    ''' <summary>
+    ''' Build probability matrix from clustal multiple sequence alignment.
+    ''' </summary>
     Public Module PWM
 
         ''' <summary>
-        ''' 从Clustal比对结果之中生成PWM用于SequenceLogo的绘制
+        ''' Build probability matrix from clustal multiple sequence alignment, this matrix model can be 
+        ''' used for the downstream sequence logo drawing visualization.
+        ''' (从Clustal比对结果之中生成PWM用于SequenceLogo的绘制)
         ''' </summary>
-        ''' <param name="fa"></param>
+        ''' <param name="fa">A fasta sequence file from the clustal multiple sequence alignment.</param>
         ''' <returns></returns>
         Public Function FromMla(fa As FastaFile) As MotifPWM
             Dim f As PatternModel = PatternsAPI.Frequency(fa)
@@ -51,7 +56,9 @@ Namespace Motif
             Dim base As Integer = If(fa.First.IsProtSource, 20, 4)
             Dim en As Double = (1 / Math.Log(2)) * ((base - 1) / (2 * n))
             Dim H As Double() = f.Residues.ToArray(Function(x) x.Alphabets.__hi)
-            Dim PWM = (From x In f.Residues.SeqIterator Select __residue(x.obj.Alphabets, H(x.Pos), en, base, x.Pos)).ToArray
+            Dim PWM As ResidueSite() =
+                LinqAPI.Exec(Of SimpleSite, ResidueSite) _
+               (f.Residues) <= Function(x, i) __residue(x.Alphabets, H(i), en, base, i)
 
             If base = 20 Then
                 Return MotifPWM.AA_PWM(PWM)
@@ -61,7 +68,7 @@ Namespace Motif
         End Function
 
         ''' <summary>
-        '''
+        ''' Construct of the residue model in the PWM
         ''' </summary>
         ''' <param name="f">ATGC</param>
         ''' <param name="h"></param>
