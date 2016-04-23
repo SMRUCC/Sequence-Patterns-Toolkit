@@ -45,20 +45,23 @@ Namespace SequenceLogo
         ''' <param name="alphabet"></param>
         ''' <returns></returns>
         Private Function __getTexture(color As Color, alphabet As String) As Image
-            Dim Bmp As New Bitmap(680, 680)
-            Dim Font As New Font(FontFace.Ubuntu, 650) ', FontStyle.Bold)
-            Dim Gr As Graphics = Graphics.FromImage(Bmp)
-
-            Gr.CompositingQuality = Drawing2D.CompositingQuality.HighQuality
-            Gr.CompositingMode = Drawing2D.CompositingMode.SourceOver
-
-            Dim Size As SizeF = Gr.MeasureString(alphabet, font:=Font)
+            Dim bitmap As New Bitmap(680, 680)
+            Dim font As New Font(FontFace.Ubuntu, 650)
             Dim br As New SolidBrush(color:=color)
-            Dim pos As New Point((Bmp.Width - Size.Width) / 2, (Bmp.Height - Size.Height) * 0.45)
 
-            Call Gr.DrawString(alphabet, Font, br, pos)
+            Using gdi As Graphics = Graphics.FromImage(bitmap)
+                Dim size As SizeF = gdi.MeasureString(alphabet, font:=font)
+                Dim w As Integer = (bitmap.Width - size.Width) / 2
+                Dim h As Integer = (bitmap.Height - size.Height) * 0.45
+                Dim pos As New Point(w, h)
 
-            Return Bmp
+                gdi.CompositingQuality = Drawing2D.CompositingQuality.HighQuality
+                gdi.CompositingMode = Drawing2D.CompositingMode.SourceOver
+
+                Call gdi.DrawString(alphabet, font, br, point:=pos)
+            End Using
+
+            Return bitmap
         End Function
 
         ''' <summary>
