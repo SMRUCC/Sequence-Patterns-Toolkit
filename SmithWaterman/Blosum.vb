@@ -27,12 +27,26 @@ Imports Microsoft.VisualBasic.Linq.Extensions
 ''' </summary>
 Public Class Blosum
 
+    ''' <summary>
+    ''' Default Blosum-62 substitution matrix from inner resource
+    ''' </summary>
+    ''' <returns></returns>
     Public ReadOnly Property Matrix As Integer()()
 
+    ''' <summary>
+    ''' Load Blosum matrix from the text file, and this Blosum matrix file which is available downloads from NCBI FTP site.
+    ''' </summary>
+    ''' <param name="path"></param>
+    ''' <returns></returns>
     Public Shared Function LoadMatrix(path As String) As Blosum
         Return LoadFromStream(FileIO.FileSystem.ReadAllText(path))
     End Function
 
+    ''' <summary>
+    ''' Load Blosum matrix from the text file, and this Blosum matrix file which is available downloads from NCBI FTP site.
+    ''' </summary>
+    ''' <param name="doc"></param>
+    ''' <returns></returns>
     Public Shared Function LoadFromStream(doc As String) As Blosum
         Dim tokens As String() = doc.lTokens
         Dim i As Integer
@@ -58,6 +72,18 @@ Public Class Blosum
         Return array
     End Function
 
+    '''<summary>
+    '''  Looks up a localized string similar to #  Matrix made by matblas from blosum62.iij
+    '''#  * column uses minimum score
+    '''#  BLOSUM Clustered Scoring Matrix in 1/2 Bit Units
+    '''#  Blocks Database = /data/blocks_5.0/blocks.dat
+    '''#  Cluster Percentage: &gt;= 62
+    '''#  Entropy =   0.6979, Expected =  -0.5209
+    '''   A  R  N  D  C  Q  E  G  H  I  L  K  M  F  P  S  T  W  Y  V  B  Z  X  *
+    '''A  4 -1 -2 -2  0 -1 -1  0 -2 -1 -1 -1 -1 -2 -1  1  0 -3 -2  0 -2 -1  0 -4 
+    '''R -1  5  0 -2 -3  1  0 -2  0 -3 -2  2 -1 -3 -2 -1 -1 -3 -2 -3 -1  0 -1 -4 
+    '''N -2  0  6  1 -3  0  0  0  1 -3 -3  0 -2 [rest of string was truncated]&quot;;.
+    '''</summary>
     Public Shared Function FromInnerBlosum62() As Blosum
         Return LoadFromStream(My.Resources.BLOSUM62)
     End Function
