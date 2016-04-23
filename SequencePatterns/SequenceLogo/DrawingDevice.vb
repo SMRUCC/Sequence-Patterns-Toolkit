@@ -89,7 +89,7 @@ For example, we identified a new domain, likely to have a role downstream of the
             Model.Residues =
                 LinqAPI.Exec(Of ResidueSite, Residue)(PWM.PWM) <=
                     Function(rsd As ResidueSite) New Residue With {
-                        .Bits = Math.Round(rsd.Bits, 1),
+                        .Bits = rsd.Bits,
                         .Address = rsd.Site,
                         .Alphabets = LinqAPI.Exec(Of Alphabet) <= From x As SeqValue(Of Double)
                                                                   In rsd.PWM.SeqIterator
@@ -115,90 +115,132 @@ For example, we identified a new domain, likely to have a role downstream of the
             Return result
         End Function
 
+        <Extension>
+        Private Function __getColors(model As DrawingModel) As Dictionary(Of Char, Image)
+            Return If(model.Alphabets = 4,
+                SequenceLogo.ColorSchema.NucleotideSchema,
+                SequenceLogo.ColorSchema.ProteinSchema)
+        End Function
+
         ''' <summary>
         ''' Drawing the sequence logo for the sequence motif model.(绘制SequenceLogo图)
         ''' </summary>
-        ''' <param name="Model">The model can be achieve from clustal alignment or meme software.</param>
-        ''' <param name="FrequencyOrder">Reorder the alphabets in each residue site in the order of frequency values. default is yes!</param>
+        ''' <param name="model">The model can be achieve from clustal alignment or meme software.</param>
+        ''' <param name="frequencyOrder">Reorder the alphabets in each residue site in the order of frequency values. default is yes!</param>
         ''' <param name="reverse">Reverse the residue sequence order in the drawing model?</param>
         ''' <returns></returns>
         <ExportAPI("Invoke.Drawing", Info:="Drawing a sequence logo from a generated sequence motif model.")>
         <Extension>
-        Public Function InvokeDrawing(Model As SequenceLogo.DrawingModel,
-                                      <Parameter("Order.Frequency", "Does the alphabets in a residue position will be ordered its drawing order based on their relative frequency in the residue site?")>
-                                      Optional FrequencyOrder As Boolean = True,
-                                      Optional Margin As Integer = 100,
+        Public Function InvokeDrawing(model As DrawingModel,
+                                      <Parameter("Order.Frequency",
+                                                 "Does the alphabets in a residue position will be ordered its drawing order based on their relative frequency in the residue site?")>
+                                      Optional frequencyOrder As Boolean = True,
+                                      Optional margin As Integer = 100,
                                       Optional reverse As Boolean = False) As Image
 
-            Dim n As Integer = Model.Residues(Scan0).Alphabets.Length
-            Dim ColorSchema As Dictionary(Of Char, Image) =
-                If(n = 4, SequenceLogo.ColorSchema.NucleotideSchema, SequenceLogo.ColorSchema.ProteinSchema)
-
-            Dim gdi As GDIPlusDeviceHandle =
-                New Size(Model.Residues.Length * DrawingDevice.WordSize + 2 * Margin, 2 * Margin + n * Height).CreateGDIDevice(Color.Transparent)
+            Dim n As Integer = model.Alphabets
+            Dim gSize As New Size(model.Residues.Length * WordSize + 2 * margin, 2 * margin + n * Height)
+            Dim gdi As GDIPlusDeviceHandle = gSize.CreateGDIDevice(Color.Transparent)
             Dim X, Y As Integer
-            Dim DrawingFont As New Font(MicrosoftYaHei, CInt(WordSize * 0.6), FontStyle.Bold)
+            Dim font As New Font(MicrosoftYaHei, CInt(WordSize * 0.6), FontStyle.Bold)
             Dim size As SizeF
 
-            size = gdi.Gr_Device.MeasureString(Model.ModelsId, DrawingFont)
-            Call gdi.Gr_Device.DrawString(Model.ModelsId, DrawingFont, Brushes.Black, New Point((gdi.Width - size.Width) / 2, y:=Margin / 2.5))
+            size =
+            gdi.Gr_Device.MeasureString(model.ModelsId, font)
+            gdi.Gr_Device.DrawString(
+                model.ModelsId, font,
+                Brushes.Black,
+                New Point((gdi.Width - size.Width) / 2, y:=margin / 2.5))
 
-            DrawingFont = New Font(MicrosoftYaHei, CInt(WordSize * 0.4))
+            font = New Font(MicrosoftYaHei, CInt(WordSize * 0.4))
 
 #Region "画坐标轴"
 
-            X = Margin
-            Y = gdi.Height - Margin  '坐标轴原点
+            X = margin
+            Y = gdi.Height - margin  '坐标轴原点
 
-            Dim MaxBits As Double = Math.Log(n, newBase:=2)
-            Dim YHeight As Integer = n * DrawingDevice.Height
+            Dim maxBits As Double = Math.Log(n, newBase:=2)
+            Dim yHeight As Integer = n * DrawingDevice.Height
 
-            Call gdi.Gr_Device.DrawLine(Pens.Black, New Point(X, Y - YHeight), New Point(X, Y))
-            Call gdi.Gr_Device.DrawLine(Pens.Black, New Point(X, Y), New Point(X + Model.Residues.Length * DrawingDevice.WordSize, y:=Y))
+            Call gdi.Gr_Device.DrawLine(Pens.Black,
+                                        New Point(X, Y - yHeight),
+                                        New Point(X, Y))
+            Call gdi.Gr_Device.DrawLine(Pens.Black,
+                                        New Point(X, Y),
+                                        New Point(X + model.Residues.Length * DrawingDevice.WordSize, y:=Y))
 
-            Dim departs As Integer = If(MaxBits = 2, 2, 5)  ' nt 2 steps,  aa 5 steps
-            Dim d As Double = MaxBits / departs
-            YHeight = d / MaxBits * (DrawingDevice.Height * n) '步进
+            Dim departs As Integer = If(maxBits = 2, 2, 5)  ' nt 2 steps,  aa 5 steps
+            Dim d As Double = maxBits / departs
+
+            yHeight = d / maxBits * (DrawingDevice.Height * n) '步进
             d = Math.Round(d, 1)
 
-            Dim YBits As Double = 0
+            Dim yBits As Double = 0
 
             For j As Integer = 0 To departs
-                size = gdi.Gr_Device.MeasureString(YBits, font:=DrawingFont)
+                size = gdi.Gr_Device.MeasureString(yBits, font:=font)
 
                 Dim y1 = Y - size.Height / 2
 
-                gdi.Gr_Device.DrawString(YBits, DrawingFont, Brushes.Black, New Point(x:=X - size.Width, y:=y1))
+                gdi.Gr_Device.DrawString(
+                    CStr(yBits),
+                    font,
+                    Brushes.Black,
+                    New Point(x:=X - size.Width, y:=y1))
 
                 y1 = Y '- sz.Height / 8
-                gdi.Gr_Device.DrawLine(Pens.Black, New Point(x:=X, y:=y1), New Point(x:=X + 10, y:=y1))
+                gdi.Gr_Device.DrawLine(
+                    Pens.Black,
+                    New Point(x:=X, y:=y1),
+                    New Point(x:=X + 10, y:=y1))
 
-                YBits += d
-                Y -= YHeight
+                yBits += d
+                Y -= yHeight
             Next
 
-            Dim source As IEnumerable(Of Residue) = If(reverse, Model.Residues.Reverse, Model.Residues)
+            Dim source As IEnumerable(Of Residue) = If(reverse, model.Residues.Reverse, model.Residues)
+            Dim colorSchema As Dictionary(Of Char, Image) = model.__getColors
 
-            Call VBDebugger.WriteLine(New String("-"c, Model.Residues.Length), ConsoleColor.Green)
+            Call VBDebugger.WriteLine(New String("-"c, model.Residues.Length), ConsoleColor.Green)
 
             For Each residue As Residue In source
-                Dim order As Alphabet() = If(FrequencyOrder, (From rsd As Alphabet
-                                                              In residue.Alphabets
-                                                              Select rsd
-                                                              Order By rsd.RelativeFrequency Ascending).ToArray, residue.Alphabets)
-                Y = gdi.Height - Margin
-                YHeight = (n * DrawingDevice.Height) * (If(residue.Bits > MaxBits, MaxBits, residue.Bits) / MaxBits)
+
+                Dim order As Alphabet() =
+                    If(Not frequencyOrder, residue.Alphabets,
+                      (From rsd As Alphabet
+                       In residue.Alphabets
+                       Select rsd
+                       Order By rsd.RelativeFrequency Ascending).ToArray)
+
+                Y = gdi.Height - margin
+
+                ' YHeight is the max height of current residue, and its value is calculate from its Bits value
+                yHeight = (n * DrawingDevice.Height) * (If(residue.Bits > maxBits, maxBits, residue.Bits) / maxBits)
 
                 Dim idx As String = CStr(residue.Address)
                 Dim loci As New Point(X + size.Width / If(Math.Abs(residue.Address) < 10, 2, 5), Y)
-                size = gdi.Gr_Device.MeasureString(idx, DrawingFont)
-                Call gdi.Gr_Device.DrawString(idx, DrawingFont, Brushes.Black, loci)
+
+                size =
+                gdi.Gr_Device.MeasureString(idx, font)
+                gdi.Gr_Device.DrawString(idx, font, Brushes.Black, loci)
 
                 For Each Alphabet As Alphabet In order
-                    Dim H As Single = Alphabet.RelativeFrequency * YHeight
 
+                    ' H is the drawing height of the current drawing alphabet, 
+                    ' this height value can be calculate from the formula that show above. 
+                    ' As the YHeight variable is transform from the current residue Bits value, so that from this statement
+                    ' The drawing height of the alphabet can be calculated out. 
+
+                    Dim H As Single = Alphabet.RelativeFrequency * yHeight
+
+                    ' Due to the reason of the Y Axis in gdi+ is up side down, so that we needs Subtraction operation, 
+                    ' and then this makes the next alphabet move up direction 
                     Y -= H
-                    gdi.Gr_Device.DrawImage(ColorSchema(Alphabet.Alphabet), CSng(X), CSng(Y), CSng(DrawingDevice.WordSize), H)
+
+                    gdi.Gr_Device.DrawImage(
+                        colorSchema(Alphabet.Alphabet),   ' Drawing alphabet
+                        CSng(X), CSng(Y),                 ' position
+                        CSng(DrawingDevice.WordSize), H)  ' Size and relative height
                 Next
 
                 X += DrawingDevice.WordSize
@@ -206,10 +248,14 @@ For example, we identified a new domain, likely to have a role downstream of the
             Next
 
             '绘制bits字符串
-            DrawingFont = New Font(DrawingFont.Name, DrawingFont.Size / 2)
-            size = gdi.Gr_Device.MeasureString("Bits", DrawingFont)
+            font = New Font(font.Name, font.Size / 2)
+            size = gdi.Gr_Device.MeasureString("Bits", font)
+
             Call gdi.Gr_Device.RotateTransform(-90)
-            Call gdi.Gr_Device.DrawString("Bits", DrawingFont, Brushes.Black, New Point((Height - size.Width) / 2, Margin / 3))
+            Call gdi.Gr_Device.DrawString("Bits",
+                                          font,
+                                          Brushes.Black,
+                                          New Point((Height - size.Width) / 2, margin / 3))
 
 #End Region
             Return gdi.ImageResource

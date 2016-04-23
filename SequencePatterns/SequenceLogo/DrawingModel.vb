@@ -1,7 +1,9 @@
 ﻿Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Motif
 Imports LANS.SystemsBiology.SequenceModel
 Imports LANS.SystemsBiology.SequenceModel.Patterns
+Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq.Extensions
+Imports Microsoft.VisualBasic.Serialization
 
 Namespace SequenceLogo
 
@@ -19,7 +21,7 @@ Namespace SequenceLogo
     ''' <summary>
     ''' Drawing model for the sequence logo visualization.
     ''' </summary>
-    Public Class DrawingModel
+    Public Class DrawingModel : Inherits ClassObject
 
         ''' <summary>
         ''' The motif model is consist of a sequence of residue sites.
@@ -34,8 +36,14 @@ Namespace SequenceLogo
         Public Property ModelsId As String
 
         Public Overrides Function ToString() As String
-            Return ModelsId
+            Return ModelsId & " --> " & Me.GetJson
         End Function
+
+        Public ReadOnly Property Alphabets As Integer
+            Get
+                Return Residues(Scan0).Alphabets.Length
+            End Get
+        End Property
 
         ''' <summary>
         ''' Creates the residue model in amino acid profiles
