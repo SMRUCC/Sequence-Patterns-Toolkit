@@ -24,5 +24,6 @@ Help for command '/logo':
 
 ![](https://raw.githubusercontent.com/SMRUCC/Sequence-Patterns-Toolkit/master/data/Xanthomonadales_MetR___Xanthomonadales.logo.png)
 ![](https://raw.githubusercontent.com/SMRUCC/Sequence-Patterns-Toolkit/master/data/Staphylococcaceae_LexA___Staphylococcaceae.logo.png)
+![](https://raw.githubusercontent.com/SMRUCC/Sequence-Patterns-Toolkit/master/data/XC_2767.clustalW.logo.png)
 ![](https://raw.githubusercontent.com/SMRUCC/Sequence-Patterns-Toolkit/master/data/Xanthomonadales_MetR___Xanthomonadales.png)
 ![](https://raw.githubusercontent.com/SMRUCC/Sequence-Patterns-Toolkit/master/data/clustalW.png)
