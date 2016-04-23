@@ -4,10 +4,14 @@ Imports Microsoft.VisualBasic.Language
 Namespace SequenceLogo
 
     ''' <summary>
-    ''' 所绘制的序列logo图之中的一个位点
+    ''' A drawing site in the sequence logo drawing.(所绘制的序列logo图之中的一个位点)
     ''' </summary>
     Public Class Residue : Implements IAddressHandle
 
+        ''' <summary>
+        ''' ATGC, 4 characters for nt, and aa is 20.
+        ''' </summary>
+        ''' <returns></returns>
         Public Property Alphabets As Alphabet()
         ''' <summary>
         ''' The total height of the letters depicts the information content Of the position, In bits.
@@ -17,11 +21,15 @@ Namespace SequenceLogo
         Public Property Bits As Double
 
         ''' <summary>
-        ''' 这个残基的位点编号
+        ''' Position value of this residue in the motif sequence.(这个残基的位点编号)
         ''' </summary>
         ''' <returns></returns>
         Public Property Address As Integer Implements IAddressHandle.Address
 
+        ''' <summary>
+        ''' Display this site as a single alphabet, and this property is used for generates the motif string.
+        ''' </summary>
+        ''' <returns></returns>
         Public ReadOnly Property AsChar As Char
             Get
                 Dim maxInd As Integer = Alphabets.MaxIndex
@@ -31,7 +39,7 @@ Namespace SequenceLogo
         End Property
 
         Public Overrides Function ToString() As String
-            Return $"{NameOf(Bits)}:= {Bits}"
+            Return $"[{Address}]{AsChar} {NameOf(Bits)}:= {Bits}"
         End Function
 
         ''' <summary>
@@ -104,15 +112,27 @@ Namespace SequenceLogo
 #End Region
     End Class
 
+    ''' <summary>
+    ''' Alphabet model in the drawing motif model, nt for 4 and aa for 20
+    ''' </summary>
     Public Class Alphabet : Implements IComparable
 
         ''' <summary>
-        ''' 可以代表本残基的字母值
+        ''' A alphabet character which represents one residue.(可以代表本残基的字母值)
         ''' </summary>
         ''' <returns></returns>
         Public Property Alphabet As Char
+        ''' <summary>
+        ''' The relative alphabet frequency at this site position.
+        ''' </summary>
+        ''' <returns></returns>
         Public Property RelativeFrequency As Double
 
+        ''' <summary>
+        ''' Sorts for the logo drawing
+        ''' </summary>
+        ''' <param name="obj"></param>
+        ''' <returns></returns>
         Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
             If obj Is Nothing Then
                 Return 1
@@ -141,8 +161,7 @@ Namespace SequenceLogo
         End Function
 
         Public Overrides Function ToString() As String
-            Return $"{Alphabet}  ---> { RelativeFrequency }"
+            Return $"{Alphabet} --> {RelativeFrequency}"
         End Function
-
     End Class
 End Namespace

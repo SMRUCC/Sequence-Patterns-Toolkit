@@ -3,7 +3,8 @@
 Namespace SequenceLogo
 
     ''' <summary>
-    ''' 包含有两种默认的颜色模式：核酸序列和蛋白质序列
+    ''' Define two prefix color schema for the sequence logo: <see cref="NT"/> and <see cref="AA"/>.
+    ''' (包含有两种默认的颜色模式：核酸序列和蛋白质序列)
     ''' </summary>
     ''' <remarks>由于可能会涉及到并行化的原因，
     ''' 多线程操作图片对象很可能会出现<see cref="System.InvalidOperationException"/>: Object is currently in use elsewhere.的错误
@@ -12,7 +13,7 @@ Namespace SequenceLogo
     Public Module ColorSchema
 
         ''' <summary>
-        ''' 核酸Motif的profiles
+        ''' Color schema for the nucleotide sequence.(核酸Motif的profiles)
         ''' </summary>
         ''' <returns></returns>
         Public ReadOnly Property NucleotideSchema As Dictionary(Of Char, Image)
@@ -37,6 +38,12 @@ Namespace SequenceLogo
         ''' <returns></returns>
         Public ReadOnly Property AA As IReadOnlyCollection(Of Char) = {"A"c, "R"c, "N"c, "D"c, "C"c, "E"c, "Q"c, "G"c, "H"c, "I"c, "L"c, "K"c, "M"c, "F"c, "P"c, "S"c, "T"c, "W"c, "Y"c, "V"c}
 
+        ''' <summary>
+        ''' Creates the image cache for the alphabet.
+        ''' </summary>
+        ''' <param name="color"></param>
+        ''' <param name="alphabet"></param>
+        ''' <returns></returns>
         Private Function __getTexture(color As Color, alphabet As String) As Image
             Dim Bmp As New Bitmap(680, 680)
             Dim Font As New Font(FontFace.Ubuntu, 650) ', FontStyle.Bold)
@@ -55,7 +62,7 @@ Namespace SequenceLogo
         End Function
 
         ''' <summary>
-        ''' 蛋白质Motif的profiles
+        ''' Color schema for the protein residues alphabets.(蛋白质Motif的profiles)
         ''' </summary>
         ''' <returns></returns>
         Public ReadOnly Property ProteinSchema As Dictionary(Of Char, Image)

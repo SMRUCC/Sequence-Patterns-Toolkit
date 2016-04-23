@@ -5,20 +5,43 @@ Imports Microsoft.VisualBasic.Linq.Extensions
 
 Namespace SequenceLogo
 
+    ''' <summary>
+    ''' Abstract model for a residue site in a motif sequence fragment.
+    ''' </summary>
     Public Interface ILogoResidue : Inherits IPatternSite
+        ''' <summary>
+        ''' The information of this site can give us.
+        ''' </summary>
+        ''' <returns></returns>
         ReadOnly Property Bits As Double
     End Interface
 
+    ''' <summary>
+    ''' Drawing model for the sequence logo visualization.
+    ''' </summary>
     Public Class DrawingModel
 
+        ''' <summary>
+        ''' The motif model is consist of a sequence of residue sites.
+        ''' </summary>
+        ''' <returns></returns>
         Public Property Residues As Residue()
         Public Property En As Double
+        ''' <summary>
+        ''' This drawing display title.
+        ''' </summary>
+        ''' <returns></returns>
         Public Property ModelsId As String
 
         Public Overrides Function ToString() As String
             Return ModelsId
         End Function
 
+        ''' <summary>
+        ''' Creates the residue model in amino acid profiles
+        ''' </summary>
+        ''' <param name="x"></param>
+        ''' <returns></returns>
         Public Shared Function AAResidue(x As ILogoResidue) As Residue
             Dim Residue As Residue = New Residue With {
                 .Alphabets = ColorSchema.AA.ToArray(
@@ -31,6 +54,11 @@ Namespace SequenceLogo
             Return Residue
         End Function
 
+        ''' <summary>
+        ''' Creates the residue model for the nucleotide sequence motif model.
+        ''' </summary>
+        ''' <param name="x"></param>
+        ''' <returns></returns>
         Public Shared Function NTResidue(x As ILogoResidue) As Residue
             Dim Residue As Residue = New Residue With {
                 .Alphabets = {

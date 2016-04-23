@@ -54,15 +54,17 @@ For example, we identified a new domain, likely to have a role downstream of the
     Public Module DrawingDevice
 
         ''' <summary>
-        ''' 字符的宽度
+        ''' The width of the character in the sequence logo.(字符的宽度)
         ''' </summary>
         Public Property WordSize As Integer = 80
         Dim Height As Integer = 75
 
         ''' <summary>
-        ''' 绘制各个残基的出现频率
+        ''' Drawing the sequence logo just simply modelling this motif site from the clustal multiple sequence alignment.
+        ''' (绘制各个残基的出现频率)
         ''' </summary>
-        ''' <param name="Fasta"></param>
+        ''' <param name="Fasta">The alignment export data from the clustal software.</param>
+        ''' <param name="title">The sequence logo display title.</param>
         ''' <returns></returns>
         <ExportAPI("Drawing.Frequency")>
         Public Function DrawFrequency(Fasta As FastaFile, Optional title As String = "") As Image
@@ -114,16 +116,18 @@ For example, we identified a new domain, likely to have a role downstream of the
         End Function
 
         ''' <summary>
-        ''' 绘制SequenceLogo图
+        ''' Drawing the sequence logo for the sequence motif model.(绘制SequenceLogo图)
         ''' </summary>
-        ''' <param name="Model"></param>
+        ''' <param name="Model">The model can be achieve from clustal alignment or meme software.</param>
+        ''' <param name="FrequencyOrder">Reorder the alphabets in each residue site in the order of frequency values. default is yes!</param>
+        ''' <param name="reverse">Reverse the residue sequence order in the drawing model?</param>
         ''' <returns></returns>
         <ExportAPI("Invoke.Drawing", Info:="Drawing a sequence logo from a generated sequence motif model.")>
         <Extension>
         Public Function InvokeDrawing(Model As SequenceLogo.DrawingModel,
                                       <Parameter("Order.Frequency", "Does the alphabets in a residue position will be ordered its drawing order based on their relative frequency in the residue site?")>
                                       Optional FrequencyOrder As Boolean = True,
-                                      Optional Margin As Integer = 200,
+                                      Optional Margin As Integer = 100,
                                       Optional reverse As Boolean = False) As Image
 
             Dim n As Integer = Model.Residues(Scan0).Alphabets.Length

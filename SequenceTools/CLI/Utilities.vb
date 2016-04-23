@@ -158,12 +158,23 @@ Public Module Utilities
         Return 0
     End Function
 
-    <ExportAPI("/logo", Usage:="/logo /in <clustal.fasta> [/out <out.png>]")>
+    ''' <summary>
+    ''' Drawing the sequence logo from the clustal alignment result.
+    ''' </summary>
+    ''' <param name="args"></param>
+    ''' <returns></returns>
+    <ExportAPI("/logo",
+               Info:="* Drawing the sequence logo from the clustal alignment result.",
+               Usage:="/logo /in <clustal.fasta> [/out <out.png> /title """"]")>
+    <ParameterInfo("/in", False, Description:="The file path of the clustal output fasta file.")>
+    <ParameterInfo("/out", True, Description:="The output sequence logo image file path. default is the same name as the input fasta sequence file.")>
+    <ParameterInfo("/title", True, Description:="The display title on the sequence logo, default is using the fasta file name.")>
     Public Function SequenceLogo(args As CommandLine) As Integer
         Dim [in] As String = args - "/in"
         Dim out As String = args.GetValue("/out", [in].TrimFileExt & ".logo.png")
+        Dim title As String = args("/title")
         Dim fa As New FastaFile([in])
-        Dim logo As Image = SequencePatterns.SequenceLogo.DrawFrequency(fa)
+        Dim logo As Image = SequencePatterns.SequenceLogo.DrawFrequency(fa, title)
         Return logo.SaveAs(out, ImageFormats.Png)
     End Function
 
