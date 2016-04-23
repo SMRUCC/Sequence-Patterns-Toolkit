@@ -68,21 +68,21 @@ Namespace SequenceLogo
         Public ReadOnly Property ProteinSchema As Dictionary(Of Char, Image)
             Get
                 Return New Dictionary(Of Char, Image) From {
-                    {"A"c, ColorSchema.__getTexture(Color.AliceBlue, "A")},      'Alanine	     Ala	A	nonpolar	    neutral	        1.8			89
-                    {"R"c, ColorSchema.__getTexture(Color.Beige, "R")},          'Arginine	     Arg	R	Basic polar	    positive	   −4.5			174
+                    {"A"c, ColorSchema.__getTexture(Color.CadetBlue, "A")},      'Alanine	     Ala	A	nonpolar	    neutral	        1.8			89
+                    {"R"c, ColorSchema.__getTexture(Color.Black, "R")},          'Arginine	     Arg	R	Basic polar	    positive	   −4.5			174
                     {"N"c, ColorSchema.__getTexture(Color.Chocolate, "N")},      'Asparagine 	 Asn	N	polar	        neutral        −3.5			132
                     {"D"c, ColorSchema.__getTexture(Color.Coral, "D")},          'Aspartic acid	 Asp	D	acidic polar	negative	   −3.5			133
-                    {"C"c, ColorSchema.__getTexture(Color.DarkBlue, "C")},       'Cysteine	     Cys	C	nonpolar	    neutral	        2.5	250	0.3	121
+                    {"C"c, ColorSchema.__getTexture(Color.Chartreuse, "C")},     'Cysteine	     Cys	C	nonpolar	    neutral	        2.5	250	0.3	121
                     {"E"c, ColorSchema.__getTexture(Color.Cyan, "E")},           'Glutamic acid	 Glu	E	acidic polar	negative	   −3.5			147
                     {"Q"c, ColorSchema.__getTexture(Color.LawnGreen, "Q")},      'Glutamine	     Gln	Q	polar	        neutral	       −3.5			146
-                    {"G"c, ColorSchema.__getTexture(Color.DodgerBlue, "G")},     'Glycine	     Gly	G	nonpolar	    neutral	       −0.4			75
-                    {"H"c, ColorSchema.__getTexture(Color.OrangeRed, "H")},      'Histidine	     His	H	Basic polar	    neutral(90%)   −3.2	211	
-                    {"I"c, ColorSchema.__getTexture(Color.Thistle, "I")},        'Isoleucine     Ile	I	nonpolar	    neutral	        4.5			131
-                    {"L"c, ColorSchema.__getTexture(Color.SeaShell, "L")},       'Leucine	     Leu	L	nonpolar	    neutral	        3.8			131
+                    {"G"c, ColorSchema.__getTexture(Color.DarkMagenta, "G")},    'Glycine	     Gly	G	nonpolar	    neutral	       −0.4			75
+                    {"H"c, ColorSchema.__getTexture(Color.Gold, "H")},           'Histidine	     His	H	Basic polar	    neutral(90%)   −3.2	211	
+                    {"I"c, ColorSchema.__getTexture(Color.HotPink, "I")},        'Isoleucine     Ile	I	nonpolar	    neutral	        4.5			131
+                    {"L"c, ColorSchema.__getTexture(Color.LightSlateGray, "L")}, 'Leucine	     Leu	L	nonpolar	    neutral	        3.8			131
                     {"K"c, ColorSchema.__getTexture(Color.Yellow, "K")},         'Lysine	     Lys	K	Basic polar	    positive       −3.9			146
                     {"M"c, ColorSchema.__getTexture(Color.Teal, "M")},           'Methionine     Met	M	nonpolar	    neutral	        1.9			149
                     {"F"c, ColorSchema.__getTexture(Color.SaddleBrown, "F")},    'Phenylalanine	 Phe	F	nonpolar	    neutral	        2.8	257, 206, 188	0.2, 9.3, 60.0	165
-                    {"P"c, ColorSchema.__getTexture(Color.Moccasin, "P")},       'Proline	     Pro	P	nonpolar	    neutral	       −1.6			115
+                    {"P"c, ColorSchema.__getTexture(Color.Red, "P")},            'Proline	     Pro	P	nonpolar	    neutral	       −1.6			115
                     {"S"c, ColorSchema.__getTexture(Color.RoyalBlue, "S")},      'Serine	     Ser	S	polar	        neutral	       −0.8			105
                     {"T"c, ColorSchema.__getTexture(Color.Tomato, "T")},         'Threonine	     Thr	T	polar	        neutral	       −0.7			119
                     {"W"c, ColorSchema.__getTexture(Color.MediumSeaGreen, "W")}, 'Tryptophan     Trp	W	nonpolar	    neutral	       −0.9	280, 219	5.6, 47.0	204
