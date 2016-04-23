@@ -1,4 +1,5 @@
 ﻿Imports System.Xml.Serialization
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.SequenceLogo
 Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat
 Imports LANS.SystemsBiology.ComponentModel.Loci
 Imports Microsoft.VisualBasic.ComponentModel
@@ -102,7 +103,12 @@ Namespace Motif
         Public ReadOnly Property AsChar As Char
             Get
                 Dim mxInd As Integer = PWM.MaxIndex
-                Return __toChar("ATGC"(mxInd), PWM(mxInd))
+
+                If PWM.Length = 4 Then
+                    Return __toChar("ATGC"(mxInd), PWM(mxInd))
+                Else
+                    Return __toChar(ColorSchema.AA(mxInd), PWM(mxInd))
+                End If
             End Get
         End Property
 
@@ -112,7 +118,7 @@ Namespace Motif
         ''' <param name="ch">大写的</param>
         ''' <param name="p"></param>
         ''' <returns></returns>
-        Private Shared Function __toChar(ch As Char, p As Double) As Char
+        Protected Friend Shared Function __toChar(ch As Char, p As Double) As Char
             If p < 0.65 Then
                 ch = Char.ToLower(ch)
             End If

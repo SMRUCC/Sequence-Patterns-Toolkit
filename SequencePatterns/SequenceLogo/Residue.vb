@@ -1,4 +1,5 @@
 ﻿Imports Microsoft.VisualBasic.ComponentModel
+Imports Microsoft.VisualBasic.Language
 
 Namespace SequenceLogo
 
@@ -20,6 +21,14 @@ Namespace SequenceLogo
         ''' </summary>
         ''' <returns></returns>
         Public Property Address As Integer Implements IAddressHandle.Address
+
+        Public ReadOnly Property AsChar As Char
+            Get
+                Dim maxInd As Integer = Alphabets.MaxIndex
+                Dim c As Char = If(Alphabets.Length = 4, ColorSchema.NT(maxInd), ColorSchema.AA(maxInd))
+                Return Motif.ResidueSite.__toChar(c, Alphabets(maxInd).RelativeFrequency)
+            End Get
+        End Property
 
         Public Overrides Function ToString() As String
             Return $"{NameOf(Bits)}:= {Bits}"
@@ -95,7 +104,7 @@ Namespace SequenceLogo
 #End Region
     End Class
 
-    Public Class Alphabet
+    Public Class Alphabet : Implements IComparable
 
         ''' <summary>
         ''' 可以代表本残基的字母值
@@ -103,6 +112,22 @@ Namespace SequenceLogo
         ''' <returns></returns>
         Public Property Alphabet As Char
         Public Property RelativeFrequency As Double
+
+        Public Function CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
+            If obj Is Nothing Then
+                Return 1
+            ElseIf obj.GetType <> GetType(Alphabet) Then
+                Return 1
+            End If
+
+            Dim n As Double = DirectCast(obj, Alphabet).RelativeFrequency
+
+            If RelativeFrequency > n Then
+                Return 1
+            Else
+                Return -1
+            End If
+        End Function
 
         ''' <summary>
         ''' The height of letter a in column i Is given by

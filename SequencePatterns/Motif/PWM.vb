@@ -70,10 +70,17 @@ Namespace Motif
         ''' <returns></returns>
         Private Function __residue(f As Dictionary(Of Char, Double), h As Double, en As Double, n As Integer, i As Integer) As ResidueSite
             Dim R As Double = Math.Log(n, 2) - (h + en)
-            Dim ATGC As Double() = {f("A"c), f("T"c), f("G"c), f("C"c)}
+            Dim alphabets As Double()
+
+            If n = 4 Then
+                alphabets = {f("A"c), f("T"c), f("G"c), f("C"c)}
+            Else
+                alphabets = LinqAPI.Exec(Of Double) <= From c As Char In ColorSchema.AA Select f(c)
+            End If
+
             Return New ResidueSite With {
                 .Bits = R,
-                .PWM = ATGC,
+                .PWM = alphabets,
                 .Site = i
             }
         End Function

@@ -87,7 +87,7 @@ For example, we identified a new domain, likely to have a role downstream of the
             Model.Residues =
                 LinqAPI.Exec(Of ResidueSite, Residue)(PWM.PWM) <=
                     Function(rsd As ResidueSite) New Residue With {
-                        .Bits = rsd.Bits,
+                        .Bits = Math.Round(rsd.Bits, 1),
                         .Address = rsd.Site,
                         .Alphabets = LinqAPI.Exec(Of Alphabet) <= From x As SeqValue(Of Double)
                                                                   In rsd.PWM.SeqIterator
@@ -131,7 +131,7 @@ For example, we identified a new domain, likely to have a role downstream of the
                 If(n = 4, SequenceLogo.ColorSchema.NucleotideSchema, SequenceLogo.ColorSchema.ProteinSchema)
 
             Dim gdi As GDIPlusDeviceHandle =
-                New Size(Model.Residues.Length * DrawingDevice.WordSize + 2 * Margin, 2 * Margin + n * Height).CreateGDIDevice
+                New Size(Model.Residues.Length * DrawingDevice.WordSize + 2 * Margin, 2 * Margin + n * Height).CreateGDIDevice(Color.Transparent)
             Dim X, Y As Integer
             Dim DrawingFont As New Font(MicrosoftYaHei, CInt(WordSize * 0.6), FontStyle.Bold)
             Dim size As SizeF
@@ -152,13 +152,14 @@ For example, we identified a new domain, likely to have a role downstream of the
             Call gdi.Gr_Device.DrawLine(Pens.Black, New Point(X, Y - YHeight), New Point(X, Y))
             Call gdi.Gr_Device.DrawLine(Pens.Black, New Point(X, Y), New Point(X + Model.Residues.Length * DrawingDevice.WordSize, y:=Y))
 
-            Dim ddddd As Integer = If(MaxBits = 2, 2, 5)
-            Dim d As Double = MaxBits / ddddd
+            Dim departs As Integer = If(MaxBits = 2, 2, 5)  ' nt 2 steps,  aa 5 steps
+            Dim d As Double = MaxBits / departs
             YHeight = d / MaxBits * (DrawingDevice.Height * n) '步进
+            d = Math.Round(d, 1)
 
             Dim YBits As Double = 0
 
-            For j As Integer = 0 To ddddd
+            For j As Integer = 0 To departs
                 size = gdi.Gr_Device.MeasureString(YBits, font:=DrawingFont)
 
                 Dim y1 = Y - size.Height / 2
@@ -173,6 +174,8 @@ For example, we identified a new domain, likely to have a role downstream of the
             Next
 
             Dim source As IEnumerable(Of Residue) = If(reverse, Model.Residues.Reverse, Model.Residues)
+
+            Call VBDebugger.WriteLine(New String("-"c, Model.Residues.Length), ConsoleColor.Green)
 
             For Each residue As Residue In source
                 Dim order As Alphabet() = If(FrequencyOrder, (From rsd As Alphabet
@@ -195,6 +198,7 @@ For example, we identified a new domain, likely to have a role downstream of the
                 Next
 
                 X += DrawingDevice.WordSize
+                Call residue.AsChar.Echo
             Next
 
             '绘制bits字符串
