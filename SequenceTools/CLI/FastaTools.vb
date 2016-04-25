@@ -8,6 +8,9 @@ Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic
 Imports LANS.SystemsBiology.SequenceModel.FASTA.Reflection
 Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat
+Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
+Imports Microsoft.VisualBasic.Serialization
+Imports LANS.SystemsBiology.SequenceModel.FASTA
 
 Partial Module Utilities
 
@@ -120,9 +123,9 @@ Partial Module Utilities
     <ParameterInfo("/brief-dump", True,
                           Description:="If this parameter is set up true, then only the locus_tag of the ORF gene will be dump to the fasta sequence.")>
     Public Function GetSegments(args As CommandLine.CommandLine) As Integer
-        Dim Regions As List(Of NucleotideModels.SimpleSegment) = args.GetObject("/regions", AddressOf LoadCsv(Of NucleotideModels.SimpleSegment))
-        Dim Fasta = SequenceModel.FASTA.FastaToken.LoadNucleotideData(args("/fasta"))
-        Dim Reader As New NucleotideModels.SegmentReader(Fasta)
+        Dim Regions As List(Of SimpleSegment) = args.GetObject("/regions", AddressOf LoadCsv(Of SimpleSegment))
+        Dim Fasta As New FASTA.FastaToken(args("/fasta"))
+        Dim Reader As New SegmentReader(Fasta)
         Dim Complement As Boolean = args.GetBoolean("/complement")
         Dim reversed As Boolean = args.GetBoolean("/reversed")
         Dim Segments = Regions.ToArray(Function(region) __fillSegment(region, Reader, Complement, reversed))
@@ -152,7 +155,7 @@ Partial Module Utilities
         Return 0
     End Function
 
-    Private Delegate Function attrDump(segment As NucleotideModels.SimpleSegment) As String()
+    Private Delegate Function attrDump(segment As SimpleSegment) As String()
 
     Private Function __attrFull(segment As NucleotideModels.SimpleSegment) As String()
         Return New String() {segment.ID, segment.MappingLocation.ToString, Len(segment.SequenceData)}
@@ -192,8 +195,8 @@ Partial Module Utilities
     <ExportAPI("/TrimTest", Usage:="/TrimTest /in <in.fasta>")>
     Public Function TrimTest(args As CommandLine.CommandLine) As Integer
         Dim inFile As String = args("/in")
-        Dim fa As New SequenceModel.FASTA.FastaToken(inFile)
-        fa = LANS.SystemsBiology.SequenceModel.FASTA.Reflection.FastaExportMethods.FastaTrimCorrupt(fa)
+        Dim fa As New FastaToken(inFile)
+        fa = FastaExportMethods.FastaTrimCorrupt(fa)
         Call fa.GenerateDocument(60).__DEBUG_ECHO
 
         Return 0
@@ -216,19 +219,22 @@ Partial Module Utilities
         Dim UpperCase As Boolean = Not String.Equals("l", args.GetValue("/case", "u"), StringComparison.OrdinalIgnoreCase)
         Dim break As Integer = args.GetValue("/break", -1)
         Dim out As String = args.GetValue("/out", Input.TrimFileExt & "-Trim.fasta")
-        Dim Fasta = SequenceModel.FASTA.FastaFile.Read(Input)
+        Dim Fasta As FastaFile = FastaFile.Read(Input)
         Dim brief As Boolean = args.GetBoolean("/brief")
 
-        Fasta = New SequenceModel.FASTA.FastaFile((From fa In Fasta Where Not String.IsNullOrEmpty(fa.SequenceData.Trim) Select fa).ToArray) ' 过滤掉零长度的序列
+        Fasta = New FastaFile(From fa As FastaToken
+                              In Fasta
+                              Where Not String.IsNullOrEmpty(fa.SequenceData.Trim)
+                              Select fa) ' 过滤掉零长度的序列
 
         If UpperCase Then
-            Fasta = New SequenceModel.FASTA.FastaFile(Fasta.ToArray(Function(fa) fa.InvokeSet(NameOf(fa.SequenceData), fa.SequenceData.ToUpper)))
+            Fasta = New FastaFile(Fasta.ToArray(Function(fa) fa.InvokeSet(NameOf(fa.SequenceData), fa.SequenceData.ToUpper)))
         Else
-            Fasta = New SequenceModel.FASTA.FastaFile(Fasta.ToArray(Function(fa) fa.InvokeSet(NameOf(fa.SequenceData), fa.SequenceData.ToLower)))
+            Fasta = New FastaFile(Fasta.ToArray(Function(fa) fa.InvokeSet(NameOf(fa.SequenceData), fa.SequenceData.ToLower)))
         End If
 
         If brief Then
-            Fasta = New SequenceModel.FASTA.FastaFile(Fasta.ToArray(Function(fa) fa.InvokeSet(NameOf(fa.Attributes), {fa.Attributes.First})))
+            Fasta = New FastaFile(Fasta.ToArray(Function(fa) fa.InvokeSet(NameOf(fa.Attributes), {fa.Attributes.First})))
         End If
 
         Return Fasta.Save(break, out, System.Text.Encoding.ASCII)
@@ -267,4 +273,42 @@ Partial Module Utilities
 
         Return 0
     End Function
+
+    <ExportAPI("/Get.Locis", Usage:="/Get.Locis /in <locis.csv> /nt <genome.nt.fasta> [/out <outDIR>]")>
+    Public Function GetSimpleSegments(args As CommandLine.CommandLine) As Integer
+        Dim [in] As String = args("/in")
+        Dim nt As String = args("/nt")
+        Dim out As String = args.GetValue("/out", [in].ParentPath)
+        Dim locis As IEnumerable(Of Loci) = [in].LoadCsv(Of Loci)
+        Dim parser As New SegmentReader(New FASTA.FastaToken(nt))
+
+        For Each loci In locis
+            loci.SequenceData = parser.TryParse(loci.MappingLocation).SequenceData
+        Next
+
+        Call locis.SaveTo(out & $"/{[in].BaseName}.Csv")
+        Call New FastaFile(From x In locis Select x.ToFasta).Save(out & $"/{[in].BaseName}.fasta")
+
+        Return 0
+    End Function
 End Module
+
+Public Class Loci : Inherits Contig
+
+    Public Property ID As String
+    Public Property st As Long
+    Public Property sp As Long
+    Public Property SequenceData As String
+
+    Public Function ToFasta() As FASTA.FastaToken
+        Return New FastaToken({ID, $"{st},{sp}"}, SequenceData)
+    End Function
+
+    Public Overrides Function ToString() As String
+        Return Me.GetJson
+    End Function
+
+    Protected Overrides Function __getMappingLoci() As NucleotideLocation
+        Return New NucleotideLocation(st, sp, Strands.Forward)
+    End Function
+End Class
