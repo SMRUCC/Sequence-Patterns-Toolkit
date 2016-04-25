@@ -2,6 +2,7 @@
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic
+Imports LANS.SystemsBiology.SequenceModel
 
 Partial Module Utilities
 
@@ -74,7 +75,7 @@ Partial Module Utilities
         Return resultSet.ToArray.GetXml.SaveTo(outDIR & "/AlignmentResult.xml").CLICode
     End Function
 
-    Public Class AlignmentResult : Inherits Microsoft.VisualBasic.DistResult
+    Public Class AlignmentResult : Inherits DistResult
 
         Public Property Query As String
         Public Property Subject As String
@@ -82,9 +83,7 @@ Partial Module Utilities
         Sub New()
         End Sub
 
-        Sub New(query As LANS.SystemsBiology.SequenceModel.FASTA.FastaToken,
-                subject As LANS.SystemsBiology.SequenceModel.FASTA.FastaToken,
-                cost As Double)
+        Sub New(query As FASTA.FastaToken, subject As FASTA.FastaToken, cost As Double)
             Call Me.New(query.Title, query.SequenceData, query.SequenceData.ToArray(Function(x) Asc(x)), subject, cost)
         End Sub
 
@@ -93,7 +92,7 @@ Partial Module Utilities
                 queryArray As Integer(),
                 subject As SequenceModel.FASTA.FastaToken,
                 cost As Double)
-            Dim result = Microsoft.VisualBasic.LevenshteinDistance.ComputeDistance(queryArray, subject.SequenceData, cost)
+            Dim result = LevenshteinDistance.ComputeDistance(queryArray, subject.SequenceData, cost)
 
             Me.CSS = result.CSS
             Me.DistEdits = result.DistEdits

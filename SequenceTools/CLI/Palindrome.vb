@@ -7,6 +7,7 @@ Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.DocumentFormat.Csv
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Text
+Imports Microsoft.VisualBasic.Parallel
 
 Partial Module Utilities
 
@@ -49,11 +50,11 @@ Partial Module Utilities
                Usage:="--Palindrome.From.Fasta /nt <nt-sequence.fasta> [/out <out.csv> /min <3> /max <20>]")>
     <ParameterInfo("/nt", False, Description:="Fasta sequence file, and this file should just contains only one sequence.")>
     Public Function SearchPalindromeFasta(args As CommandLine.CommandLine) As Integer
-        Dim Nt = LANS.SystemsBiology.SequenceModel.FASTA.FastaToken.Load(args("/nt"))
+        Dim nt As FastaToken = FastaToken.Load(args("/nt"))
         Dim Out As String = args.GetValue("/out", args("/nt").TrimFileExt & ".csv")
         Dim Min As Integer = args.GetValue("/min", 3)
         Dim Max As Integer = args.GetValue("/max", 20)
-        Dim Search As New Topologically.PalindromeSearchs(Nt, Min, Max)
+        Dim Search As New Topologically.PalindromeSearchs(nt, Min, Max)
         Call Search.InvokeSearch()
         Call Search.ResultSet.SaveTo(Out)
         Return 0
@@ -113,13 +114,13 @@ Partial Module Utilities
         Dim outDIR As String = args("/out")
         Dim min As Integer = args.GetValue("/min", 3)
         Dim max As Integer = args.GetValue("/max", 20)
-        Dim Fasta = LANS.SystemsBiology.SequenceModel.FASTA.FastaFile.Read(input)
+        Dim Fasta As FastaFile = FastaFile.Read(input)
         Dim numThreads As Integer = args.GetValue("/num_threads", -1)
 
-        Call Microsoft.VisualBasic.Parallel.BatchTask(Fasta,
-                                                      getCLI:=Function(fa) __palindromeTask(fa, outDIR, min, max),
-                                                      getExe:=Function() App.ExecutablePath,
-                                                      numThreads:=numThreads)
+        Call BatchTask(Fasta,
+                       getCLI:=Function(fa) __palindromeTask(fa, outDIR, min, max),
+                       getExe:=Function() App.ExecutablePath,
+                       numThreads:=numThreads)
         Return 0
     End Function
 
@@ -157,10 +158,10 @@ Partial Module Utilities
         Dim Fasta = FastaFile.Read(input)
         Dim numThreads As Integer = args.GetValue("/num_threads", -1)
 
-        Call Microsoft.VisualBasic.Parallel.BatchTask(Fasta,
-                                                      getCLI:=Function(fa) __imperfectsPalindromeTask(fa, out, min, max, cutoff, maxDist),
-                                                      getExe:=Function() App.ExecutablePath,
-                                                      numThreads:=numThreads)
+        Call BatchTask(Fasta,
+                       getCLI:=Function(fa) __imperfectsPalindromeTask(fa, out, min, max, cutoff, maxDist),
+                       getExe:=Function() App.ExecutablePath,
+                       numThreads:=numThreads)
         Return 0
     End Function
 
@@ -195,13 +196,13 @@ Partial Module Utilities
         Dim out As String = args.GetValue("/out", input.TrimFileExt & ".csv")
         Dim min As Integer = args.GetValue("/min", 3)
         Dim max As Integer = args.GetValue("/max", 20)
-        Dim inFasta As LANS.SystemsBiology.SequenceModel.FASTA.FastaToken
+        Dim inFasta As FastaToken
         Dim cutoff As Double = args.GetValue("/cutoff", 0.6)
         Dim maxDist As Integer = args.GetValue("/max-dist", 1000)
         Dim partitions As Integer = args.GetValue("/partitions", -1)
 
         If input.FileExists Then
-            inFasta = LANS.SystemsBiology.SequenceModel.FASTA.FastaToken.Load(input)
+            inFasta = FastaToken.Load(input)
         Else
             inFasta = New SequenceModel.FASTA.FastaToken With {
                 .SequenceData = input,
@@ -232,11 +233,11 @@ Partial Module Utilities
         Dim numThreads As Integer = args.GetValue("/num_threads", -1)
         Dim interval As Integer = args.GetValue("/interval", 200)
 
-        Call Microsoft.VisualBasic.Parallel.BatchTask(inFasta,
-                                                      getCLI:=Function(fa) __hairpinksCLI(fa, out, min, max, cutoff, maxDist),
-                                                      getExe:=Function() App.ExecutablePath,
-                                                      numThreads:=numThreads,
-                                                      TimeInterval:=interval)
+        Call BatchTask(inFasta,
+                       getCLI:=Function(fa) __hairpinksCLI(fa, out, min, max, cutoff, maxDist),
+                       getExe:=Function() App.ExecutablePath,
+                       numThreads:=numThreads,
+                       TimeInterval:=interval)
         Return 0
     End Function
 
