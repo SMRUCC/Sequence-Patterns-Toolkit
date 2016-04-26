@@ -3,8 +3,18 @@ Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic
 Imports LANS.SystemsBiology.SequenceModel
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.NeedlemanWunsch
 
 Partial Module Utilities
+
+    <ExportAPI("/nw", Usage:="/nw /query <query.fasta> /subject <subject.fasta> /out <out.txt>")>
+    Public Function NW(args As CommandLine.CommandLine) As Integer
+        Dim query As String = args("/query")
+        Dim subject As String = args("/subject")
+        Dim out As String = args.GetValue("/out", query.TrimFileExt & "-" & subject.BaseName & ".txt")
+        Call RunNeedlemanWunsch.RunAlign(New FASTA.FastaToken(query), New FASTA.FastaToken(subject), False, out)
+        Return 0
+    End Function
 
     <ExportAPI("/align", Usage:="/align /query <query.fasta> /subject <subject.fasta> [/blosum <matrix.txt> /out <out.xml>]")>
     Public Function Align2(args As CommandLine.CommandLine) As Integer

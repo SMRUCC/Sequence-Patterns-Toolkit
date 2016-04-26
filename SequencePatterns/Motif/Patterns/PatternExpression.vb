@@ -41,6 +41,7 @@ Namespace Motif.Patterns
             Dim nt As String = seq.SequenceData.ToUpper
             Dim matches = __regex.Matches(nt).ToArray
 
+            Throw New NotImplementedException
         End Function
 
         Public Overrides Function ToString() As String

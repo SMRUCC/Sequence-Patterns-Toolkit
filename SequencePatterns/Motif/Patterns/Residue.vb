@@ -77,6 +77,8 @@ Namespace Motif.Patterns
             Else
 
             End If
+
+            Throw New NotImplementedException
         End Function
 
         Public Overrides Function ToString() As String
