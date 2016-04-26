@@ -1,5 +1,5 @@
-
 Imports System.IO
+
 ''' <summary>
 ''' Needleman-Wunsch Algorithm
 ''' Bioinformatics 1, WS 15/16
@@ -26,7 +26,7 @@ Public Class NeedlemanWunsch
     ''' <param name="s2"></param>
     ''' <param name="i"></param>
     ''' <param name="j"></param>
-    Protected Friend Overridable Sub traceback(ByVal s1 As Stack(Of Char?), ByVal s2 As Stack(Of Char?), ByVal i As Integer, ByVal j As Integer)
+    Protected Friend Sub traceback(s1 As Stack(Of Char?), s2 As Stack(Of Char?), i As Integer, j As Integer)
         Dim direction As Integer = tracebackMatrix(i - 1)(j - 1)
 
         Select Case direction
@@ -76,7 +76,7 @@ Public Class NeedlemanWunsch
     ''' <summary>
     ''' computes the matrix for the Needleman-Wunsch Algorithm
     ''' </summary>
-    Public Overridable Sub compute()
+    Public Sub compute()
 
         '    	
         '    	 * this function computes the NW-algorithm with linear gap-costs
@@ -153,7 +153,7 @@ Public Class NeedlemanWunsch
     ''' <param name="left"> </param>
     ''' <param name="upper"> </param>
     ''' <returns> code for the maximizing cell(s) </returns>
-    Private Function fillTracebackMatrix(ByVal upperLeft As Integer, ByVal left As Integer, ByVal upper As Integer) As Integer
+    Private Function fillTracebackMatrix(upperLeft As Integer, left As Integer, upper As Integer) As Integer
         Dim max As Integer = Me.max(upperLeft, left, upper)
 
         If upperLeft = left AndAlso left = upper Then
@@ -177,7 +177,7 @@ Public Class NeedlemanWunsch
     ''' This funktion provide a easy way to write a computed alignment into a fasta file </summary>
     ''' <param name="outFile"> </param>
     ''' <param name="single"> </param>
-    Public Overridable Sub writeAlignment(ByVal outFile As String, ByVal [single] As Boolean)
+    Public Sub writeAlignment(outFile As String, [single] As Boolean)
         Using outputFile As New FileStream(outFile, FileMode.OpenOrCreate)
             Using output As New StreamWriter(outputFile)
 

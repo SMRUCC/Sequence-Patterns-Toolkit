@@ -11,17 +11,17 @@ Public Class GapPenalty
     ''' <summary>
     ''' get gap opening cost </summary>
     ''' <returns> gapOpening </returns>
-    Public Overridable Property GapOpening As Integer = 1
+    Public Property GapOpening As Integer = 1
 
     ''' <summary>
     ''' get gap extension cost </summary>
     ''' <returns> gapExtension </returns>
-    Public Overridable Property GapExtension As Integer = 1
+    Public Property GapExtension As Integer = 1
 
     ''' <summary>
     ''' get gap penalty typ </summary>
     ''' <returns> 0 if linear, 1 else </returns>
-    Public Overridable Property PenaltyTyp As Integer
+    Public Property PenaltyTyp As Integer
         Get
             If __affine Then
                 Return 1
@@ -29,7 +29,7 @@ Public Class GapPenalty
                 Return 0
             End If
         End Get
-        Set(ByVal penaltyType As Integer)
+        Set(penaltyType As Integer)
             If penaltyType = 0 Then
                 Me.__affine = False
             Else
@@ -42,7 +42,7 @@ Public Class GapPenalty
     ''' get gap cost for currend gap </summary>
     ''' <param name="gapOpen"> </param>
     ''' <returns> gapCost </returns>
-    Public Overridable Function getGapCost(ByVal gapOpen As Boolean) As Integer
+    Public Function getGapCost(gapOpen As Boolean) As Integer
         If __affine And gapOpen Then
             Return GapOpening
         ElseIf __affine And (Not gapOpen) Then
