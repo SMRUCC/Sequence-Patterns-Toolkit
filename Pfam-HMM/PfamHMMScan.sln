@@ -7,18 +7,15 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "PfamHMMScan", "PfamHMMScan\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "runtime", "runtime", "{A955AFEC-A041-437E-A30E-5AC35601D0CA}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "+Microsoft.VisualBasic.Architecture.Framework", "..\VisualBasic_AppFramework\Microsoft.VisualBasic.Architecture.Framework\+Microsoft.VisualBasic.Architecture.Framework.vbproj", "{FECCE1FD-E1D4-49E3-A668-60BB5E7AED99}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "+Microsoft.VisualBasic.Architecture.Framework", "..\..\VisualBasic_AppFramework\Microsoft.VisualBasic.Architecture.Framework\+Microsoft.VisualBasic.Architecture.Framework.vbproj", "{FECCE1FD-E1D4-49E3-A668-60BB5E7AED99}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DocumentFormat.Csv", "..\VisualBasic_AppFramework\DocumentFormats\DocumentFormat.Csv\DocumentFormat.Csv.vbproj", "{1D8910C2-ADA2-4306-96DC-A61B494522ED}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "DocumentFormat.Csv", "..\..\VisualBasic_AppFramework\DocumentFormats\DocumentFormat.Csv\DocumentFormat.Csv.vbproj", "{1D8910C2-ADA2-4306-96DC-A61B494522ED}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "HMM", "..\HMM\HMM\HMM.vbproj", "{3B9EDFFD-67FC-41CE-B573-6E1291E88EC6}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "HMM", "..\..\HMM\HMM\HMM.vbproj", "{3B9EDFFD-67FC-41CE-B573-6E1291E88EC6}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Bio.Assembly", "..\GCModeller.Core\Bio.Assembly\Bio.Assembly.vbproj", "{C699D311-9923-4C19-BF70-5048D0E2CF5D}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Bio.Assembly", "..\..\GCModeller.Core\Bio.Assembly\Bio.Assembly.vbproj", "{C699D311-9923-4C19-BF70-5048D0E2CF5D}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\VisualBasic_AppFramework\SharedProject.VB_FrameworkExtensions\SharedProject.VB_FrameworkExtensions.projitems*{fecce1fd-e1d4-49e3-a668-60bb5e7aed99}*SharedItemsImports = 4
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64

@@ -5,12 +5,13 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{70640BD3-7F63-4B4D-9465-1F9FD1C5C965}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <StartupObject>PfamHMMScan.Program</StartupObject>
-    <RootNamespace>PfamHMMScan</RootNamespace>
-    <AssemblyName>PfamHMMScan</AssemblyName>
+    <OutputType>Library</OutputType>
+    <StartupObject>
+    </StartupObject>
+    <RootNamespace>LANS.SystemsBiology.AnalysisTools.ProteinTools.Sanger.PfamHMMScan</RootNamespace>
+    <AssemblyName>LANS.SystemsBiology.AnalysisTools.ProteinTools.Sanger.PfamHMMScan</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <MyType>Console</MyType>
+    <MyType>Windows</MyType>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -22,7 +23,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>PfamHMMScan.xml</DocumentationFile>
+    <DocumentationFile>LANS.SystemsBiology.AnalysisTools.ProteinTools.Sanger.PfamHMMScan.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -32,7 +33,7 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>PfamHMMScan.xml</DocumentationFile>
+    <DocumentationFile>LANS.SystemsBiology.AnalysisTools.ProteinTools.Sanger.PfamHMMScan.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
@@ -52,7 +53,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DocumentationFile>PfamHMMScan.xml</DocumentationFile>
+    <DocumentationFile>LANS.SystemsBiology.AnalysisTools.ProteinTools.Sanger.PfamHMMScan.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -62,7 +63,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <DefineTrace>true</DefineTrace>
     <OutputPath>..\..\..\GCModeller\GCModeller-x64\</OutputPath>
-    <DocumentationFile>PfamHMMScan.xml</DocumentationFile>
+    <DocumentationFile>LANS.SystemsBiology.AnalysisTools.ProteinTools.Sanger.PfamHMMScan.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -92,7 +93,8 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CLI.vb" />
+    <Compile Include="hmmer\hmmsearch.vb" />
+    <Compile Include="hmmer\hmmscan.vb" />
     <Compile Include="Pfam.hmm\ActiveSite.vb" />
     <Compile Include="Pfam.hmm\AAIndex.vb" />
     <Compile Include="Pfam.hmm\HMMParser\HMM.vb" />
@@ -102,7 +104,6 @@
     <Compile Include="Pfam.hmm\Stockholm.vb" />
     <Compile Include="Pfam.hmm\HMMStruct.vb" />
     <Compile Include="Pfam.hmm\DBI.vb" />
-    <Compile Include="Program.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -156,6 +157,9 @@
       <Project>{fecce1fd-e1d4-49e3-a668-60bb5e7aed99}</Project>
       <Name>+Microsoft.VisualBasic.Architecture.Framework</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="HMMScan\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
