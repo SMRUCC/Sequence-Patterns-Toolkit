@@ -79,8 +79,9 @@
     <Import Include="System.Diagnostics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GapPenalty.vb" />
     <Compile Include="NeedlemanWunsch.vb" />
+    <Compile Include="GapPenalty.vb" />
+    <Compile Include="GNW.vb" />
     <Compile Include="NeedlemanWunschArguments.vb" />
     <Compile Include="Properties\AssemblyInfo.vb" />
     <Compile Include="RunNeedlemanWunsch.vb" />

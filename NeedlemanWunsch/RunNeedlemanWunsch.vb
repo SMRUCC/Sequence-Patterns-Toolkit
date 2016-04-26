@@ -18,16 +18,12 @@ Public Module RunNeedlemanWunsch
     ''' <param name="args"> commandline arguments </param>
     ''' <exception cref="Exception"> </exception>
     Public Sub RunAlign(fasta1 As FASTA.FastaToken, fasta2 As FASTA.FastaToken, [single] As Boolean, outfile As String)
-        Dim nw As New NeedlemanWunsch
-
-        'set sequences
-        nw.Sequence1 = fasta1.SequenceData
-        nw.Sequence2 = fasta2.SequenceData
+        Dim nw As New NeedlemanWunsch(fasta1.SequenceData, fasta2.SequenceData)
 
         ' display input
         Console.WriteLine("Input:")
-        Console.WriteLine(vbTab & "seq1 = " & nw.Sequence1)
-        Console.WriteLine(vbTab & "seq2 = " & nw.Sequence2)
+        Console.WriteLine(vbTab & "seq1 = " & nw.Query)
+        Console.WriteLine(vbTab & "seq2 = " & nw.Subject)
         Console.WriteLine()
 
         ' run algorithm
