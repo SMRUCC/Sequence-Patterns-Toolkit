@@ -26,7 +26,7 @@ Public Class NeedlemanWunsch
     ''' <param name="s2"></param>
     ''' <param name="i"></param>
     ''' <param name="j"></param>
-    Protected Friend Sub traceback(s1 As Stack(Of Char?), s2 As Stack(Of Char?), i As Integer, j As Integer)
+    Protected Sub traceback(s1 As Stack(Of Char), s2 As Stack(Of Char), i As Integer, j As Integer)
         Dim direction As Integer = tracebackMatrix(i - 1)(j - 1)
 
         Select Case direction
@@ -37,8 +37,8 @@ Public Class NeedlemanWunsch
                 '			 * think of a clever object oriented way to do so!
                 '			 
 
-                Dim ___aligned1 As String = s1.ToString()
-                Dim ___aligned2 As String = s2.ToString()
+                Dim ___aligned1 As String = New String(s1.ToArray)
+                Dim ___aligned2 As String = New String(s2.ToArray)
 
                 Me.addAligned1(reverse(___aligned1))
                 Me.addAligned2(reverse(___aligned2))
@@ -139,7 +139,7 @@ Public Class NeedlemanWunsch
         Me.Score = matrix(rows - 1)(columns - 1)
 
         ' call the traceback function
-        Me.traceback(New Stack(Of Char?), New Stack(Of Char?), rows, columns)
+        Me.traceback(New Stack(Of Char), New Stack(Of Char), rows, columns)
     End Sub
 
     ''' <summary>
