@@ -2,10 +2,25 @@
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Serialization
 
+''' <summary>
+''' hmmscan :: search sequence(s) against a profile database
+''' </summary>
 Public Class hmmscan
 
+    ''' <summary>
+    ''' HMMER 3.1b1 (May 2013); http://hmmer.org/
+    ''' </summary>
+    ''' <returns></returns>
     Public Property version As String
+    ''' <summary>
+    ''' query sequence file
+    ''' </summary>
+    ''' <returns></returns>
     Public Property query As String
+    ''' <summary>
+    ''' target HMM database
+    ''' </summary>
+    ''' <returns></returns>
     Public Property HMM As String
     Public Property Querys As Query()
 
@@ -14,11 +29,18 @@ Public Class hmmscan
     End Function
 End Class
 
+''' <summary>
+''' Scores for complete sequence (score includes all domains)
+''' </summary>
 Public Class Query : Inherits ClassObject
 
     Public Property name As String
     Public Property length As Integer
     Public Property Hits As Hit()
+    ''' <summary>
+    ''' ------ inclusion threshold ------
+    ''' </summary>
+    ''' <returns></returns>
     Public Property uncertain As Hit()
 
     Public Overrides Function ToString() As String
@@ -28,10 +50,23 @@ End Class
 
 Public Class Hit
 
+    ''' <summary>
+    ''' --- full sequence ---
+    ''' </summary>
+    ''' <returns></returns>
     Public Property Full As Score
+    ''' <summary>
+    ''' --- best 1 domain ---
+    ''' </summary>
+    ''' <returns></returns>
     Public Property Best As Score
+
+#Region "-#dom-"
+
     Public Property exp As Double
     Public Property N As Integer
+#End Region
+
     Public Property Model As String
     Public Property Description As String
 

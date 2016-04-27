@@ -94,6 +94,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="hmmer\hmmscanParser.vb" />
     <Compile Include="hmmer\hmmsearch.vb" />
     <Compile Include="hmmer\hmmscan.vb" />
     <Compile Include="Pfam.hmm\ActiveSite.vb" />
