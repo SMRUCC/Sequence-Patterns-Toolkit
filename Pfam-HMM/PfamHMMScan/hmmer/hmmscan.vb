@@ -183,11 +183,22 @@ Namespace hmmscan
         <Column(Name:="env To")> Public Property envTo As Integer
         Public Property acc As Double
 
-        Sub New()
+        Friend Sub New(buf As String())
+            rank = (buf(1) & buf(2)).Trim
+            score = Val(buf(3).Trim)
+            bias = Val(buf(5).Trim)
+            cEvalue = Val(buf(7).Trim)
+            iEvalue = Val(buf(9).Trim)
+            hmmfrom = CInt(Val(buf(11).Trim))
+            hmmTo = CInt(Val(buf(13).Trim))
+            alifrom = CInt(Val(buf(15).Trim))
+            aliTo = CInt(Val(buf(17).Trim))
+            envfrom = CInt(Val(buf(19).Trim))
+            envTo = CInt(Val(buf(21).Trim))
+            acc = Val(buf(23).Trim)
         End Sub
 
-        Friend Sub New(buf As String())
-
+        Sub New()
         End Sub
 
         Public Overrides Function ToString() As String

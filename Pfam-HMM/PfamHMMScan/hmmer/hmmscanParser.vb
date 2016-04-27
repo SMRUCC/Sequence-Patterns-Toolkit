@@ -38,9 +38,9 @@ Namespace hmmscan
 
             If buf.Lookup(NoHits) <> -1 Then
                 Return New Query With {
-                .name = Mid(query, 7).Trim,
-                .length = len
-            }
+                    .name = Mid(query, 7).Trim,
+                    .length = len
+                }
             End If
 
             Dim fields As Integer() = buf(4).CrossFields
@@ -49,7 +49,7 @@ Namespace hmmscan
             Dim s As String = ""
 
             Do While Not buf.Read(offset).ShadowCopy(s).IsBlank AndAlso
-            InStr(s, inclusion) = 0
+                InStr(s, inclusion) = 0
                 hits += s.HitParser(fields)
             Loop
 
@@ -59,25 +59,27 @@ Namespace hmmscan
                 uhits += s.HitParser(fields)
             Loop
 
+            Dim details As Alignment() = __alignmentParser(buf.Skip(offset + 2))
+
             Return New Query With {
                 .name = Mid(query, 7).Trim,
                 .length = len,
                 .Hits = hits.ToArray,
                 .uncertain = uhits.ToArray,
-                .Alignments = __alignmentParser(buf.Skip(offset))
+                .Alignments = details
             }
         End Function
 
         Private Function __alignmentParser(buf As IEnumerable(Of String)) As Alignment()
             Dim blocks As IEnumerable(Of String()) =
-                buf.FlagSplit(Function(s) s.IndexOf(">>") = 0)
+                buf.FlagSplit(Function(s) s.IndexOf(">>") = 0 OrElse s.IndexOf("Internal") = 0)
             Return blocks.ToArray(Function(x) __alignmentParser(x))
         End Function
 
         Private Function __alignmentParser(buf As String()) As Alignment
             Dim title As String = Mid(buf(Scan0), 3).Trim
             Dim p As Integer = InStr(title, " ")
-            Dim name As String = Mid(title, 1, p)
+            Dim name As String = Mid(title, 1, p - 1)
             Dim describ As String = Mid(title, p + 1).Trim
             Dim fields As Integer() = buf(2).CrossFields
             Dim s As String = Nothing
@@ -86,7 +88,7 @@ Namespace hmmscan
             p = 3
 
             Do While Not buf.Read(p).ShadowCopy(s).IsBlank
-                aligns += New Align(s.FieldParser(fields))
+                aligns += New Align(FormattedParser.FieldParser(s, fields))
             Loop
 
             Return New Alignment With {
