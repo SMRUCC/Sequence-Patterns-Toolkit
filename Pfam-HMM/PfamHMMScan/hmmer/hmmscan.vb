@@ -27,6 +27,12 @@ Public Class hmmscan
     Public Overrides Function ToString() As String
         Return New With {version, query, HMM}.GetJson
     End Function
+
+    Public Function GetTable() As ScanTable()
+        Return LinqAPI.Exec(Of ScanTable) <= From query As Query
+                                             In Querys
+                                             Select result = query.GetTable
+    End Function
 End Class
 
 ''' <summary>
@@ -45,6 +51,47 @@ Public Class Query : Inherits ClassObject
 
     Public Overrides Function ToString() As String
         Return $"{name}  [L={length}]"
+    End Function
+
+    Public Function GetTable() As ScanTable()
+        Return Hits.ToList(Function(x) New ScanTable(Me, x)) + From x As Hit In uncertain Select New ScanTable(Me, x)
+    End Function
+End Class
+
+Public Class ScanTable
+    Public Property name As String
+    Public Property len As Integer
+    <Column(Name:="full.E-value")> Public Property FullEvalue As Double
+    <Column(Name:="full.score")> Public Property FullScore As Double
+    <Column(Name:="full.bias")> Public Property FullBias As Double
+    <Column(Name:="best.E-value")> Public Property BestEvalue As Double
+    <Column(Name:="best.score")> Public Property BestScore As Double
+    <Column(Name:="best.bias")> Public Property BestBias As Double
+    Public Property exp As Double
+    Public Property N As Integer
+    Public Property model As String
+    Public Property describ As String
+
+    Sub New()
+    End Sub
+
+    Sub New(query As Query, hit As Hit)
+        name = query.name
+        len = query.length
+        FullEvalue = hit.Full.Evalue
+        FullScore = hit.Full.score
+        FullBias = hit.Full.bias
+        BestBias = hit.Best.bias
+        BestEvalue = hit.Best.Evalue
+        BestScore = hit.Best.score
+        exp = hit.exp
+        N = hit.N
+        model = hit.Model
+        describ = hit.Description
+    End Sub
+
+    Public Overrides Function ToString() As String
+        Return Me.GetJson
     End Function
 End Class
 
