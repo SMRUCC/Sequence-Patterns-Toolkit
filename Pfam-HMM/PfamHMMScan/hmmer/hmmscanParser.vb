@@ -59,7 +59,15 @@ Namespace hmmscan
                 uhits += s.HitParser(fields)
             Loop
 
-            Dim details As Alignment() = __alignmentParser(buf.Skip(offset + 2))
+            offset = buf.Lookup("Domain annotation for each model")
+
+            Dim details As Alignment()
+
+            If offset = -1 Then
+                details = New Alignment() {}
+            Else
+                details = __alignmentParser(buf.Skip(offset + 1))
+            End If
 
             Return New Query With {
                 .name = Mid(query, 7).Trim,

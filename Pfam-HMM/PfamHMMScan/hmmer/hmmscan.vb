@@ -78,7 +78,7 @@ Namespace hmmscan
             Return (LinqAPI.MakeList(Of ScanTable) <=
                 From x As Hit
                 In uncertain.SafeQuery
-                Select __getTable(x)) + Hits.Select(AddressOf __getTable)
+                Select __getTable(x)) + Hits.ToArray(AddressOf __getTable)
         End Function
 
         Private Function __getTable(x As Hit) As IEnumerable(Of ScanTable)
@@ -128,6 +128,10 @@ Namespace hmmscan
             MyBase.iEvalue = align.iEvalue
             MyBase.score = align.score
         End Sub
+
+        Public Overloads Function GetPfamToken() As String
+            Return MyBase.GetPfamToken(model)
+        End Function
 
         Public Overrides Function ToString() As String
             Return Me.GetJson
@@ -207,6 +211,10 @@ Namespace hmmscan
         Public Property envfrom As Integer
         <Column(Name:="env To")> Public Property envTo As Integer
         Public Property acc As Double
+
+        Public Function GetPfamToken(name As String) As String
+            Return $"{name}({alifrom}|{aliTo})"
+        End Function
 
         Friend Sub New(buf As String())
             rank = (buf(1) & buf(2)).Trim
