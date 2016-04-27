@@ -76,9 +76,20 @@ Public Class Hit
 End Class
 
 Public Structure Score
+
     <Column(Name:="E-value")> Public Property Evalue As Double
     Public Property score As Double
     Public Property bias As Double
+
+    Sub New(buf As String())
+        Call Me.New(buf(0), buf(1), buf(2))
+    End Sub
+
+    Sub New(e As String, s As String, b As String)
+        Evalue = Val(e.Trim)
+        score = Val(s.Trim)
+        bias = Val(b.Trim)
+    End Sub
 
     Public Overrides Function ToString() As String
         Return Me.GetJson
