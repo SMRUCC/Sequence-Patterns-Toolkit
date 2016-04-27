@@ -1,5 +1,6 @@
 ﻿Imports System.Data.Linq.Mapping
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Serialization
 
 ''' <summary>
@@ -54,7 +55,9 @@ Public Class Query : Inherits ClassObject
     End Function
 
     Public Function GetTable() As ScanTable()
-        Return Hits.ToList(Function(x) New ScanTable(Me, x)) + From x As Hit In uncertain Select New ScanTable(Me, x)
+        Return Hits.ToList(Function(x) New ScanTable(Me, x)) + From x As Hit
+                                                               In uncertain.SafeQuery
+                                                               Select New ScanTable(Me, x)
     End Function
 End Class
 

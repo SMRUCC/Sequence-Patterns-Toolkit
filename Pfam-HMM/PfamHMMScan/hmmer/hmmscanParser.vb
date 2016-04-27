@@ -27,11 +27,20 @@ Public Module hmmscanParser
     End Function
 
     Const inclusion As String = "------ inclusion threshold ------"
+    Const NoHits As String = "[No hits detected that satisfy reporting thresholds]"
 
     <Extension>
     Private Function QueryParser(buf As String()) As Query
         Dim query As String = buf(Scan0)
         Dim len As Integer = Regex.Match(query, "L=\d+", RegexICSng).Value.Split("="c).Last
+
+        If buf.Lookup(NoHits) <> -1 Then
+            Return New Query With {
+                .name = Mid(query, 7).Trim,
+                .length = len
+            }
+        End If
+
         Dim fields As Integer() = buf(4).CrossFields
         Dim hits As New List(Of Hit)
         Dim offset As Integer = 5
