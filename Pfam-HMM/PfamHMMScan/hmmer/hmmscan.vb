@@ -1,4 +1,5 @@
 ﻿Imports System.Data.Linq.Mapping
+Imports Microsoft.VisualBasic.ComponentModel.Collection.Generic
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Serialization
@@ -52,26 +53,40 @@ Namespace hmmscan
         ''' <returns></returns>
         Public Property uncertain As Hit()
         Public Property Alignments As Alignment()
+            Get
+                Return __alignments
+            End Get
+            Set(value As Alignment())
+                __alignments = value
+
+                If __alignments.IsNullOrEmpty Then
+                    __alignHash = New Dictionary(Of Alignment)
+                Else
+                    __alignHash = value.ToDictionary
+                End If
+            End Set
+        End Property
+
+        Dim __alignments As Alignment()
+        Dim __alignHash As Dictionary(Of Alignment)
 
         Public Overrides Function ToString() As String
             Return $"{name}  [L={length}]"
         End Function
 
         Public Function GetTable() As ScanTable()
-            Return Hits.ToList(Function(x) New ScanTable(Me, x, "!"c)) +
-            From x As Hit
-            In uncertain.SafeQuery
-            Select New ScanTable(Me, x, "?"c)
+            Return Hits.Select(AddressOf __getTable) + (LinqAPI.MakeList(Of ScanTable) <= From x As Hit
+                                                                                          In uncertain.SafeQuery
+                                                                                          Select __getTable(x))
+        End Function
+
+        Private Function __getTable(x As Hit) As IEnumerable(Of ScanTable)
+            Return __alignHash(x.Model).Aligns.Select(Function(o) New ScanTable(Me, x, o))
         End Function
     End Class
 
-    Public Class ScanTable
+    Public Class ScanTable : Inherits Align
 
-        ''' <summary>
-        ''' !?
-        ''' </summary>
-        ''' <returns></returns>
-        Public Property rank As Char
         Public Property name As String
         Public Property len As Integer
         <Column(Name:="full.E-value")> Public Property FullEvalue As Double
@@ -81,14 +96,13 @@ Namespace hmmscan
         <Column(Name:="best.score")> Public Property BestScore As Double
         <Column(Name:="best.bias")> Public Property BestBias As Double
         Public Property exp As Double
-        Public Property N As Integer
         Public Property model As String
         Public Property describ As String
 
         Sub New()
         End Sub
 
-        Sub New(query As Query, hit As Hit, ranks As Char)
+        Sub New(query As Query, hit As Hit, align As Align)
             name = query.name
             len = query.length
             FullEvalue = hit.Full.Evalue
@@ -98,10 +112,20 @@ Namespace hmmscan
             BestEvalue = hit.Best.Evalue
             BestScore = hit.Best.score
             exp = hit.exp
-            N = hit.N
             model = hit.Model
             describ = hit.Description
-            rank = ranks
+            MyBase.rank = align.rank
+            MyBase.acc = align.acc
+            MyBase.alifrom = align.alifrom
+            MyBase.aliTo = align.aliTo
+            MyBase.bias = align.bias
+            MyBase.cEvalue = align.cEvalue
+            MyBase.envfrom = align.envfrom
+            MyBase.envTo = align.envTo
+            MyBase.hmmfrom = align.hmmfrom
+            MyBase.hmmTo = align.hmmTo
+            MyBase.iEvalue = align.iEvalue
+            MyBase.score = align.score
         End Sub
 
         Public Overrides Function ToString() As String
@@ -157,9 +181,9 @@ Namespace hmmscan
         End Function
     End Structure
 
-    Public Class Alignment
+    Public Class Alignment : Implements sIdEnumerable
 
-        Public Property model As String
+        Public Property model As String Implements sIdEnumerable.Identifier
         Public Property describ As String
         Public Property Aligns As Align()
 
