@@ -7,6 +7,7 @@ Imports Microsoft.VisualBasic.Language
 Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports LANS.SystemsBiology.SequenceModel.Patterns
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Motif
+Imports Microsoft.VisualBasic.Imaging
 
 Namespace SequenceLogo
 

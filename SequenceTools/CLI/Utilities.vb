@@ -11,6 +11,7 @@ Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports LANS.SystemsBiology.SequenceModel
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
 Imports LANS.SystemsBiology.Assembly.NCBI.GenBank
+Imports Microsoft.VisualBasic.Imaging
 
 ''' <summary>
 ''' Sequence Utilities
