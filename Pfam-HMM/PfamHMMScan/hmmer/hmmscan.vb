@@ -75,9 +75,10 @@ Namespace hmmscan
         End Function
 
         Public Function GetTable() As ScanTable()
-            Return Hits.Select(AddressOf __getTable) + (LinqAPI.MakeList(Of ScanTable) <= From x As Hit
-                                                                                          In uncertain.SafeQuery
-                                                                                          Select __getTable(x))
+            Return (LinqAPI.MakeList(Of ScanTable) <=
+                From x As Hit
+                In uncertain.SafeQuery
+                Select __getTable(x)) + Hits.Select(AddressOf __getTable)
         End Function
 
         Private Function __getTable(x As Hit) As IEnumerable(Of ScanTable)
