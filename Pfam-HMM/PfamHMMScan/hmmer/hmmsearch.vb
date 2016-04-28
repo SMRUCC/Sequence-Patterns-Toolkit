@@ -34,10 +34,7 @@ Public Class hmmsearch
         Dim LQuery As IEnumerable(Of AlignmentHit) =
             LinqAPI.MakeList(Of AlignmentHit) <= From x As PfamQuery
                                                  In Queries.AsParallel
-                                                 Let id As String = x.Query.Split.First
-                                                 Let newProp = Function() New ExtendedProps(New [Property](Of Object)(NameOf(PfamQuery), id))
-                                                 Select x.alignments _
-                                                     .ToArray(Function(o) o.InvokeSet(NameOf(o.Extension), newProp()))
+                                                 Select x.alignments
         Dim Groups = From x As AlignmentHit
                      In LQuery
                      Select o = x
@@ -80,11 +77,15 @@ Public Class Score
     End Function
 End Class
 
-Public Class AlignmentHit : Inherits ClassObject
-    Implements IMatched
+Public Class AlignmentHit : Implements IMatched
 
     Public Property locus As String
     Public Property hits As hmmscan.Align()
+    ''' <summary>
+    ''' Tag data for the Pfam HMM model
+    ''' </summary>
+    ''' <returns></returns>
+    Public Property QueryTag As String
 
     Public ReadOnly Property IsMatched As Boolean Implements IMatched.IsMatched
         Get

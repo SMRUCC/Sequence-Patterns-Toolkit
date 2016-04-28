@@ -73,6 +73,10 @@ Public Module hmmsearchParser
             details = __alignmentParser(buf.Skip(offset + 1))
         End If
 
+        For Each x As AlignmentHit In details
+            x.QueryTag = query.Split.First
+        Next
+
         Return New PfamQuery With {
             .Query = query,
             .MLen = len,
