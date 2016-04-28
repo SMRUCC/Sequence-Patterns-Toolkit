@@ -201,7 +201,7 @@ Namespace hmmscan
     '''    #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
     '''  ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
     ''' </summary>
-    Public Class Align
+    Public Class Align : Implements IMatched
 
         <Column(Name:="#")> Public Property rank As String
         Public Property score As Double
@@ -215,6 +215,12 @@ Namespace hmmscan
         Public Property envfrom As Integer
         <Column(Name:="env To")> Public Property envTo As Integer
         Public Property acc As Double
+
+        Private ReadOnly Property IsMatched As Boolean Implements IMatched.IsMatched
+            Get
+                Return rank.Last <> "?"c
+            End Get
+        End Property
 
         Public Function GetPfamToken(name As String) As String
             Return $"{name}({alifrom}|{aliTo})"
