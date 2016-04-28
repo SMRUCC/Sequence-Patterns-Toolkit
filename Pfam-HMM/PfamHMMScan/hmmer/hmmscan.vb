@@ -197,6 +197,10 @@ Namespace hmmscan
         End Function
     End Class
 
+    ''' <summary>
+    '''    #    score  bias  c-Evalue  i-Evalue hmmfrom  hmm to    alifrom  ali to    envfrom  env to     acc
+    '''  ---   ------ ----- --------- --------- ------- -------    ------- -------    ------- -------    ----
+    ''' </summary>
     Public Class Align
 
         <Column(Name:="#")> Public Property rank As String

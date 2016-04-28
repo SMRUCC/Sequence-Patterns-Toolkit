@@ -97,6 +97,7 @@
     <Compile Include="hmmer\hmmscanParser.vb" />
     <Compile Include="hmmer\hmmsearch.vb" />
     <Compile Include="hmmer\hmmscan.vb" />
+    <Compile Include="hmmer\hmmsearchParser.vb" />
     <Compile Include="Pfam.hmm\ActiveSite.vb" />
     <Compile Include="Pfam.hmm\AAIndex.vb" />
     <Compile Include="Pfam.hmm\HMMParser\HMM.vb" />

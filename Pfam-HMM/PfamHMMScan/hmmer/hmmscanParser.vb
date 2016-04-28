@@ -28,8 +28,8 @@ Namespace hmmscan
             Next
         End Function
 
-        Const inclusion As String = "------ inclusion threshold ------"
-        Const NoHits As String = "[No hits detected that satisfy reporting thresholds]"
+        Public Const inclusion As String = "------ inclusion threshold ------"
+        Public Const NoHits As String = "[No hits detected that satisfy reporting thresholds]"
 
         <Extension>
         Private Function QueryParser(buf As String()) As Query
