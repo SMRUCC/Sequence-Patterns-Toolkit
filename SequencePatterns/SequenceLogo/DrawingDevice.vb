@@ -68,7 +68,7 @@ For example, we identified a new domain, likely to have a role downstream of the
         ''' <param name="title">The sequence logo display title.</param>
         ''' <returns></returns>
         <ExportAPI("Drawing.Frequency")>
-        Public Function DrawFrequency(Fasta As FastaFile, Optional title As String = "") As Image
+        Public Function DrawFrequency(Fasta As FastaFile, Optional title As String = "", Optional ByRef getModel As MotifPWM = Nothing) As Image
             Dim PWM As MotifPWM = Motif.PWM.FromMla(Fasta)
             Dim Model As DrawingModel = New DrawingModel
 
@@ -87,6 +87,7 @@ For example, we identified a new domain, likely to have a role downstream of the
                 Model.ModelsId = title
             End If
 
+            getModel = PWM
             Model.Residues =
                 LinqAPI.Exec(Of ResidueSite, Residue)(PWM.PWM) <=
                     Function(rsd As ResidueSite) New Residue With {
