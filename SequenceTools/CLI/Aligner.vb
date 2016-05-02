@@ -22,8 +22,8 @@ Partial Module Utilities
         Dim subject As String = args("/subject")
         Dim blosum As String = args("/blosum")
         Dim out As String = args.GetValue("/out", query.TrimFileExt & "-" & IO.Path.GetFileNameWithoutExtension(subject) & ".xml")
-        Dim queryFa As New SequenceModel.FASTA.FastaToken(query)
-        Dim subjectFa As New SequenceModel.FASTA.FastaToken(subject)
+        Dim queryFa As New FASTA.FastaToken(query)
+        Dim subjectFa As New FASTA.FastaToken(subject)
         Dim mat = If(String.IsNullOrEmpty(blosum), Nothing, SmithWaterman.Blosum.LoadMatrix(blosum))
         Dim sw As SmithWaterman.SmithWaterman = SmithWaterman.SmithWaterman.Align(queryFa, subjectFa, mat)
         Dim output As Output = sw.GetOutput(0.65, 6)
@@ -34,8 +34,8 @@ Partial Module Utilities
     <ExportAPI("--align", Usage:="--align /query <query.fasta> /subject <subject.fasta> [/out <out.DIR> /cost <0.7>]")>
     Public Function Align(args As CommandLine.CommandLine) As Integer
         Dim cost As Double = args.GetValue(Of Double)("/cost", 0.7)
-        Dim query = LANS.SystemsBiology.SequenceModel.FASTA.FastaFile.Read(args("/query"))
-        Dim subject = LANS.SystemsBiology.SequenceModel.FASTA.FastaFile.Read(args("/subject"))
+        Dim query = FASTA.FastaFile.Read(args("/query"))
+        Dim subject = FASTA.FastaFile.Read(args("/subject"))
         Dim outDIR As String = args.GetValue(
             "/out",
             $"{query.FilePath.ParentPath}/{IO.Path.GetFileNameWithoutExtension(query.FilePath)}-{IO.Path.GetFileNameWithoutExtension(subject.FilePath)}/")
@@ -43,15 +43,12 @@ Partial Module Utilities
         Return resultSet.GetXml.SaveTo(outDIR & "/AlignmentResult.xml").CLICode
     End Function
 
-    Private Function __alignCommon(query As SequenceModel.FASTA.FastaFile,
-                                   subject As SequenceModel.FASTA.FastaFile,
-                                   cost As Double,
-                                   outDIR As String) As AlignmentResult()
+    Private Function __alignCommon(query As FASTA.FastaFile, subject As FASTA.FastaFile, cost As Double, outDIR As String) As AlignmentResult()
         Dim resultSet As New List(Of AlignmentResult)
 
-        For Each queryToken As LANS.SystemsBiology.SequenceModel.FASTA.FastaToken In query
+        For Each queryToken As FASTA.FastaToken In query
             Dim queryCache As Integer() = queryToken.SequenceData.ToArray(Function(x) Asc(x))
-            Dim alignSet = (From subjectToken As LANS.SystemsBiology.SequenceModel.FASTA.FastaToken
+            Dim alignSet = (From subjectToken As FASTA.FastaToken
                             In subject.AsParallel
                             Let aln = AlignmentResult.SafeAlign(
                                 queryToken.Title,
@@ -94,13 +91,13 @@ Partial Module Utilities
         End Sub
 
         Sub New(query As FASTA.FastaToken, subject As FASTA.FastaToken, cost As Double)
-            Call Me.New(query.Title, query.SequenceData, query.SequenceData.ToArray(Function(x) Asc(x)), subject, cost)
+            Call Me.New(query.Title, query.SequenceData, query.SequenceData.ToArray(AddressOf Asc), subject, cost)
         End Sub
 
         Sub New(queryTitle As String,
                 query As String,
                 queryArray As Integer(),
-                subject As SequenceModel.FASTA.FastaToken,
+                subject As FASTA.FastaToken,
                 cost As Double)
             Dim result = LevenshteinDistance.ComputeDistance(queryArray, subject.SequenceData, cost)
 
@@ -142,7 +139,7 @@ Partial Module Utilities
     ''' <returns></returns>
     <ExportAPI("/Clustal.Cut", Usage:="/Clustal.Cut /in <in.fasta> [/left 0.1 /right 0.1 /out <out.fasta>]")>
     Public Function CutMlAlignment(args As CommandLine.CommandLine) As Integer
-        Dim aln As New LANS.SystemsBiology.SequenceModel.FASTA.Clustal.Clustal(args("/in"))
+        Dim aln As New Patterns.Clustal.Clustal(args("/in"))
         Dim left As Double = args.GetValue("/left", 0.1)
         Dim right As Double = args.GetValue("/right", 0.1)
         Dim leftOffset, rightOffset As Integer
@@ -161,7 +158,8 @@ Partial Module Utilities
         Next
 
         Dim out = aln.Mid(leftOffset, rightOffset)
-        Dim outFile As String = args.GetValue("/out", aln.FileName.TrimFileExt & $"{leftOffset}-{rightOffset}.fasta")
+        Dim outFile As String =
+            args.GetValue("/out", aln.FileName.TrimFileExt & $"{leftOffset}-{rightOffset}.fasta")
         Return out.Save(-1, outFile, Encodings.ASCII).CLICode
     End Function
 End Module
