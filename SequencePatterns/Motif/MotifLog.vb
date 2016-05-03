@@ -3,14 +3,20 @@ Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
 Imports Microsoft.VisualBasic.DocumentFormat.Csv.StorageProvider.Reflection
 
 ''' <summary>
-''' 简单的Motif位点
+''' Simple site information of the TF motif site.
+''' (简单的Motif位点)
 ''' </summary>
 Public Class MotifLog : Inherits SimpleSegment
+
     Public Property Family As String
     Public Property BiologicalProcess As String
     Public Property Regulog As String
     Public Property Taxonomy As String
     Public Property ATGDist As Integer
+    ''' <summary>
+    ''' 基因组上下文之中的位置的描述
+    ''' </summary>
+    ''' <returns></returns>
     Public Property Location As String
 
     ''' <summary>
@@ -31,6 +37,10 @@ Public Class MotifLog : Inherits SimpleSegment
     Sub New()
     End Sub
 
+    ''' <summary>
+    ''' 复制
+    ''' </summary>
+    ''' <param name="loci"></param>
     Sub New(loci As MotifLog)
         Call MyBase.New(loci)
 
