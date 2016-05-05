@@ -96,7 +96,7 @@ For example, we identified a new domain, likely to have a role downstream of the
                         .Alphabets = LinqAPI.Exec(Of Alphabet) <= From x As SeqValue(Of Double)
                                                                   In rsd.PWM.SeqIterator
                                                                   Select New Alphabet With {
-                                                                      .Alphabet = PWM.Alphabets(x.Pos),
+                                                                      .Alphabet = PWM.Alphabets(x.i),
                                                                       .RelativeFrequency = x.obj
                                                                   }  ' alphabets
             }  ' residues

@@ -19,6 +19,7 @@ Public Class MotifLog : Inherits SimpleSegment
     ''' </summary>
     ''' <returns></returns>
     Public Property Location As String
+    Public Property tag As String
 
     ''' <summary>
     ''' 当前的这个位点对象是否是在启动子区

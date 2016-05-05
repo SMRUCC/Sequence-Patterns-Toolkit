@@ -100,7 +100,7 @@ Public Module ClustalVisual
             LinqAPI.Exec(Of Integer) <= From site As SeqValue(Of SimpleSite)
                                         In Patterns.Frequency(aln).Residues.SeqIterator
                                         Where site.obj.IsConserved
-                                        Select site.Pos
+                                        Select site.i
         Dim idx As Integer = 0
 
         Call gdi.ImageAddFrame(offset:=1)
