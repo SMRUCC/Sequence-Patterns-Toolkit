@@ -249,6 +249,8 @@ For example, we identified a new domain, likely to have a role downstream of the
                 Call residue.AsChar.Echo
             Next
 
+            Call Console.WriteLine()
+
             '绘制bits字符串
             font = New Font(font.Name, font.Size / 2)
             size = gdi.Gr_Device.MeasureString("Bits", font)
