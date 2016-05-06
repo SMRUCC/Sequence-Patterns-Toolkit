@@ -2,7 +2,7 @@
 Imports Microsoft.VisualBasic
 Imports System.Text.RegularExpressions
 Imports System.Text
-Imports Microsoft.VisualBasic.Marshal
+Imports Microsoft.VisualBasic.Emit.Marshal
 
 Namespace Motif.Patterns
 
