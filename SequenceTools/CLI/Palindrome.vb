@@ -224,7 +224,7 @@ Partial Module Utilities
                Usage:="--Hairpinks.batch.task /in <in.fasta> [/out <outDIR> /min <6> /max <7> /cutoff <0.6> /max-dist <35 (bp)> /num_threads <-1> /interval <200>]")>
     Public Function HairpinksBatch(args As CommandLine.CommandLine) As Integer
         Dim input As String = args("/in")
-        Dim out As String = args.GetValue("/out", App.CurrentWork & "/Hairpinks/")
+        Dim out As String = args.GetValue("/out", App.CurrentDirectory & "/Hairpinks/")
         Dim min As Integer = args.GetValue("/min", 6)
         Dim max As Integer = args.GetValue("/max", 7)
         Dim cutoff As Double = args.GetValue("/cutoff", 0.6)
@@ -270,7 +270,7 @@ Partial Module Utilities
                                           loci.Site.Count("-"c) <> loci.Site.Length AndAlso
                                           loci.MaxMatch >= Cut
                                       Select loci).ToArray).ToArray
-        Dim out As String = args.GetValue("/out", App.CurrentWork & "/Perfects/")
+        Dim out As String = args.GetValue("/out", App.CurrentDirectory & "/Perfects/")
 
         For Each file In Filter
             Dim name As String = IO.Path.GetFileNameWithoutExtension(file.file)
