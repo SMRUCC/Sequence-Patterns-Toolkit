@@ -11,7 +11,7 @@ Namespace Motif
     ''' <summary>
     ''' A column in the motif
     ''' </summary>
-    Public Class ResidueSite : Implements IAddressHandle
+    <XmlType("Residue")> Public Class ResidueSite : Implements IAddressHandle
 
         <XmlAttribute> Public Property Site As Integer Implements IAddressHandle.Address
         ''' <summary>
