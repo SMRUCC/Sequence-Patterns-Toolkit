@@ -212,8 +212,10 @@ Partial Module Utilities
     <ExportAPI("--Trim",
                Usage:="--Trim /in <in.fasta> [/case <u/l> /break <-1/int> /out <out.fasta> /brief]",
                Info:="")>
-    <ParameterInfo("/case", True, Description:="Adjust the letter case of your sequence, l for lower case and u for upper case. Default value is upper case.")>
-    <ParameterInfo("/break", True, Description:="Adjust the sequence break when this program write the fasta sequence, default is -1 which means no break, write all sequence in one line.")>
+    <ParameterInfo("/case", True,
+                   Description:="Adjust the letter case of your sequence, l for lower case and u for upper case. Default value is upper case.")>
+    <ParameterInfo("/break", True,
+                   Description:="Adjust the sequence break when this program write the fasta sequence, default is -1 which means no break, write all sequence in one line.")>
     Public Function Trim(args As CommandLine.CommandLine) As Integer
         Dim Input As String = args("/in")
         Dim UpperCase As Boolean = Not String.Equals("l", args.GetValue("/case", "u"), StringComparison.OrdinalIgnoreCase)
@@ -290,6 +292,23 @@ Partial Module Utilities
         Call New FastaFile(From x In locis Select x.ToFasta).Save(out & $"/{[in].BaseName}.fasta")
 
         Return 0
+    End Function
+
+    <ExportAPI("/Distinct", Usage:="/Distinct /in <in.fasta> [/out <out.fasta>]")>
+    Public Function Distinct(args As CommandLine.CommandLine) As Integer
+        Dim [in] As String = args("/in")
+        Dim out As String = args.GetValue("/out", [in].TrimFileExt & ".Distinct.fasta")
+        Dim fasta As New FASTA.FastaFile([in])
+        Dim uids = (From fa As FastaToken In fasta
+                    Let id As String = fa.Attributes.First.Split(":"c).Last,
+                        seq As String = fa.SequenceData.ToUpper
+                    Select uid = id.ToUpper & "+" & seq,
+                        id,
+                        seq
+                    Group By uid Into Group)
+        fasta = New FastaFile(From x In uids Let fa = x.Group.First Select New FastaToken({fa.id}, fa.seq))
+
+        Return fasta.Save(out, Encodings.ASCII)
     End Function
 End Module
 
