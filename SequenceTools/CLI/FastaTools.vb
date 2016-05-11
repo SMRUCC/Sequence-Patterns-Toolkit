@@ -11,8 +11,31 @@ Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat
 Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
 Imports Microsoft.VisualBasic.Serialization
 Imports LANS.SystemsBiology.SequenceModel.FASTA
+Imports Microsoft.VisualBasic.Language.UnixBash
 
 Partial Module Utilities
+
+    <ExportAPI("/Select.By_Locus",
+               Usage:="/Select.By_Locus /in <locus.txt> /fa <fasta.inDIR> [/out <out.fasta>]")>
+    Public Function SelectByLocus(args As CommandLine.CommandLine) As Integer
+        Dim [in] As String = args("/in")
+        Dim fa As String = args("/fa")
+        Dim out As String = args.GetValue("/out", [in].TrimFileExt & "-" & fa.BaseName & ".fasta")
+        Dim fasta As IEnumerable(Of String) =
+            ls - l - r - wildcards("*.faa", "*.fasta", "*.fsa", "*.fa") <= fa
+        Dim locus As String() = [in].ReadAllLines
+
+        Call $"Found {fasta.Count} fasta files in source DIR  {fa}".__DEBUG_ECHO
+
+        Dim seqHash = (From file As String In fasta Select New FastaFile(file)).MatrixAsIterator.ToDictionary(Function(x) x.Attributes.First.Split.First.Trim)
+
+        Call $"Files loads {seqHash.Count} sequence...".__DEBUG_ECHO
+
+        Dim LQuery = (From sId As String In locus Where seqHash.ContainsKey(sId) Select seqHash(sId))
+        Dim outFa As New FastaFile(LQuery)
+
+        Return outFa.Save(out, Encodings.ASCII)
+    End Function
 
     <ExportAPI("/To_Fasta",
                Usage:="/To_Fasta /in <anno.csv> [/out <out.fasta> /attrs <gene;locus_tag;gi;location,...> /seq <Sequence>]",
