@@ -37,11 +37,13 @@ Public Class hmmsearch
                                                  Select x.alignments
         Dim Groups = From x As AlignmentHit
                      In LQuery
-                     Select o = x
-                     Group o By o.locus Into Group
+                     Let tag As String = x.locus.Split.First
+                     Select o = x,
+                         tag
+                     Group By tag Into Group
         Dim hash As Dictionary(Of String, AlignmentHit()) =
-            Groups.ToDictionary(Function(x) x.locus,
-                                Function(x) x.Group.ToArray)
+            Groups.ToDictionary(Function(x) x.tag,
+                                Function(x) x.Group.ToArray(Function(o) o.o))
         Return hash
     End Function
 
