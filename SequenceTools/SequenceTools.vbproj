@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CLI\Aligner.vb" />
+    <Compile Include="CLI\NTProps.vb" />
     <Compile Include="CLI\Repeats.vb" />
     <Compile Include="CLI\FastaTools.vb" />
     <Compile Include="CLI\Palindrome.vb" />

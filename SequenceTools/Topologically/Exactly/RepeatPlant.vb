@@ -37,6 +37,10 @@ Namespace Topologically
             End Get
         End Property
 
+        Public Overridable Function LociProvider() As Integer()
+            Return Locis
+        End Function
+
         Public Shared Function TrimView(data As Generic.IEnumerable(Of RepeatsLoci)) As RepeatsView()
             Dim LQuery = (From loci As RepeatsLoci
                           In data
@@ -62,19 +66,24 @@ Namespace Topologically
         ''' <param name="data"></param>
         ''' <param name="size"></param>
         ''' <returns></returns>
-        Public Shared Function ToVector(Of TView As RepeatsView)(data As Generic.IEnumerable(Of TView), size As Long) As Double()
+        Public Shared Function ToVector(Of TView As RepeatsView)(data As IEnumerable(Of TView), size As Long) As Double()
             Dim Extract = (From obj As TView
                            In data
+                           Where Not obj Is Nothing
                            Select (From site As Integer
-                                   In obj.Locis
-                                   Select site, obj.Hot).ToArray).ToArray.MatrixToList
+                                   In obj.LociProvider
+                                   Select site,
+                                       obj.Hot).ToArray).MatrixToList
             Dim src = (From t In (From site In Extract
                                   Select site
                                   Group site By site.site Into Group)
-                       Select t.site, Group = t.Group.ToArray Order By site Ascending).ToArray
-            Dim LQuery As Dictionary(Of Integer, Double) = src.ToDictionary(
+                       Select t.site,
+                           Group = t.Group.ToArray
+                       Order By site Ascending).ToArray
+            Dim LQuery As Dictionary(Of Integer, Double) =
+                src.ToDictionary(
                 Function(site) site.site,
-                elementSelector:=Function(site) site.Group.ToArray(Function(loci) loci.Hot).Sum)
+                Function(site) site.Group.ToArray(Function(loci) loci.Hot).Sum)
             Dim vector As Double() = size.ToArray(Function(idx) LQuery.TryGetValue(idx, [default]:=0))
             Return vector
         End Function
@@ -87,14 +96,17 @@ Namespace Topologically
         ''' <returns></returns>
         Public Overridable ReadOnly Property Hot As Double
             Get
-                Dim ordLocis = (From n In Locis Select n Order By n Ascending).ToArray.CreateSlideWindows(2)
+                Dim ordLocis = (From n As Integer
+                                In Me.LociProvider
+                                Select n
+                                Order By n Ascending).ToArray.CreateSlideWindows(2)
                 Dim avgDist As Double = ordLocis.ToArray(
                     Function(loci) _
                         If(loci.Elements.IsNullOrEmpty OrElse
                         loci.Elements.Length = 1, 1,
                         loci.Elements.Last - loci.Elements.First)).Average
                 avgDist = Len(SequenceData) / avgDist  ' 表达式的含义： 片段越长，热度越高，  平均距离越短，热度越高
-                Dim lociCounts As Double = Locis.Length
+                Dim lociCounts As Double = LociProvider.Length
                 lociCounts = lociCounts / 10
                 Return avgDist + lociCounts
             End Get
@@ -102,7 +114,7 @@ Namespace Topologically
 
         Public Overridable ReadOnly Property RepeatsNumber As Integer
             Get
-                Return Me.Locis.Length
+                Return Me.LociProvider.Length
             End Get
         End Property
     End Class
@@ -113,6 +125,10 @@ Namespace Topologically
 
         Public Property RevLocis As Integer()
         Public Property RevSegment As String
+
+        Public Overrides Function LociProvider() As Integer()
+            Return RevLocis
+        End Function
 
         Public Overloads Shared Function TrimView(data As Generic.IEnumerable(Of RevRepeats)) As RevRepeatsView()
             Dim LQuery As RevRepeatsView() = data.ToArray(

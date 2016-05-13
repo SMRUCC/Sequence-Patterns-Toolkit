@@ -20,7 +20,8 @@ Partial Module Utilities
         Return 0
     End Function
 
-    <ExportAPI("Repeats.Density", Usage:="Repeats.Density /dir <dir> /size <size> /ref <refName> [/out <out.csv> /cutoff <default:=0>]")>
+    <ExportAPI("Repeats.Density",
+               Usage:="Repeats.Density /dir <dir> /size <size> /ref <refName> [/out <out.csv> /cutoff <default:=0>]")>
     Public Function RepeatsDensity(args As CommandLine.CommandLine) As Integer
         Dim DIR As String = args("/dir")
         Dim size As Integer = args.GetInt32("/size")

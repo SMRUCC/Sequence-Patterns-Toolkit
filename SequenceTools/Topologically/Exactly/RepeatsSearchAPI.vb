@@ -172,12 +172,17 @@ RETURN_VALUE:
                 .ToArray(Function(file) New With {
                     .ID = IO.Path.GetFileNameWithoutExtension(file),
                     .context = file.LoadCsv(Of TView)})
+
+            VBDebugger.Mute = True
+
             Dim Vecotrs = (From genome In files.AsParallel
                            Select genome.ID,
                                vector = RepeatsView.ToVector(genome.context, size)) _
                               .ToDictionary(Function(genome) genome.ID,
                                             Function(genome) genome.vector)
             Dim refGenome As Double() = Vecotrs.TryGetValue(ref.NormalizePathString(True))
+
+            VBDebugger.Mute = False
 
             If refGenome Is Nothing Then
                 Call $"Reference `{ref}` is not exists in the dataset, using the first sequence as default!".__DEBUG_ECHO
