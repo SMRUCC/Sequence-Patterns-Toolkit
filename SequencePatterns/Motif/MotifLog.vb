@@ -32,7 +32,8 @@ Public Class MotifLog : Inherits SimpleSegment
             If Location Is Nothing Then
                 Return False
             End If
-            Return InStr(Location, "promoter", CompareMethod.Text) > 0
+            Return InStr(Location, "In the promoter region of", CompareMethod.Text) > 0 OrElse
+                InStr(Location, "Overlap on up_stream with", CompareMethod.Text) > 0
         End Get
     End Property
 
