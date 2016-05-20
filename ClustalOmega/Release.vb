@@ -12,12 +12,12 @@
 
         Call FileIO.FileSystem.CreateDirectory(DIR)
 
-        Call My.Resources.clustalo.FlushStream(SavePath:=DIR & "/clustalo.exe")
-        Call My.Resources.libgcc_s_dw2_1.FlushStream(SavePath:=DIR & "/libgcc_s_dw2-1.dll")
-        Call My.Resources.libgomp_1.FlushStream(SavePath:=DIR & "/libgomp-1.dll")
-        Call My.Resources.libstdc___6.FlushStream(SavePath:=DIR & "/libstdc++-6.dll")
-        Call My.Resources.mingwm10.FlushStream(SavePath:=DIR & "/mingwm10.dll")
-        Call My.Resources.pthreadGC2.FlushStream(SavePath:=DIR & "/pthreadGC2.dll")
+        Call My.Resources.clustalo.FlushStream(path:=DIR & "/clustalo.exe")
+        Call My.Resources.libgcc_s_dw2_1.FlushStream(path:=DIR & "/libgcc_s_dw2-1.dll")
+        Call My.Resources.libgomp_1.FlushStream(path:=DIR & "/libgomp-1.dll")
+        Call My.Resources.libstdc___6.FlushStream(path:=DIR & "/libstdc++-6.dll")
+        Call My.Resources.mingwm10.FlushStream(path:=DIR & "/mingwm10.dll")
+        Call My.Resources.pthreadGC2.FlushStream(path:=DIR & "/pthreadGC2.dll")
 
         Return DIR & "/clustalo.exe"
     End Function
