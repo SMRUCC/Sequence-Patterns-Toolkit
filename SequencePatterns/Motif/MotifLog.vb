@@ -37,6 +37,9 @@ Public Class MotifLog : Inherits SimpleSegment
         End Get
     End Property
 
+    <Meta(GetType(String))>
+    Public Property tags As Dictionary(Of String, String)
+
     Sub New()
     End Sub
 
