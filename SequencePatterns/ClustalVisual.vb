@@ -112,7 +112,7 @@ Public Module ClustalVisual
                 Continue For
             End If
 
-            Call gdi.Gr_Device.DrawString("*", DotFont, Brushes.Black, New Point(X, Y))
+            Call gdi.Graphics.DrawString("*", DotFont, Brushes.Black, New Point(X, Y))
 
             idx += 1
             X += DotSize
@@ -122,15 +122,15 @@ Public Module ClustalVisual
         Y += DotSize
 
         For Each fa As FASTA.FastaToken In aln
-            Call gdi.Gr_Device.DrawString(fa.Title, titleFont, Brushes.Black, New Point(Margin * 0.75, Y))
+            Call gdi.Graphics.DrawString(fa.Title, titleFont, Brushes.Black, New Point(Margin * 0.75, Y))
 
             For Each ch As Char In fa.SequenceData
                 Dim s As String = ch.ToString
                 Dim br As New SolidBrush(ClustalVisual.__colours(s))
                 Dim rect As New Rectangle(New Point(X, Y), New Size(DotSize, DotSize))
 
-                Call gdi.Gr_Device.FillRectangle(br, rect)
-                Call gdi.Gr_Device.DrawString(s, DotFont, Brushes.Black, New Point(X, Y))
+                Call gdi.Graphics.FillRectangle(br, rect)
+                Call gdi.Graphics.DrawString(s, DotFont, Brushes.Black, New Point(X, Y))
 
                 X += DotSize
             Next
