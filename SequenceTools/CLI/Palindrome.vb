@@ -11,6 +11,7 @@ Imports Microsoft.VisualBasic.Parallel
 Imports Microsoft.VisualBasic.Language.UnixBash
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
+Imports Microsoft.VisualBasic.Language
 
 Partial Module Utilities
 
@@ -86,19 +87,34 @@ Partial Module Utilities
     End Function
 
     <ExportAPI("/Mirror.Batch",
-               Usage:="/Mirror.Batch /nt <nt.fasta> /out <out.csv> [/min <3> /max <20>]")>
+               Usage:="/Mirror.Batch /nt <nt.fasta> [/out <out.csv> /mp /min <3> /max <20>]")>
+    <ParameterInfo("/mp", True,
+                   Description:="Calculation in the multiple process mode?")>
     Public Function MirrorBatch(args As CommandLine.CommandLine) As Integer
         Dim NT As New FastaFile(args - "/nt")
         Dim out As String = args.GetValue("/out", args("/nt").TrimFileExt & "-Mirror/")
         Dim Min As Integer = args.GetValue("/min", 3)
         Dim Max As Integer = args.GetValue("/max", 20)
 
-        For Each seq As FastaToken In NT
-            Dim Search As New Topologically.MirrorSearchs(seq, Min, Max)
-            Dim path As String = out & $"/{seq.Title.NormalizePathString.Replace(" ", "_")}.csv"
-            Call Search.InvokeSearch()
-            Call Search.ResultSet.SaveTo(path)
-        Next
+        If args.GetBoolean("/mp") Then
+            Dim api As String = GetType(Utilities).API(NameOf(SearchMirrotFasta))
+            Dim task As Func(Of String, String) =
+                Function(path) $"{api} /nt {path.CliPath} /out {(out & "/" & path.BaseName & ".csv").CliPath} /min {Min} /max {Max}"
+            Dim CLI As String() =
+                LinqAPI.Exec(Of String) <= From fa As FastaToken
+                                           In NT
+                                           Let path As String = App.GetAppSysTempFile(".fasta")
+                                           Let save As Boolean = fa.Save(path, Encodings.ASCII)
+                                           Select task(path)
+            Call App.SelfFolks(CLI, LQuerySchedule.CPU_NUMBER)
+        Else
+            For Each seq As FastaToken In NT
+                Dim Search As New Topologically.MirrorSearchs(seq, Min, Max)
+                Dim path As String = out & $"/{seq.Title.NormalizePathString.Replace(" ", "_")}.csv"
+                Call Search.InvokeSearch()
+                Call Search.ResultSet.SaveTo(path)
+            Next
+        End If
 
         Return 0
     End Function
