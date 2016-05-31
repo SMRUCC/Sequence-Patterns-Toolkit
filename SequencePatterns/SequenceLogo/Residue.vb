@@ -33,7 +33,11 @@ Namespace SequenceLogo
         Public ReadOnly Property AsChar As Char
             Get
                 Dim maxInd As Integer = Alphabets.MaxIndex
-                Dim c As Char = If(Alphabets.Length = 4, ColorSchema.NT(maxInd), ColorSchema.AA(maxInd))
+                Dim c As Char =
+                    If(Alphabets.Length = 4,
+                    ColorSchema.NT(maxInd),
+                    ColorSchema.AA(maxInd))
+
                 Return Motif.ResidueSite.__toChar(c, Alphabets(maxInd).RelativeFrequency)
             End Get
         End Property
@@ -53,11 +57,14 @@ Namespace SequenceLogo
         ''' </summary>
         ''' <returns></returns>
         Public Function Hi() As Double
-            Dim LQuery As Double = (From alph As Alphabet
-                                    In Alphabets
-                                    Select alph.RelativeFrequency * Math.Log(alph.RelativeFrequency, newBase:=2)).Sum
-            LQuery *= -1
-            Return LQuery
+            Dim LQuery As IEnumerable(Of Double) =
+                From alph As Alphabet
+                In Alphabets
+                Select alph.RelativeFrequency *
+                    Math.Log(alph.RelativeFrequency, newBase:=2)
+            Dim sm As Double = LQuery.Sum * -1
+
+            Return sm
         End Function
 
         ''' <summary>

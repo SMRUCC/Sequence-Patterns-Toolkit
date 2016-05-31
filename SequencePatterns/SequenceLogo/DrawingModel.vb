@@ -92,7 +92,9 @@ Namespace SequenceLogo
             For i As Integer = 0 To npos - 1
                 Dim idx As Integer = i
                 ic(i) = 2 + Sum(pwm.Residues.ToArray(Of Double)(
-                                Function(x) If(x.Alphabets(idx).RelativeFrequency > 0, x.Alphabets(idx).RelativeFrequency * Math.Log(x.Alphabets(idx).RelativeFrequency, 2), 0)))
+                                Function(x) If(x.Alphabets(idx).RelativeFrequency > 0,
+                                x.Alphabets(idx).RelativeFrequency * Math.Log(x.Alphabets(idx).RelativeFrequency, 2),
+                                0)))
             Next
 
             Return ic

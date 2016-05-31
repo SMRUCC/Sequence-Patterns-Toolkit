@@ -4,6 +4,9 @@ Imports System.Text.RegularExpressions
 Imports LANS.SystemsBiology.SequenceModel.FASTA.FastaFile
 Imports LANS.SystemsBiology.ComponentModel.Loci
 Imports LANS.SystemsBiology.SequenceModel.FASTA
+Imports Microsoft.VisualBasic.Linq
+Imports System.Runtime.CompilerServices
+Imports Microsoft.VisualBasic.Language
 
 Namespace Pattern
 
@@ -21,22 +24,19 @@ Namespace Pattern
         ''' <returns></returns>
         ''' <remarks></remarks>
         Public Function Match(Seq As FastaFile, pattern As String) As File
-            Dim Segments = From fa As FastaToken
-                           In Seq.AsParallel
-                           Let Segment = GenerateSegment(fa, pattern)
-                           Where Segment IsNot Nothing
-                           Select Segment
-                           Order By Segment.First.First Ascending '
+            Dim LQuery = From fa As FastaToken
+                         In Seq.AsParallel
+                         Let Segment As RowObject() = fa.GenerateSegment(pattern)
+                         Where Segment IsNot Nothing
+                         Select Segment
+                         Order By Segment.First.First Ascending '
 
-            Dim Csv As File = New File
+            Dim df As New File(LQuery.MatrixAsIterator)
 
-            For Each part As RowObject() In Segments
-                Csv += part
-            Next
-
-            Return Csv
+            Return df
         End Function
 
+        <Extension>
         Public Function GenerateSegment(Seq As FastaToken, pattern As String) As RowObject()
             Dim LQuery = RowObject.Distinct((From Segment As SegLoci
                                              In Match(Seq.SequenceData, pattern)
@@ -57,12 +57,14 @@ Namespace Pattern
 
         Public Function Match(sequence As String, pattern As String) As SegLoci()
             Dim startLeft As Long = 1
-            Dim LQuery = From m As Match
-                     In Regex.Matches(sequence, pattern) '由于StartLeft参数在被调用的时候是以ByRef的形式传递的，故而这里不可以再使用并行拓展
-                         Let Segment As SegLoci = SegLoci.CreateObject(WholeSeq:=sequence, SegmentValue:=m, startLeft:=startLeft)
-                         Select Segment
-                         Order By Segment.Left Ascending '
-            Return LQuery.ToArray
+            Dim LQuery As SegLoci() =
+                LinqAPI.Exec(Of SegLoci) <= From m As Match
+                                            In Regex.Matches(sequence, pattern) '由于StartLeft参数在被调用的时候是以ByRef的形式传递的，故而这里不可以再使用并行拓展
+                                            Let Segment As SegLoci =
+                                                SegLoci.CreateObject(WholeSeq:=sequence, SegmentValue:=m, startLeft:=startLeft)
+                                            Select Segment
+                                            Order By Segment.Left Ascending '
+            Return LQuery
         End Function
     End Module
 End Namespace

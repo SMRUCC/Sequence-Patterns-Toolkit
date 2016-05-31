@@ -9,6 +9,7 @@ Namespace Pattern
 
         <ExportAPI("Loci.Find.Location",
                    Info:="Found out all of the loci site on the target sequence.")>
+        <Extension>
         Public Function FindLocation(Sequence As I_PolymerSequenceModel, Loci As String) As Integer()
             Return FindLocation(Sequence.SequenceData, Loci)
         End Function
