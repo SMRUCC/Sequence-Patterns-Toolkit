@@ -6,6 +6,9 @@ Imports Microsoft.VisualBasic.DocumentFormat.Csv.Extensions
 Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports Microsoft.VisualBasic.Text.Similarity
 Imports Microsoft.VisualBasic
+Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
+Imports System.Runtime.CompilerServices
 
 Namespace Topologically.SimilarityMatches
 
@@ -21,7 +24,7 @@ Namespace Topologically.SimilarityMatches
         ''' 模糊匹配相似的位点在目标序列之上的位置
         ''' </summary>
         ''' <param name="Sequence"></param>
-        ''' <param name="Loci"></param>
+        ''' <param name="loci"></param>
         ''' <param name="Min"></param>
         ''' <param name="Max"></param>
         ''' <param name="cutoff"></param>
@@ -29,21 +32,33 @@ Namespace Topologically.SimilarityMatches
         ''' <remarks></remarks>
         ''' 
         <ExportAPI("Search.Loci.Repeats")>
-        Public Function MatchLociLocations(Sequence As String, Loci As String, Min As Integer, Max As Integer, Optional cutoff As Double = 0.65) As LociMatchedResult()
-            Dim Chars As Char() = (From c As Char In Sequence.ToUpper.ShadowCopy(Sequence) Select c Distinct).ToArray
-            Dim initSeeds = (From obj In __generateSeeds(Chars, Loci, cutoff, Min, Max)
+        Public Function MatchLociLocations(Sequence As String,
+                                           loci As String,
+                                           Min As Integer,
+                                           Max As Integer,
+                                           Optional cutoff As Double = 0.65) As LociMatchedResult()
+
+            Dim Chars As Char() =
+                LinqAPI.Exec(Of Char) <= From c As Char
+                                         In Sequence.ToUpper.ShadowCopy(Sequence)
+                                         Select c
+                                         Distinct
+            Dim initSeeds = (From obj In __generateSeeds(Chars, loci, cutoff, Min, Max)
                              Select obj
-                             Group By obj.Key Into Group)
+                             Group By obj.Name Into Group)
             Dim SeedsData = (From seed In initSeeds
-                             Select seed.Key,
-                                 seed.Group.First.Value) _
-                                   .ToDictionary(Function(obj) obj.Key,
-                                                 Function(obj) obj.Value)
+                             Select seed.Name,
+                                 seed.Group.First.x) _
+                                   .ToDictionary(Function(obj) obj.Name,
+                                                 Function(obj) obj.x)
             Dim Seeds = (From obj In SeedsData Select obj.Key).ToArray
-            Dim Repeats As LociMatchedResult() = (From lociSegment As LociMatchedResult
-                                                  In __matchLociLocation(Sequence, Seeds)
-                                                  Let Score As Double = SeedsData(lociSegment.Matched)
-                                                  Select lociSegment.InvokeSet(NameOf(lociSegment.Similarity), Score).InvokeSet(NameOf(lociSegment.Loci), Loci)).ToArray
+            Dim Repeats As LociMatchedResult() =
+                LinqAPI.Exec(Of LociMatchedResult) <= From lociSegment As LociMatchedResult
+                                                      In __matchLociLocation(Sequence, Seeds)
+                                                      Let Score As Double = SeedsData(lociSegment.Matched)
+                                                      Select lociSegment _
+                                                          .InvokeSet(NameOf(lociSegment.Similarity), Score) _
+                                                          .InvokeSet(NameOf(lociSegment.Loci), loci)
             Return Repeats
         End Function
 
@@ -55,58 +70,71 @@ Namespace Topologically.SimilarityMatches
         ''' <returns></returns>
         ''' <remarks></remarks>
         Private Function __matchLociLocation(Sequence As String, seeds As String()) As LociMatchedResult()
-            Dim LQuery = (From s As String In seeds
-                          Let Location = FindLocation(Sequence, s)
-                          Select New LociMatchedResult With {
-                              .Matched = s,
-                              .Location = Location}).ToArray
+            Dim LQuery As LociMatchedResult() =
+                LinqAPI.Exec(Of LociMatchedResult) <= From s As String
+                                                      In seeds
+                                                      Let Location = FindLocation(Sequence, s)
+                                                      Select New LociMatchedResult With {
+                                                          .Matched = s,
+                                                          .Location = Location
+                                                      }
             Return LQuery
         End Function
 
+        <Extension>
         Private Function __generateSeeds(Chars As Char(),
                                          Loci As String,
                                          Cutoff As Double,
                                          Min As Integer,
-                                         Max As Integer) As KeyValuePair(Of String, Double)()
+                                         Max As Integer) As NamedValue(Of Double)()
             If Min < 6 Then
                 Cutoff = 0.3
             End If
 
-            Dim Seeds As List(Of String) = Topologically.InitializeSeeds(Chars, Min)
-            Dim SeedsCollection = (From s As String In Seeds
-                                   Let Score As Double = New StringSimilarityMatchs(s, Loci).Score
-                                   Where Score >= Cutoff
-                                   Select s,
-                                       Score).ToList '生成初始长度的种子
-            Dim TempChunk As List(Of String)
+            Dim seeds As List(Of String) = Topologically.InitializeSeeds(Chars, Min)
+            Dim source = (From s As String In seeds
+                          Let Score As Double = New StringSimilarityMatchs(s, Loci).Score
+                          Where Score >= Cutoff
+                          Select s,
+                              Score).ToList '生成初始长度的种子
+            Dim buf As List(Of String)
             'Seeds = (From obj In SeedsCollection Select obj.s).ToList
 
             For i As Integer = Min + 1 To Max   '种子延伸至长度的上限
-                TempChunk = Topologically.ExtendSequence(Seeds, Chars)
-                Dim ChunkBuffer = (From s As String In TempChunk.AsParallel Let Score As Double = New StringSimilarityMatchs(Loci, s).Score Where Score >= Cutoff Select s, Score).ToArray
-                TempChunk = (From obj In ChunkBuffer Select obj.s).ToList
+                buf = Topologically.ExtendSequence(seeds, Chars)
+                Dim tmp = (From s As String
+                           In buf.AsParallel
+                           Let Score As Double = New StringSimilarityMatchs(Loci, s).Score
+                           Where Score >= Cutoff
+                           Select s,
+                               Score).ToArray
 
                 Call Console.Write(".")
 
-                Call Seeds.AddRange(TempChunk)
-                Call SeedsCollection.AddRange(ChunkBuffer)
+                seeds += tmp.Select(Function(x) x.s)
+                source += tmp
             Next
 
-            Call Console.WriteLine("Seeds generation thread for        {0}       job done!", Loci)
-            Return (From obj In SeedsCollection.AsParallel Select New KeyValuePair(Of String, Double)(obj.s, obj.Score)).ToArray
+            Call $"Seeds generation thread for   {Loci}    job done!".__DEBUG_ECHO
+
+            Return LinqAPI.Exec(Of NamedValue(Of Double)) <=
+                From x
+                In source.AsParallel
+                Select New NamedValue(Of Double)(x.s, x.Score)
         End Function
 
         ''' <summary>
-        ''' 生成和<paramref name="Loci"></paramref>满足相似度匹配关系的序列的集合
+        ''' 生成和<paramref name="loci"></paramref>满足相似度匹配关系的序列的集合
         ''' </summary>
         ''' <param name="Chars"></param>
-        ''' <param name="Loci"></param>
+        ''' <param name="loci"></param>
         ''' <param name="Cutoff"></param>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Private Function __generateSeeds(Chars As Char(), Loci As String, Cutoff As Double) As KeyValuePair(Of String, Double)()
-            Dim Min As Integer = Len(Loci), Max As Integer = Len(Loci) * 2
-            Return __generateSeeds(Chars, Loci, Cutoff, Min, Max)
+        Private Function __generateSeeds(Chars As Char(), loci As String, Cutoff As Double) As NamedValue(Of Double)()
+            Dim Min As Integer = Len(loci),
+                Max As Integer = Len(loci) * 2
+            Return __generateSeeds(Chars, loci, Cutoff, Min, Max)
         End Function
 
         ''' <summary>
@@ -123,24 +151,47 @@ Namespace Topologically.SimilarityMatches
         Public Function InvokeSearch(SequenceData As String, Min As Integer, Max As Integer, Optional cutoff As Double = 0.65) As LociMatchedResult()
             SequenceData = SequenceData.ToUpper
 
-            Call Console.WriteLine("Start to generate seeds....")
-            Dim Seeds = (From rp In SearchRepeats(New NucleotideModels.SegmentObject(SequenceData, 1), Min, Max) Select seq = rp.SequenceData Distinct).ToArray  '生成搜索所需要的种子
-            Call Console.WriteLine("Generate repeats search seeds, job done! {0} repeats sequence was export for seeds!", Seeds.Count)
+            Call "Start to generate seeds....".__DEBUG_ECHO
+
+            Dim Seeds As String() =
+                LinqAPI.Exec(Of String) <= From rp As Topologically.Repeats
+                                           In SearchRepeats(New SegmentObject(SequenceData, 1), Min, Max)
+                                           Select seq = rp.SequenceData
+                                           Distinct  '生成搜索所需要的种子
+
+            Call $"Generate repeats search seeds, job done! {Seeds.Length} repeats sequence was export for seeds!".__DEBUG_ECHO
+
             Dim Chars As Char() = (From c As Char In SequenceData Select c Distinct).ToArray
-            Call Console.WriteLine("Scanning the whole sequence for each repeats loci.....")
+
+            Call "Scanning the whole sequence for each repeats loci.....".__DEBUG_ECHO
+
             Dim Repeats = (From Loci As String
                            In Seeds
-                           Let InternalSeeds = (From obj In __generateSeeds(Chars, Loci, cutoff, Min, Max:=Len(Loci) * 1.5) Select obj Group By obj.Key Into Group).ToArray.ToDictionary(Function(obj) obj.Key, elementSelector:=Function(obj) obj.Group.First.Value)
+                           Let InternalSeeds = (From obj As NamedValue(Of Double)
+                                                In __generateSeeds(Chars, Loci, cutoff, Min, Max:=Len(Loci) * 1.5)
+                                                Select obj
+                                                Group By obj.Name Into Group) _
+                                                    .ToDictionary(Function(obj) obj.Name,
+                                                                  Function(obj) obj.Group.First.x)
                            Let InternalSeedsSegment As String() = (From obj In InternalSeeds Select obj.Key).ToArray
-                           Select InternalSeeds, Loci, repeatsCollection = __matchLociLocation(SequenceData, InternalSeedsSegment)).ToArray '遍历种子，进行全序列扫描
-            Call Console.WriteLine("{0} repeats loci!", Repeats.Count)
-            Dim LQuery = (From Group In Repeats.AsParallel
-                          Let data = (From Loci As LociMatchedResult
-                              In Group.repeatsCollection.AsParallel
-                                      Let Score As Double = Group.InternalSeeds(Loci.Matched)
-                                      Select Loci.InvokeSet(NameOf(Loci.Similarity), Score).InvokeSet(NameOf(Loci.Loci), Group.Loci)).ToArray
-                          Select data).ToArray.MatrixToVector
-            Call Console.WriteLine("Finally generate {0} repeats loci data!", LQuery.Count)
+                           Select InternalSeeds,
+                               Loci,
+                               repeatsCollection = __matchLociLocation(SequenceData, InternalSeedsSegment)).ToArray '遍历种子，进行全序列扫描
+
+            Call $"{Repeats.Length} repeats loci!".__DEBUG_ECHO
+
+            Dim LQuery As LociMatchedResult() =
+                LinqAPI.Exec(Of LociMatchedResult) <= From Group
+                                                      In Repeats.AsParallel
+                                                      Let data = (From loci As LociMatchedResult
+                                                                  In Group.repeatsCollection.AsParallel
+                                                                  Let Score As Double = Group.InternalSeeds(loci.Matched)
+                                                                  Select loci.InvokeSet(NameOf(loci.Similarity), Score) _
+                                                                             .InvokeSet(NameOf(loci.Loci), Group.Loci)).ToArray
+                                                      Select data
+
+            Call $"Finally generate {LQuery.Length} repeats loci data!".__DEBUG_ECHO
+
             Return LQuery
         End Function
 
@@ -150,12 +201,12 @@ Namespace Topologically.SimilarityMatches
         End Function
 
         <ExportAPI("write.csv.repeats_result")>
-        Public Function SaveRepeatsResult(result As Generic.IEnumerable(Of LociMatchedResult), saveto As String) As Boolean
+        Public Function SaveRepeatsResult(result As IEnumerable(Of LociMatchedResult), saveto As String) As Boolean
             Return result.SaveTo(saveto, False)
         End Function
 
         <ExportAPI("write.csv.repeats_result")>
-        Public Function SaveRepeatsResult(result As Generic.IEnumerable(Of ReversedLociMatchedResult), saveto As String) As Boolean
+        Public Function SaveRepeatsResult(result As IEnumerable(Of ReversedLociMatchedResult), saveto As String) As Boolean
             Return result.SaveTo(saveto, False)
         End Function
 
@@ -175,22 +226,26 @@ Namespace Topologically.SimilarityMatches
                            In Seeds.AsParallel
                            Let InternalSeeds = (From obj In __generateSeeds(Chars, Loci, cutoff)
                                                 Select obj
-                                                Group By obj.Key Into Group) _
-                                                      .ToDictionary(Function(obj) obj.Key,
-                                                                    Function(obj) obj.Group.First.Value)
+                                                Group By obj.Name Into Group) _
+                                                      .ToDictionary(Function(obj) obj.Name,
+                                                                    Function(obj) obj.Group.First.x)
                            Let InternalSeedsSegment As String() = (From obj In InternalSeeds Select obj.Key).ToArray
                            Select InternalSeeds,
                                Loci,
                                repeatsCollection = __matchLociLocation(Sequence, InternalSeedsSegment)).ToArray '遍历种子，进行全序列扫描
 
             '反向重复的
-            Dim LQuery = (From Group
-                          In Repeats.AsParallel
-                          Select (From Loci As LociMatchedResult
-                                  In Group.repeatsCollection.AsParallel
-                                  Let Score As Double = Group.InternalSeeds(Loci.Matched)
-                                  Let LociResult = Loci.InvokeSet(NameOf(Loci.Similarity), Score).InvokeSet(NameOf(Loci.Loci), Group.Loci)
-                                  Select ReversedLociMatchedResult.GenerateFromBase(LociResult))).MatrixToVector
+            Dim LQuery As ReversedLociMatchedResult() =
+                LinqAPI.Exec(Of ReversedLociMatchedResult) <=
+                    From Group
+                    In Repeats.AsParallel
+                    Select From Loci As LociMatchedResult
+                           In Group.repeatsCollection.AsParallel
+                           Let Score As Double = Group.InternalSeeds(Loci.Matched)
+                           Let LociResult =
+                               Loci.InvokeSet(NameOf(Loci.Similarity), Score) _
+                                   .InvokeSet(NameOf(Loci.Loci), Group.Loci)
+                           Select ReversedLociMatchedResult.GenerateFromBase(LociResult)
             Return LQuery
         End Function
     End Module

@@ -1,6 +1,7 @@
 ﻿Imports LANS.SystemsBiology.SequenceModel
 Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports Microsoft.VisualBasic
+Imports Microsoft.VisualBasic.Language
 
 Namespace Topologically
 
@@ -36,11 +37,13 @@ Namespace Topologically
                 <Parameter("Max.Len", "The maximum length of the repeat sequence loci.")> Max As Integer)
 
             SequenceData = Sequence.SequenceData.ToUpper
-            ResidueBase = (From ch As Char
-                           In SequenceData
-                           Where ch <> "-"c AndAlso ch <> "*"c ' 这些缺口的符号是需要被过滤掉的
-                           Select ch Distinct).ToArray ' 获取所有的残基的符号
-            _segmentLocis = Topologically.Seeds.InitializeSeeds(ResidueBase, Min)
+            ResidueBase =
+                LinqAPI.Exec(Of Char) <= From ch As Char
+                                         In SequenceData
+                                         Where ch <> "-"c AndAlso ch <> "*"c ' 这些缺口的符号是需要被过滤掉的
+                                         Select ch
+                                         Distinct ' 获取所有的残基的符号
+            _segmentLocis = Seeds.InitializeSeeds(ResidueBase, Min)
             _min = Min
             _max = Max
 
