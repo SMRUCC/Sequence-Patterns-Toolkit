@@ -84,6 +84,24 @@ Partial Module Utilities
         Return 0
     End Function
 
+    <ExportAPI("/Mirror.Batch",
+               Usage:="/Mirror.Batch /nt <nt.fasta> /out <out.csv> [/min <3> /max <20>]")>
+    Public Function MirrorBatch(args As CommandLine.CommandLine) As Integer
+        Dim NT As New FastaFile(args - "/nt")
+        Dim out As String = args.GetValue("/out", args("/nt").TrimFileExt & "-Mirror/")
+        Dim Min As Integer = args.GetValue("/min", 3)
+        Dim Max As Integer = args.GetValue("/max", 20)
+
+        For Each seq As FastaToken In NT
+            Dim Search As New Topologically.MirrorSearchs(seq, Min, Max)
+            Dim path As String = out & $"/{seq.Title.NormalizePathString.Replace(" ", "_")}.csv"
+            Call Search.InvokeSearch()
+            Call Search.ResultSet.SaveTo(path)
+        Next
+
+        Return 0
+    End Function
+
     ''' <summary>
     ''' 同一条链上面的镜像回文
     ''' </summary>

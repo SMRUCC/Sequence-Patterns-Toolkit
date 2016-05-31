@@ -31,7 +31,9 @@ Namespace Topologically
         ''' <param name="currLen"></param>
         Protected Overrides Sub __postResult(currentRemoves() As String, currentStat As List(Of String), currLen As Integer)
             Dim Sites As PalindromeLoci() = currentStat.ToArray(
-              Function(loci) Palindrome.CreatePalindrome(loci, Sequence:=SequenceData), Parallel:=True).MatrixAsIterator.TrimNull
+                Function(loci) Palindrome.CreatePalindrome(
+                    loci, SequenceData),
+                    Parallel:=True).MatrixAsIterator.TrimNull
             Call _ResultSet.Add(Sites)
         End Sub
     End Class
