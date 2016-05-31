@@ -27,11 +27,18 @@ Partial Module Utilities
 
         Call $"Found {fasta.Count} fasta files in source DIR  {fa}".__DEBUG_ECHO
 
-        Dim seqHash = (From file As String In fasta Select New FastaFile(file)).MatrixAsIterator.ToDictionary(Function(x) x.Attributes.First.Split.First.Trim)
+        Dim seqHash As Dictionary(Of String, FastaToken) =
+            (From file As String
+             In fasta
+             Select New FastaFile(file)).MatrixAsIterator _
+                                        .ToDictionary(Function(x) x.Attributes.First.Split.First.Trim)
 
         Call $"Files loads {seqHash.Count} sequence...".__DEBUG_ECHO
 
-        Dim LQuery = (From sId As String In locus Where seqHash.ContainsKey(sId) Select seqHash(sId))
+        Dim LQuery As IEnumerable(Of FastaToken) = From sId As String
+                                                   In locus
+                                                   Where seqHash.ContainsKey(sId)
+                                                   Select seqHash(sId)
         Dim outFa As New FastaFile(LQuery)
 
         Return outFa.Save(out, Encodings.ASCII)
@@ -50,15 +57,16 @@ Partial Module Utilities
         Dim readers = Csv.CreateDataSource
         Dim attrSchema = (From x In Csv.GetOrdinalSchema(lstAttrs) Where x > -1 Select x).ToArray
         Dim seqOrd As Integer = Csv.GetOrdinal(seq)
-        Dim Fa = (From row As DynamicObjectLoader
-                  In readers.AsParallel
-                  Let attributes As String() = row.GetValues(attrSchema)
-                  Let seqData As String = row.GetValue(seqOrd)
-                  Let seqFa As FASTA.FastaToken = New FASTA.FastaToken With {
-                      .Attributes = attributes,
-                      .SequenceData = seqData
-                  }
-                  Select seqFa).ToArray
+        Dim Fa As IEnumerable(Of FastaToken) =
+            From row As DynamicObjectLoader
+            In readers.AsParallel
+            Let attributes As String() = row.GetValues(attrSchema)
+            Let seqData As String = row.GetValue(seqOrd)
+            Let seqFa As FASTA.FastaToken = New FASTA.FastaToken With {
+                .Attributes = attributes,
+                .SequenceData = seqData
+            }
+            Select seqFa
         Dim Fasta As New FASTA.FastaFile(Fa)
         Return Fasta.Save(out, Encodings.ASCII).CLICode
     End Function

@@ -1,210 +1,63 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
   <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.My.MySettings" Collapsed="true">
-    <Position X="35.75" Y="0.5" Width="1.5" />
+    <Position X="4" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAEAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Pattern.SegLoci" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="32.25" Y="1.5" Width="1.5" />
+  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Loci" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAEAAAAAABAAAAAAgAACICAAAEAAAA=</HashCode>
-      <FileName>Pattern\SegLoci.vb</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.RevRepeats">
-    <Position X="14.5" Y="15.75" Width="5.25" />
-    <TypeIdentifier>
-      <HashCode>AgAAAAAAAAAAAAgACAAAAAAAAAAAAAAgAAAAIAAAAAA=</HashCode>
-      <FileName>Topologically\Exactly\RepeatsLoci.vb</FileName>
+      <HashCode>AAAIAAAAAAAAgAAEAAAAAAAAAAAAACAIAEAAgAAAAAA=</HashCode>
+      <FileName>CLI\FastaTools.vb</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.Repeats">
-    <Position X="15" Y="12.5" Width="4.5" />
+  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.locusMap" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AgAgAAAAAAAAAAgEAAIAAABAAAAAAAAIAAAAAAAAAAA=</HashCode>
-      <FileName>Topologically\Exactly\RepeatsLoci.vb</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.SearchWorker">
-    <Position X="13.75" Y="0.5" Width="5.75" />
-    <TypeIdentifier>
-      <HashCode>AAgAAAAAAJAAAAAAEACAAAAAAAAAQQAIEQBAAAAAAAA=</HashCode>
-      <FileName>Topologically\SearchWorker.vb</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAACAAAA=</HashCode>
+      <FileName>Program.vb</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.SimilarityMatches.ReversedLociMatchedResult">
-    <Position X="7.5" Y="15" Width="5" />
+  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.pv" Collapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAIAAAAAA=</HashCode>
-      <FileName>Topologically\Similarity\Loci.vb</FileName>
+      <HashCode>QAsAAAAAAAABgAgQAAAAAAAAAACQAAAAAAAAUACAAAA=</HashCode>
+      <FileName>Program.vb</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.SimilarityMatches.LociMatchedResult">
-    <Position X="9.25" Y="12.5" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AAAkgAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Topologically\Similarity\Loci.vb</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.RepeatsSearchs">
-    <Position X="24.75" Y="5" Width="6.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAACAAAAAAAQAAAAAQQAAAAAABAAAAAA=</HashCode>
-      <FileName>Topologically\Exactly\RepeatsSearchs.vb</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.SearchReversedRepeats">
-    <Position X="17.5" Y="5" Width="6.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAACAAAAAAAQAAAAAQQAAAAAABAAAAAA=</HashCode>
-      <FileName>Topologically\Exactly\SearchReversedRepeats.vb</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.PalindromeSearchs">
-    <Position X="1.75" Y="8.5" Width="5.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Topologically\Palindrome\SearchWorker.vb</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.MiroorSearchs">
-    <Position X="6.5" Y="5" Width="5.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAAAAAAAAAAQAAEAAQQAAAAAAAAAAAAA=</HashCode>
-      <FileName>Topologically\Palindrome\SearchWorker.vb</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.RepeatsLoci">
-    <Position X="0.5" Y="0.5" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAQAAAAA=</HashCode>
-      <FileName>Topologically\Exactly\RepeatPlant.vb</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.RevRepeatsLoci">
-    <Position X="0.5" Y="3" Width="2" />
-    <TypeIdentifier>
-      <HashCode>gAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAQAAAAA=</HashCode>
-      <FileName>Topologically\Exactly\RepeatPlant.vb</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.PalindromeLoci" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="37.5" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAMQAACACAAAAAQABAAAABAgEAAAAAIAAAAAAAAAAA=</HashCode>
-      <FileName>Topologically\Palindrome\PalindromeLoci.vb</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Blast" Collapsed="true">
-    <Position X="32.25" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
-      <FileName>Topologically\Similarity\Blast.vb</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.RepeatsView">
-    <Position X="0.5" Y="10.5" Width="5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAEAAAAAABAAIAGAAAICAAAAggAAAA=</HashCode>
-      <FileName>Topologically\Exactly\RepeatPlant.vb</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.RevRepeatsView">
-    <Position X="0.75" Y="14.25" Width="4.5" />
-    <TypeIdentifier>
-      <HashCode>BAAAAAAAAAAAAAAACAAAAAAAAIACAAAAAAAAAgAAAAA=</HashCode>
-      <FileName>Topologically\Exactly\RepeatPlant.vb</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.Imperfect">
-    <Position X="8.25" Y="8.5" Width="8.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAgAAAAAAAAAAAAAgAAQAAAAASIBAAAAAAAAAAAA=</HashCode>
-      <FileName>Topologically\Palindrome\Imperfect.vb</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.ImperfectPalindrome" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="34" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>ABAAAAAAAAAAgAgUgAAAAAAAAAAIAABACIAAAAAAAAA=</HashCode>
-      <FileName>Topologically\Palindrome\ImperfectPalindrome.vb</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Module Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Utilities" Collapsed="true">
-    <Position X="34" Y="4.75" Width="1.5" />
+    <Position X="2.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ACAAAIAAsAAgwAABBiAAIAAIKABEGEBEoAACQAAAAIg=</HashCode>
+      <HashCode>CCAAAIAAsAAgyAABBiQAIAAIKApMGURUoFACQgAAAIg=</HashCode>
       <FileName>CLI\Aligner.vb</FileName>
     </TypeIdentifier>
   </Module>
   <Module Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Program" Collapsed="true">
-    <Position X="37.5" Y="2.75" Width="1.5" />
+    <Position X="2.25" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAABAAAAAA=</HashCode>
       <FileName>Program.vb</FileName>
     </TypeIdentifier>
   </Module>
   <Module Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.ShellScriptAPI" Collapsed="true">
-    <Position X="32.25" Y="4.75" Width="1.5" />
+    <Position X="0.5" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAEAAIBAgYAAAAAAIAAAAAAAAAAAEAAACCAAAAgA=</HashCode>
+      <HashCode>AAAAAEAAIBAgYAAAAAAAAAAAAAAAAAAEAAACCAAAAgA=</HashCode>
       <FileName>ShellScriptAPI.vb</FileName>
     </TypeIdentifier>
   </Module>
   <Module Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.My.Resources.Resources" Collapsed="true">
-    <Position X="35.75" Y="3.75" Width="1.5" />
+    <Position X="4" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
     </TypeIdentifier>
   </Module>
   <Module Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.My.MySettingsProperty" Collapsed="true">
-    <Position X="32.25" Y="2.75" Width="1.5" />
+    <Position X="0.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAA=</HashCode>
-    </TypeIdentifier>
-  </Module>
-  <Module Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Pattern.PatternSearch" Collapsed="true">
-    <Position X="35.75" Y="2.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAgAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Pattern\PatternSearch.vb</FileName>
-    </TypeIdentifier>
-  </Module>
-  <Module Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.RepeatsSearchAPI" Collapsed="true">
-    <Position X="34" Y="3.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AKQgAAAEAAAQgAAIAACAAAABAChAAAAAAAAIAEAAAAg=</HashCode>
-      <FileName>Topologically\Exactly\RepeatsSearchAPI.vb</FileName>
-    </TypeIdentifier>
-  </Module>
-  <Module Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.Palindrome" Collapsed="true">
-    <Position X="34" Y="2.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAQAAAAAAAEEAAAACAhAAAAAAAAAAAAAAAAIQAAA=</HashCode>
-      <FileName>Topologically\Palindrome\Palindrome.vb</FileName>
-    </TypeIdentifier>
-  </Module>
-  <Module Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.Seeds" Collapsed="true">
-    <Position X="37.5" Y="3.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAQAAACAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
-      <FileName>Topologically\Seeds.vb</FileName>
-    </TypeIdentifier>
-  </Module>
-  <Module Name="LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically.SimilarityMatches.Repeats" Collapsed="true">
-    <Position X="32.25" Y="3.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AQAAAAAAAAAAAAAAAAAAAAAAAAAAAQCCAQCAIAAAAAA=</HashCode>
-      <FileName>Topologically\Similarity\Repeats.vb</FileName>
     </TypeIdentifier>
   </Module>
   <Font Name="Segoe UI" Size="9" />
