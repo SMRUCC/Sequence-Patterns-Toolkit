@@ -1,5 +1,4 @@
-﻿Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.Topologically
-Imports LANS.SystemsBiology.Assembly.NCBI
+﻿Imports LANS.SystemsBiology.Assembly.NCBI
 Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat.ComponentModels
 Imports LANS.SystemsBiology.ComponentModel.Loci
 Imports LANS.SystemsBiology.SequenceModel.FASTA
@@ -9,6 +8,8 @@ Imports Microsoft.VisualBasic.DocumentFormat.Csv
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Text
 Imports Microsoft.VisualBasic.Parallel
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
 
 Partial Module Utilities
 
@@ -308,7 +309,7 @@ Partial Module Utilities
                            search As TextIndexing,
                            maxDist As Integer,
                            max As Integer) As ImperfectPalindrome
-        Dim palin As String = Topologically.PalindromeLoci.GetPalindrome(segment.Segment)  ' 当前片段所计算出来的完全匹配的回文位点
+        Dim palin As String = PalindromeLoci.GetPalindrome(segment.Segment)  ' 当前片段所计算出来的完全匹配的回文位点
         Dim start As Integer = segment.Index + segment.Array.Length + maxDist * 0.95
         Dim parPiece As String = Mid(inFasta.SequenceData, start, max + 5)  ' 实际的位点
         Dim dist = LevenshteinDistance.ComputeDistance(palin, parPiece)

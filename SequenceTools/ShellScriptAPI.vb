@@ -4,6 +4,8 @@ Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports Microsoft.VisualBasic
 Imports LANS.SystemsBiology.SequenceModel.FASTA.Reflection
 Imports LANS.SystemsBiology.SequenceModel
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Pattern
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
 
 <[PackageNamespace]("SequenceTools",
                     Category:=APICategories.ResearchTools,
@@ -71,9 +73,9 @@ Public Module ShellScriptAPI
             output = My.Computer.FileSystem.SpecialDirectories.Desktop
         End If
 
-        Dim Csv = LANS.SystemsBiology.AnalysisTools.SequenceTools.Pattern.Match(Seq:=fasta, pattern:=pattern)
-        Dim Complement = LANS.SystemsBiology.AnalysisTools.SequenceTools.Pattern.Match(Seq:=fasta.Complement(), pattern:=pattern)
-        Dim Reverse = LANS.SystemsBiology.AnalysisTools.SequenceTools.Pattern.Match(Seq:=fasta.Reverse, pattern:=pattern)
+        Dim Csv = SequencePatterns.Pattern.Match(Seq:=fasta, pattern:=pattern)
+        Dim Complement = SequencePatterns.Pattern.Match(Seq:=fasta.Complement(), pattern:=pattern)
+        Dim Reverse = SequencePatterns.Pattern.Match(Seq:=fasta.Reverse, pattern:=pattern)
 
         Call Csv.Insert(rowId:=-1, Row:={"Match pattern:=", pattern})
         Call Complement.Insert(rowId:=-1, Row:={"Match pattern:=", pattern})
@@ -87,38 +89,8 @@ Public Module ShellScriptAPI
     End Function
 
     <ExportAPI("Search")>
-    Public Function PatternSearch(Fasta As LANS.SystemsBiology.SequenceModel.FASTA.FastaToken, Pattern As String) As Pattern.SegLoci()
-
-    End Function
-
-    <ExportAPI("Loci.Find.Location", Info:="Found out all of the loci site on the target sequence.")>
-    Public Function FindLocation(Sequence As I_PolymerSequenceModel, Loci As String) As Integer()
-        Return FindLocation(Sequence.SequenceData, Loci)
-    End Function
-
-    ''' <summary>
-    '''
-    ''' </summary>
-    ''' <param name="Sequence"></param>
-    ''' <param name="Loci"></param>
-    ''' <returns></returns>
-    ''' <remarks>这个位置查找函数是OK的</remarks>
-    <ExportAPI("Loci.Find.Location", Info:="Found out all of the loci site on the target sequence.")>
-    Public Function FindLocation(Sequence As String, Loci As String) As Integer()
-        Dim Locis = New List(Of Integer)
-        Dim p As Integer = 1
-
-        Do While True
-            p = InStr(Start:=p, String1:=Sequence, String2:=Loci)
-            If p > 0 Then
-                Call Locis.Add(p)
-                p += 1
-            Else
-                Exit Do
-            End If
-        Loop
-
-        Return Locis.ToArray
+    Public Function PatternSearch(Fasta As FastaToken, Pattern As String) As SegLoci()
+        Throw New NotImplementedException
     End Function
 
     <ExportAPI("loci.match.location")>

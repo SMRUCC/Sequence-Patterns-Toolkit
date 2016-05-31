@@ -1,4 +1,5 @@
-﻿Imports LANS.SystemsBiology.SequenceModel.FASTA
+﻿Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
+Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 
 Partial Module Utilities

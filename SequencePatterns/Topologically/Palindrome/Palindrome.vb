@@ -5,6 +5,7 @@ Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic
 Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Pattern
 
 Namespace Topologically
 
@@ -139,7 +140,7 @@ Namespace Topologically
         ''' 
         <ExportAPI("HasMirror?")>
         Public Function HaveMirror(Segment As String, Sequence As String) As Boolean
-            Dim Locations = SequenceTools.FindLocation(Sequence, Segment)
+            Dim Locations = FindLocation(Sequence, Segment)
             If Locations.IsNullOrEmpty Then
                 Return False
             End If
@@ -166,7 +167,7 @@ Namespace Topologically
 
         <ExportAPI("Mirrors.Locis.Get")>
         Public Function CreateMirrors(Segment As String, Sequence As String) As PalindromeLoci()
-            Dim Locations = SequenceTools.FindLocation(Sequence, Segment)
+            Dim Locations = FindLocation(Sequence, Segment)
             If Locations.IsNullOrEmpty Then
                 Return Nothing
             End If
@@ -187,7 +188,7 @@ Namespace Topologically
 
         <ExportAPI("Palindrome.Locis.Get")>
         Public Function CreatePalindrome(Segment As String, Sequence As String) As PalindromeLoci()
-            Dim Locations = SequenceTools.FindLocation(Sequence, Segment)
+            Dim Locations = FindLocation(Sequence, Segment)
             If Locations.IsNullOrEmpty Then
                 Return Nothing
             End If
@@ -239,7 +240,7 @@ Namespace Topologically
         ''' 
         <ExportAPI("HasPalindrome?")>
         Public Function HavePalindrome(Segment As String, Sequence As String) As Boolean
-            Dim Locations = SequenceTools.FindLocation(Sequence, Segment)
+            Dim Locations = FindLocation(Sequence, Segment)
             If Locations.IsNullOrEmpty Then
                 Return False
             End If

@@ -5,6 +5,7 @@ Imports Microsoft.VisualBasic.DocumentFormat.Csv.Extensions
 Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports LANS.SystemsBiology.SequenceModel.FASTA
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Pattern
 
 Namespace Topologically
 
@@ -15,12 +16,12 @@ Namespace Topologically
     Public Module RepeatsSearchAPI
 
         <ExportAPI("Write.Csv.RepeatsLoci")>
-        Public Function WriteSearchResult(data As Generic.IEnumerable(Of Repeats), SaveTo As String) As Boolean
+        Public Function WriteSearchResult(data As IEnumerable(Of Repeats), SaveTo As String) As Boolean
             Return data.SaveTo(SaveTo, False)
         End Function
 
         <ExportAPI("Write.Csv.RepeatsLoci")>
-        Public Function WriteSearchResult(data As Generic.IEnumerable(Of RevRepeats), SaveTo As String) As Boolean
+        Public Function WriteSearchResult(data As IEnumerable(Of RevRepeats), SaveTo As String) As Boolean
             Return data.SaveTo(SaveTo, False)
         End Function
 
@@ -86,7 +87,7 @@ Namespace Topologically
 
             Segment = Mid(Segment, 1, Len(Segment) - 1)
 
-            Dim Locis = ShellScriptAPI.FindLocation(Sequence, Segment)
+            Dim Locis = FindLocation(Sequence, Segment)
 
             If Locis.Length < MinAppeared Then
                 If Rev Then
@@ -121,10 +122,13 @@ RETURN_VALUE:
         ''' <param name="Mla">必须是经过多序列比对对齐的</param>
         ''' 
         <ExportAPI("Repeats.Density")>
-        Public Function RepeatsDensity(Mla As FastaFile, Min As Integer, Max As Integer, Optional MinAppeared As Integer = 2) As KeyValuePair(Of Double(), Double())
+        Public Function RepeatsDensity(Mla As FastaFile,
+                                       Min As Integer,
+                                       Max As Integer,
+                                       Optional MinAppeared As Integer = 2) As KeyValuePair(Of Double(), Double())
             Dim LQuery = (From genome As FastaToken
                           In Mla
-                          Select repeats = SequenceTools.Topologically.RepeatsSearchAPI.SearchRepeats(genome, Min, Max, MinAppeared),
+                          Select repeats = Topologically.RepeatsSearchAPI.SearchRepeats(genome, Min, Max, MinAppeared),
                               rev = Topologically.RepeatsSearchAPI.SearchReversedRepeats(genome, Min, Max, MinAppeared)).ToArray
             Dim Vecotrs = (From genome In LQuery
                            Let repeatsViews = RepeatsView.TrimView(Repeats.CreateDocument(genome.repeats)),

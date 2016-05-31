@@ -4,7 +4,6 @@ Imports Microsoft.VisualBasic.DocumentFormat.Csv.DocumentStream.File
 Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.Extensions
 Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports Microsoft.VisualBasic
-Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.Pattern
 Imports LANS.SystemsBiology.SequenceModel.FASTA.Reflection
 Imports System.Drawing
 Imports LANS.SystemsBiology.SequenceModel.FASTA
@@ -140,10 +139,10 @@ Public Module Utilities
         End If
 
         Dim File As String = IO.Path.GetFileNameWithoutExtension(Input)
-        Dim Csv = SequenceTools.Pattern.PatternSearch.Match(Seq:=FASTA, pattern:=pattern)
-        Dim Complement = SequenceTools.Pattern.PatternSearch.Match(Seq:=FASTA.Complement, pattern:=pattern)
-        Dim Reverse = SequenceTools.Pattern.PatternSearch.Match(Seq:=FASTA.Reverse, pattern:=pattern)
-        Dim ComplementReverse = SequenceTools.Pattern.PatternSearch.Match(Seq:=FASTA.Complement.Reverse, pattern:=pattern)
+        Dim Csv = SequencePatterns.Pattern.PatternSearch.Match(Seq:=FASTA, pattern:=pattern)
+        Dim Complement = SequencePatterns.Pattern.PatternSearch.Match(Seq:=FASTA.Complement, pattern:=pattern)
+        Dim Reverse = SequencePatterns.Pattern.PatternSearch.Match(Seq:=FASTA.Reverse, pattern:=pattern)
+        Dim ComplementReverse = SequencePatterns.Pattern.PatternSearch.Match(Seq:=FASTA.Complement.Reverse, pattern:=pattern)
 
         Call Csv.Insert(rowId:=-1, Row:={"Match pattern:=", pattern})
         Call Complement.Insert(rowId:=-1, Row:={"Match pattern:=", pattern})

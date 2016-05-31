@@ -1,4 +1,5 @@
 ﻿Imports LANS.SystemsBiology.SequenceModel
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Pattern
 Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic
@@ -65,7 +66,7 @@ Namespace Topologically
                           }, Parallel:=True)
 
             For Each segment In LQuery
-                Dim locis = ShellScriptAPI.FindLocation(Me.SequenceData, segment.seg)
+                Dim locis = FindLocation(Me.SequenceData, segment.seg)
                 Dim seg As String = segment.seg
                 Dim lstSet As List(Of ImperfectPalindrome) =
                     (From loci In segment.pali.AsParallel

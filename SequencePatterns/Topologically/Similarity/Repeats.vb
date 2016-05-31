@@ -1,5 +1,6 @@
 ﻿Imports LANS.SystemsBiology.SequenceModel
 Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Pattern
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.DocumentFormat.Csv.Extensions
 Imports Microsoft.VisualBasic.Scripting.MetaData
@@ -55,7 +56,7 @@ Namespace Topologically.SimilarityMatches
         ''' <remarks></remarks>
         Private Function __matchLociLocation(Sequence As String, seeds As String()) As LociMatchedResult()
             Dim LQuery = (From s As String In seeds
-                          Let Location = ShellScriptAPI.FindLocation(Sequence, s)
+                          Let Location = FindLocation(Sequence, s)
                           Select New LociMatchedResult With {
                               .Matched = s,
                               .Location = Location}).ToArray
@@ -71,7 +72,7 @@ Namespace Topologically.SimilarityMatches
                 Cutoff = 0.3
             End If
 
-            Dim Seeds As List(Of String) = SequenceTools.Topologically.InitializeSeeds(Chars, Min)
+            Dim Seeds As List(Of String) = Topologically.InitializeSeeds(Chars, Min)
             Dim SeedsCollection = (From s As String In Seeds
                                    Let Score As Double = New StringSimilarityMatchs(s, Loci).Score
                                    Where Score >= Cutoff
@@ -81,7 +82,7 @@ Namespace Topologically.SimilarityMatches
             'Seeds = (From obj In SeedsCollection Select obj.s).ToList
 
             For i As Integer = Min + 1 To Max   '种子延伸至长度的上限
-                TempChunk = SequenceTools.Topologically.ExtendSequence(Seeds, Chars)
+                TempChunk = Topologically.ExtendSequence(Seeds, Chars)
                 Dim ChunkBuffer = (From s As String In TempChunk.AsParallel Let Score As Double = New StringSimilarityMatchs(Loci, s).Score Where Score >= Cutoff Select s, Score).ToArray
                 TempChunk = (From obj In ChunkBuffer Select obj.s).ToList
 

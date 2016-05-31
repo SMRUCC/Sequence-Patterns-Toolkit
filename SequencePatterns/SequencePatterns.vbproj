@@ -118,6 +118,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -166,10 +167,28 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Motif\ResidueSite.vb" />
+    <Compile Include="Pattern\Extensions.vb" />
+    <Compile Include="Pattern\PatternSearch.vb" />
+    <Compile Include="Pattern\SegLoci.vb" />
     <Compile Include="SequenceLogo\ColorSchema.vb" />
     <Compile Include="SequenceLogo\DrawingDevice.vb" />
     <Compile Include="SequenceLogo\DrawingModel.vb" />
     <Compile Include="SequenceLogo\Residue.vb" />
+    <Compile Include="Topologically\Exactly\RepeatPlant.vb" />
+    <Compile Include="Topologically\Exactly\RepeatsLoci.vb" />
+    <Compile Include="Topologically\Exactly\RepeatsSearchAPI.vb" />
+    <Compile Include="Topologically\Exactly\RepeatsSearchs.vb" />
+    <Compile Include="Topologically\Exactly\SearchReversedRepeats.vb" />
+    <Compile Include="Topologically\Palindrome\Imperfect.vb" />
+    <Compile Include="Topologically\Palindrome\ImperfectPalindrome.vb" />
+    <Compile Include="Topologically\Palindrome\Palindrome.vb" />
+    <Compile Include="Topologically\Palindrome\PalindromeLoci.vb" />
+    <Compile Include="Topologically\Palindrome\SearchWorker.vb" />
+    <Compile Include="Topologically\SearchWorker.vb" />
+    <Compile Include="Topologically\Seeds.vb" />
+    <Compile Include="Topologically\Similarity\Blast.vb" />
+    <Compile Include="Topologically\Similarity\Loci.vb" />
+    <Compile Include="Topologically\Similarity\Repeats.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
