@@ -2,13 +2,14 @@
 Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic
+Imports Microsoft.VisualBasic.Language
 
 Namespace Topologically
 
     ''' <summary>
     ''' 片段在反向链找得到自己的反向片段
     ''' </summary>
-    Public Class PalindromeSearchs : Inherits MiroorSearchs
+    Public Class PalindromeSearchs : Inherits MirrorSearchs
 
         ''' <summary>
         ''' 
@@ -38,12 +39,19 @@ Namespace Topologically
     ''' <summary>
     ''' 片段在正向链找得到自己的反向片段
     ''' </summary>
-    Public Class MiroorSearchs : Inherits SearchWorker
+    Public Class MirrorSearchs : Inherits SearchWorker
 
         Public ReadOnly Property ResultSet As IEnumerable(Of PalindromeLoci)
             Get
-                Dim LQuery = (From site In _ResultSet Select site Group site By site.Mirror Into Group).ToArray
-                Dim rs = (From site In LQuery Select PalindromeLoci.SelectSite(site.Group.ToArray)).ToArray
+                Dim LQuery = (From site As PalindromeLoci
+                              In _ResultSet
+                              Select site
+                              Group site By site.Mirror Into Group).ToArray
+                Dim rs As PalindromeLoci() =
+                    LinqAPI.Exec(Of PalindromeLoci) <=
+                        From site
+                        In LQuery
+                        Select PalindromeLoci.SelectSite(site.Group.ToArray)
                 Return rs
             End Get
         End Property
@@ -71,23 +79,27 @@ Namespace Topologically
         ''' <param name="currLen"></param>
         Protected Overrides Sub __postResult(currentRemoves() As String, currentStat As List(Of String), currLen As Integer)
             Dim Sites As PalindromeLoci() = currentStat.ToArray(
-                Function(loci) Palindrome.CreateMirrors(loci, Sequence:=SequenceData), Parallel:=True).MatrixToList.TrimNull
+                Function(loci) _
+                    Palindrome.CreateMirrors(
+                        loci,
+                        SequenceData), Parallel:=True).MatrixAsIterator.TrimNull
+
             Call _ResultSet.Add(Sites)
         End Sub
 
         Protected Overrides Sub __beginInit(ByRef seeds As List(Of String))
-            seeds = (From Segment As String
-                     In seeds
-                     Where SequenceData.IndexOf(Segment) > -1
-                     Select Segment).ToList
+            seeds = LinqAPI.MakeList(Of String) <= From fragment As String
+                                                   In seeds
+                                                   Where SequenceData.IndexOf(fragment) > -1
+                                                   Select fragment
         End Sub
 
         Protected Overrides Function __getRemovedList(ByRef currentStat As List(Of String)) As String()
-            Dim RemoveList = (From Segment As String
-                              In currentStat.AsParallel
-                              Where SequenceData.IndexOf(Segment) = -1  '只需要判断存不存在就行了，因为是连在一起的，所以现在短片段可能不会有回文，但是长片段却会出现回文，所以不能够在这里移除
-                              Select Segment).ToArray
-            Return RemoveList
+            Return LinqAPI.Exec(Of String) <=
+                From Segment As String
+                In currentStat.AsParallel
+                Where SequenceData.IndexOf(Segment) = -1  ' 只需要判断存不存在就行了，因为是连在一起的，所以现在短片段可能不会有回文，但是长片段却会出现回文，所以不能够在这里移除
+                Select Segment
         End Function
     End Class
 End Namespace

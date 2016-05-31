@@ -6,6 +6,7 @@ Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic
 Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Pattern
+Imports Microsoft.VisualBasic.Language
 
 Namespace Topologically
 
@@ -84,7 +85,8 @@ Namespace Topologically
                          In FileIO.FileSystem.GetFiles(DIR, FileIO.SearchOption.SearchTopLevelOnly, "*.csv")
                          Select file.LoadCsv(Of ImperfectPalindrome)).ToArray
             Call $"Data load done! Start to filter data...".__DEBUG_ECHO
-            files = (From genome In files.AsParallel
+            files = (From genome
+                     In files.AsParallel
                      Select (From site As ImperfectPalindrome
                              In genome
                              Where site.MaxMatch >= min AndAlso
@@ -208,19 +210,26 @@ Namespace Topologically
                                       .MirrorSite = rev})
         End Function
 
+        ''' <summary>
+        ''' 搜索序列上面的镜像回文片段
+        ''' </summary>
+        ''' <param name="Sequence"></param>
+        ''' <param name="Min"></param>
+        ''' <param name="Max"></param>
+        ''' <returns></returns>
         <ExportAPI("Search.Mirror")>
         Public Function SearchMirror(Sequence As I_PolymerSequenceModel,
                                      Optional Min As Integer = 3,
                                      Optional Max As Integer = 20) As PalindromeLoci()
-            Dim search As New Topologically.MiroorSearchs(Sequence, Min, Max)
+            Dim search As New Topologically.MirrorSearchs(Sequence, Min, Max)
             Call search.InvokeSearch()
             Return search.ResultSet.ToArray
         End Function
 
         <ExportAPI("Search.Palindrome")>
         Public Function SearchPalindrome(Sequence As I_PolymerSequenceModel,
-                                     Optional Min As Integer = 3,
-                                     Optional Max As Integer = 20) As PalindromeLoci()
+                                         Optional Min As Integer = 3,
+                                         Optional Max As Integer = 20) As PalindromeLoci()
             Dim search As New Topologically.PalindromeSearchs(Sequence, Min, Max)
             Call search.InvokeSearch()
             Return search.ResultSet.ToArray
@@ -240,18 +249,22 @@ Namespace Topologically
         ''' 
         <ExportAPI("HasPalindrome?")>
         Public Function HavePalindrome(Segment As String, Sequence As String) As Boolean
-            Dim Locations = FindLocation(Sequence, Segment)
+            Dim Locations As Integer() = FindLocation(Sequence, Segment)
+
             If Locations.IsNullOrEmpty Then
                 Return False
             End If
 
-            Dim Mirror As String = NucleicAcid.Complement(New String(Segment.Reverse.ToArray))
+            Dim Mirror As String =
+                NucleicAcid.Complement(New String(Segment.Reverse.ToArray))
             Dim l As Integer = Len(Segment)
-            Dim Result = (From loci As Integer
-                        In Locations
-                          Let ml As Integer = __haveMirror(l, loci, Mirror, Sequence)
-                          Where ml > -1
-                          Select ml).ToArray
+            Dim Result As Integer() =
+                LinqAPI.Exec(Of Integer) <= From loci As Integer
+                                            In Locations
+                                            Let ml As Integer =
+                                                __haveMirror(l, loci, Mirror, Sequence)
+                                            Where ml > -1
+                                            Select ml
             Return Not Result.IsNullOrEmpty
         End Function
     End Module

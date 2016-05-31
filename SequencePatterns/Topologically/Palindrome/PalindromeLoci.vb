@@ -2,6 +2,7 @@
 Imports LANS.SystemsBiology.ComponentModel.Loci.Abstract
 Imports LANS.SystemsBiology.SequenceModel
 Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
+Imports Microsoft.VisualBasic.Language
 
 Namespace Topologically
 
@@ -28,10 +29,12 @@ Namespace Topologically
         End Property
 
         Public Shared Function SelectSite(sites As IEnumerable(Of PalindromeLoci)) As PalindromeLoci
-            Dim LQuery = (From site As PalindromeLoci
-                          In sites
-                          Select site
-                          Order By site.Length Descending).FirstOrDefault
+            Dim LQuery As PalindromeLoci =
+                LinqAPI.DefaultFirst(Of PalindromeLoci) <=
+                    From site As PalindromeLoci
+                    In sites
+                    Select site
+                    Order By site.Length Descending
             Return LQuery
         End Function
 

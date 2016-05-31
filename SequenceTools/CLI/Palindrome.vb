@@ -78,7 +78,7 @@ Partial Module Utilities
         Dim Out As String = args("/out")
         Dim Min As Integer = args.GetValue("/min", 3)
         Dim Max As Integer = args.GetValue("/max", 20)
-        Dim Search As New Topologically.MiroorSearchs(NT, Min, Max)
+        Dim Search As New Topologically.MirrorSearchs(NT, Min, Max)
         Call Search.InvokeSearch()
         Call Search.ResultSet.SaveTo(Out)
         Return 0
@@ -99,7 +99,7 @@ Partial Module Utilities
         Dim Out As String = args.GetValue("/out", args("/nt").TrimFileExt & ".csv")
         Dim Min As Integer = args.GetValue("/min", 3)
         Dim Max As Integer = args.GetValue("/max", 20)
-        Dim Search As New Topologically.MiroorSearchs(Nt, Min, Max)
+        Dim Search As New Topologically.MirrorSearchs(Nt, Min, Max)
         Call Search.InvokeSearch()
         Return Search.ResultSet.SaveTo(Out).CLICode
     End Function

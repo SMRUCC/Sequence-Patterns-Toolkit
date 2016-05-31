@@ -10,7 +10,7 @@ Namespace Topologically
     ''' <summary>
     ''' 在互补链部分的回文，由于Mirror其实就是简单重复序列，所以在这里不再编写了
     ''' </summary>
-    Public Class Imperfect : Inherits MiroorSearchs
+    Public Class Imperfect : Inherits MirrorSearchs
 
         ReadOnly _index As TextIndexing
         ReadOnly _cutoff As Double
