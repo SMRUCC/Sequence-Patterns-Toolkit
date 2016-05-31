@@ -26,8 +26,8 @@ Namespace Pattern
         ''' 该序列在整条序列当中的左端长度和右端长度
         ''' </summary>
         ''' <remarks></remarks>
-        <XmlAttribute> Public Property Left As Long Implements ILocationComponent.Left
-        <XmlAttribute> Public Property Right As Long Implements ILocationComponent.Right
+        <XmlAttribute> Public Property Left As Integer Implements ILocationComponent.Left
+        <XmlAttribute> Public Property Right As Integer Implements ILocationComponent.Right
 
         Public Function ToRow() As RowObject
             Return New String() {Left, Right, Length, Sequence}

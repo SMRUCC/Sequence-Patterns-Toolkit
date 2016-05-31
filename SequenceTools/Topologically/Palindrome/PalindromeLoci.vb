@@ -10,7 +10,7 @@ Namespace Topologically
         Implements ILoci
 
         Public Property Loci As String Implements I_PolymerSequenceModel.SequenceData
-        Public Property Start As Long Implements ILoci.Left
+        Public Property Start As Integer Implements ILoci.Left
         Public Property Palindrome As String
         Public Property PalEnd As Integer
         Public Property MirrorSite As String

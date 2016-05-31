@@ -9,7 +9,7 @@ Namespace Topologically
     Public Class RepeatsLoci : Implements ILoci
 
         Public Property RepeatLoci As String
-        <Column("Loci.Left")> Public Property LociLeft As Long Implements ILoci.Left
+        <Column("Loci.Left")> Public Property LociLeft As Integer Implements ILoci.Left
 
         Friend Overridable Function __hash() As String
             Return Me.RepeatLoci & CStr(LociLeft)
@@ -28,7 +28,7 @@ Namespace Topologically
     Public Class RepeatsView : Implements ILoci
         Implements I_PolymerSequenceModel
 
-        Public Property Left As Long Implements ILoci.Left
+        Public Property Left As Integer Implements ILoci.Left
         Public Property SequenceData As String Implements I_PolymerSequenceModel.SequenceData
         Public Property Locis As Integer()
         Public ReadOnly Property Length As Integer

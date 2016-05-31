@@ -17,7 +17,7 @@ Namespace Topologically
         ''' 种子序列在基因组上面的位置
         ''' </summary>
         ''' <returns></returns>
-        Public Property Left As Long Implements ILoci.Left
+        Public Property Left As Integer Implements ILoci.Left
         ''' <summary>
         ''' 回文片段的位点位置
         ''' </summary>
