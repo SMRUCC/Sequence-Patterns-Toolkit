@@ -4,6 +4,7 @@ Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.Text
+Imports Microsoft.VisualBasic.Language
 
 Namespace Topologically
 
@@ -68,22 +69,25 @@ Namespace Topologically
             For Each segment In LQuery
                 Dim locis = FindLocation(Me.SequenceData, segment.seg)
                 Dim seg As String = segment.seg
-                Dim lstSet As List(Of ImperfectPalindrome) =
-                    (From loci In segment.pali.AsParallel
-                     Let palLeft As Integer = loci.Key.Index
-                     Select (From left As Integer
-                             In locis
-                             Let d As Integer = palLeft - left
-                             Where d > 0 AndAlso d <= Me._maxDist
-                             Select New ImperfectPalindrome With {
-                                 .Site = segment.seg,
-                                 .Left = left,
-                                 .Palindrome = loci.Key.Segment,
-                                 .Paloci = loci.Key.Index,
-                                 .Distance = loci.Value.Distance,
-                                 .Evolr = loci.Value.DistEdits,
-                                 .Matches = loci.Value.Matches,
-                                 .Score = loci.Value.Score}).ToArray).MatrixToList
+                Dim lstSet As ImperfectPalindrome() =
+                    LinqAPI.Exec(Of ImperfectPalindrome) <=
+                    From loci
+                    In segment.pali.AsParallel
+                    Let palLeft As Integer = loci.Key.Index
+                    Select From left As Integer
+                           In locis
+                           Let d As Integer = palLeft - left
+                           Where d > 0 AndAlso d <= Me._maxDist
+                           Select New ImperfectPalindrome With {
+                               .Site = segment.seg,
+                               .Left = left,
+                               .Palindrome = loci.Key.Segment,
+                               .Paloci = loci.Key.Index,
+                               .Distance = loci.Value.Distance,
+                               .Evolr = loci.Value.DistEdits,
+                               .Matches = loci.Value.Matches,
+                               .Score = loci.Value.Score
+                          }
 
                 Call _resultSet.AddRange(lstSet)
             Next

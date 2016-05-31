@@ -8,6 +8,7 @@ Imports Microsoft.VisualBasic.DocumentFormat.Csv
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Text
 Imports Microsoft.VisualBasic.Parallel
+Imports Microsoft.VisualBasic.Language.UnixBash
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
 
@@ -361,5 +362,21 @@ Partial Module Utilities
         Dim size As Integer = args.GetInt32("/size")
         Dim vector = Topologically.Palindrome.ImperfectPalindromeVector(inDIR, size, min, max)
         Return vector.ToArray(Function(n) CStr(n)).FlushAllLines(out).CLICode
+    End Function
+
+    <ExportAPI("/Mirror.Vector", Usage:="/Mirror.Vector /in <inDIR> /size <genome.size> [/out out.txt]")>
+    Public Function MirrorsVector(args As CommandLine.CommandLine) As Integer
+        Dim inDIR As String = args("/in")
+        Dim out As String = args.GetValue("/out", inDIR.TrimDIR & ".Mirror.Vector.txt")
+        Dim files As IEnumerable(Of String) = ls - l - r - wildcards("*.csv") <= inDIR
+        Dim size As Integer = args.GetInt32("/size")
+        Dim Loads = (From path As String
+                     In files
+                     Select path.BaseName,
+                         data = path.LoadCsv(Of PalindromeLoci)) _
+                         .ToDictionary(Function(x) x.BaseName,
+                                       Function(x) x.data)
+        Dim result As Double() = Topologically.Palindrome.Density(Loads.Values, size)
+        Return result.FlushAllLines(out)
     End Function
 End Module
