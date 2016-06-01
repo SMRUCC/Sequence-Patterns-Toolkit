@@ -140,6 +140,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LociExtensions.vb" />
     <Compile Include="Motif\Extensions.vb" />
     <Compile Include="Motif\MotifLog.vb" />
     <Compile Include="Motif\MotifPattern.vb" />
