@@ -3,7 +3,7 @@ Imports System.Runtime.CompilerServices
 Imports LANS.SystemsBiology.SequenceModel
 Imports LANS.SystemsBiology.SequenceModel.Patterns
 Imports Microsoft.VisualBasic.CommandLine.Reflection
-Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
+Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel.SchemaMaps
 Imports Microsoft.VisualBasic.Imaging
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
