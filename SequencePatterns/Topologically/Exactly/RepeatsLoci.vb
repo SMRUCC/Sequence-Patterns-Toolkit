@@ -1,5 +1,6 @@
 ﻿Imports LANS.SystemsBiology.SequenceModel
 Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
+Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Scripting
 
@@ -35,22 +36,27 @@ Namespace Topologically
         ''' <returns></returns>
         ''' <remarks></remarks>
         Public Overrides Function GenerateDocumentSegment() As Topologically.RepeatsLoci()
-            Dim LQuery = (From revLoci As Integer
-                          In Me.Locations
-                          Select (From loci As Integer
-                                  In Me.RepeatLoci
-                                  Select DirectCast(New Topologically.RevRepeatsLoci With {
-                                      .RepeatLoci = Me.SequenceData,
-                                      .LociLeft = loci,
-                                      .RevRepeats = Me.RevSegment,
-                                      .RevLociLeft = revLoci}, Topologically.RepeatsLoci)).ToArray).MatrixToVector
+            Dim LQuery As RepeatsLoci() =
+                LinqAPI.Exec(Of RepeatsLoci) <=
+                From revLoci As Integer
+                In Me.Locations
+                Select From loci As Integer
+                       In Me.RepeatLoci
+                       Let site = New Topologically.RevRepeatsLoci With {
+                           .RepeatLoci = Me.SequenceData,
+                           .LociLeft = loci,
+                           .RevRepeats = Me.RevSegment,
+                           .RevLociLeft = revLoci
+                       }
+                       Select DirectCast(site, Topologically.RepeatsLoci)
             Return LQuery
         End Function
 
-        Public Overloads Shared Function CreateDocument(RevData As Generic.IEnumerable(Of RevRepeats)) As Topologically.RevRepeatsLoci()
-            Dim LQuery = (From line As RevRepeats
-                          In RevData.AsParallel
-                          Select line.GenerateDocumentSegment).MatrixToList
+        Public Overloads Shared Function CreateDocument(RevData As IEnumerable(Of RevRepeats)) As Topologically.RevRepeatsLoci()
+            Dim LQuery As IEnumerable(Of RepeatsLoci) =
+                LinqAPI.Exec(Of RepeatsLoci) <= From line As RevRepeats
+                                                In RevData.AsParallel
+                                                Select line.GenerateDocumentSegment
             Return (From loci As RepeatsLoci
                     In LQuery
                     Where Not loci Is Nothing
