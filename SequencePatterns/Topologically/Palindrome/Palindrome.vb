@@ -6,6 +6,7 @@ Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic
 Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Pattern
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically.SimilarityMatches
 Imports Microsoft.VisualBasic.Language
 
 Namespace Topologically
@@ -16,6 +17,8 @@ Namespace Topologically
     ''' all bases Not included inpalindromic hexamers are given a value of 0 (van et al. 2003).
     ''' -- van Noort V, Worning P, Ussery DW, Rosche WA, Sinden RR Strand misalignments lead To 
     '''    quasipalindrome correction (2003) 19:365-9
+    ''' <see cref="SearchMirror"/> (镜像回文序列)
+    ''' 
     ''' 
     ''' === Inverted Repeats ===
     ''' Local Inverted repeats are found by taking a 100 bp sequence window, And looking For the 
@@ -23,6 +26,8 @@ Namespace Topologically
     ''' direction (Jensen et al. 1999). 
     ''' Values can range from 0 (no match at all)To 1 (one Or more perfect match within the window).
     ''' -- L. J. Jensen And C. Friis And D.W. Ussery Three views of complete chromosomes (1999) 150773-777
+    ''' <see cref="InvokeSearchReversed"/> (反向重复)
+    ''' 
     ''' 
     ''' === Quasi-palindromes ===
     ''' "Quasi-palindromes" are short inverted repeats, which are found by taking a 30 bp piece of sequence, 
@@ -31,14 +36,17 @@ Namespace Topologically
     ''' match within the window).
     ''' -- van Noort V, Worning P, Ussery DW, Rosche WA, Sinden RR Strand misalignments lead 
     '''    To quasipalindrome correction (2003) 19:365-9
-    '''
+    ''' <see cref="Topologically.Imperfect"/> (非完全回文)
+    ''' 
+    ''' 
     ''' === Perfect-palindromes ===
     ''' "Perfect-palindromes" are short inverted repeats, which are found by taking a 30 bp piece of sequence, 
     ''' And looking forperfect matches of 7 nt Or longer, on the opposite strand, in the opposite direction (van et al. 2003). 
     ''' Values can rangefrom 0 (no match at all) to 1 (one Or more perfect match within the window).
     ''' -- van Noort V, Worning P, Ussery DW, Rosche WA, Sinden RR Strand misalignments lead To 
     '''    quasipalindrome correction (2003) 19:365-9
-    '''
+    ''' <see cref="SearchPalindrome"/>  (简单回文)
+    ''' 
     ''' === Simple Repeats ===
     ''' A "simple repeat" Is a region which contains a simple oligonucleotide repeat, Like microsattelites. 
     ''' Simple repeats are foundby looking for tandem repeats of length R within a 2R-bp window. 
@@ -46,7 +54,8 @@ Namespace Topologically
     ''' of length of at least 24 bp (Jensen et al. 1999). Values can range from 0(no match at all) to 1 
     ''' (one Or more perfect match within the window).
     ''' -- L. J. Jensen And C. Friis And D.W. Ussery Three views of complete chromosomes (1999) 150773-777
-    '''
+    ''' <see cref="SearchRepeats"/> (简单重复序列)
+    ''' 
     ''' === GC Skew ===
     ''' For many genomes there Is a strand bias, such that one strand tends To have more G's, 
     ''' whilst the other strand has more C's.This GC-skew bias can be measured the number of G's 
