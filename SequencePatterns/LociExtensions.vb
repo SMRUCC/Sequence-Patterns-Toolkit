@@ -36,13 +36,23 @@ Public Module LociExtensions
     End Function
 
     <Extension>
-    Public Function ToLoci(x As RevRepeats) As SimpleSegment
-
+    Public Function ToLoci(x As RevRepeats, start As Integer) As SimpleSegment
+        Return New SimpleSegment With {
+            .Start = start,
+            .Ends = start + x.Length,
+            .SequenceData = x.SequenceData,
+            .Strand = "+"
+        }
     End Function
 
     <Extension>
     Public Function ToLoci(x As Topologically.ImperfectPalindrome) As SimpleSegment
-
+        Return New SimpleSegment With {
+            .Start = x.MappingLocation.Left,
+            .Ends = x.MappingLocation.Right,
+            .Strand = x.MappingLocation.Strand.GetBriefCode,
+            .SequenceData = x.Palindrome
+        }
     End Function
 
     <Extension>
@@ -62,7 +72,12 @@ Public Module LociExtensions
 
     <Extension>
     Public Function ToLocis(x As IEnumerable(Of RevRepeats)) As SimpleSegment()
-        Return x.ToArray(AddressOf ToLoci)
+        Return LinqAPI.Exec(Of SimpleSegment) <=
+            From loci As RevRepeats
+            In x
+            Select From n As Integer
+                   In loci.Locations
+                   Select loci.ToLoci(n)
     End Function
 
     <Extension>
