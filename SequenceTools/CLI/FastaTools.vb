@@ -12,6 +12,7 @@ Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
 Imports Microsoft.VisualBasic.Serialization
 Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports Microsoft.VisualBasic.Language.UnixBash
+Imports LANS.SystemsBiology.Assembly.NCBI.GenBank
 
 Partial Module Utilities
 
@@ -120,7 +121,7 @@ Partial Module Utilities
 
                 Dim GeneID As String = argvs("/geneid")
                 Dim Distance As Integer = argvs.GetInt32("/dist")
-                Dim PTTData = LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat.PTT.Load(PTT)
+                Dim PTTData = TabularFormat.PTT.Load(PTT)
                 Dim GeneObject = PTTData.GeneObject(GeneID)
                 Dim DownStream As Boolean = argvs.HavebFlag("/downstream")
 
