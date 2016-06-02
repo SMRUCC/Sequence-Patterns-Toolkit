@@ -2,7 +2,6 @@ Public Module snpsites
 
     Friend Function generate_snp_sites_generic(ByRef filename As String, output_multi_fasta_file As Integer, output_vcf_file As Integer, output_phylip_file As Integer, ByRef output_filename As String, output_reference As Integer,
         pure_mode As Integer, output_monomorphic As Integer) As Integer
-        Dim i As Integer
         GlobalMembersAlignmentMinusfile.detect_snps(filename, pure_mode, output_monomorphic)
 
         Dim bases_for_snps As String() = New String(GlobalMembersAlignmentMinusfile.number_of_snps - 1) {}
