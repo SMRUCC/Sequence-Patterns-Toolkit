@@ -1,3 +1,6 @@
+Imports System.IO
+Imports FILE = System.IO.StreamWriter
+
 Public Module GlobalMembersPhylibMinusofMinussnpMinussites
 
     '	 *  Wellcome Trust Sanger Institute
@@ -21,35 +24,33 @@ Public Module GlobalMembersPhylibMinusofMinussnpMinussites
 
     Public Sub create_phylib_of_snp_sites(ByRef filename As String, number_of_snps As Integer, ByRef bases_for_snps As String(), ByRef sequence_names As String(), number_of_samples As Integer, output_reference As Integer,
         ByRef pseudo_reference_sequence As String, snp_locations As Integer())
-        Dim phylip_file_pointer As FILE
         Dim sample_counter As Integer
         Dim snp_counter As Integer
 
-        phylip_file_pointer = fopen(filename, "w")
+        Using phylip_file_pointer As FILE = New StreamWriter(New FileStream(filename, FileMode.OpenOrCreate))
 
-        If output_reference = 1 Then
-            fprintf(phylip_file_pointer, "%d %d" & vbLf, number_of_samples + 1, number_of_snps)
-            fprintf(phylip_file_pointer, "pseudo_reference_sequence" & vbTab)
-            For snp_counter = 0 To number_of_snps - 1
-                fputc(pseudo_reference_sequence(snp_locations(snp_counter)), phylip_file_pointer)
+            If output_reference = 1 Then
+                phylip_file_pointer.Write("%d %d" & vbLf, number_of_samples + 1, number_of_snps)
+                phylip_file_pointer.Write("pseudo_reference_sequence" & vbTab)
+                For snp_counter = 0 To number_of_snps - 1
+                    phylip_file_pointer.Write(pseudo_reference_sequence(snp_locations(snp_counter)))
+                Next
+                phylip_file_pointer.Write(vbLf)
+            Else
+                phylip_file_pointer.Write("%d %d" & vbLf, number_of_samples, number_of_snps)
+            End If
+
+            For sample_counter = 0 To number_of_samples - 1
+
+                phylip_file_pointer.WriteLine("%s" & vbTab, sequence_names(sample_counter))
+
+                For snp_counter = 0 To number_of_snps - 1
+                    phylip_file_pointer.Write(bases_for_snps(snp_counter)(sample_counter))
+                Next
+                phylip_file_pointer.Write(vbLf)
             Next
-            fprintf(phylip_file_pointer, vbLf)
-        Else
-            fprintf(phylip_file_pointer, "%d %d" & vbLf, number_of_samples, number_of_snps)
-        End If
 
-        For sample_counter = 0 To number_of_samples - 1
-            ' sequence_name can be more than 10 (relaxed phylib format) and contain [\w\s]
-            'TODO check for illegal characters [^\w\s]
-            fprintf(phylip_file_pointer, "%s" & vbTab, sequence_names(sample_counter))
-
-            For snp_counter = 0 To number_of_snps - 1
-                fputc(bases_for_snps(snp_counter)(sample_counter), phylip_file_pointer)
-            Next
-            fprintf(phylip_file_pointer, vbLf)
-        Next
-
-        fclose(phylip_file_pointer)
+        End Using
     End Sub
 End Module
 

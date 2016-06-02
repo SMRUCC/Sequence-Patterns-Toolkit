@@ -1,4 +1,6 @@
 Imports System.Diagnostics
+Imports System.IO
+Imports FILE = System.IO.StreamWriter
 
 Public Module GlobalMembersVcf
 
@@ -43,59 +45,52 @@ Public Module GlobalMembersVcf
     '	 *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     '	 
 
-    Public Sub output_vcf_header(vcf_file_pointer As FILE, ByRef sequence_names As String(), number_of_samples As Integer, length_of_genome As UInteger)
+    Public Sub output_vcf_header(vcf_file_pointer As File, ByRef sequence_names As String(), number_of_samples As Integer, length_of_genome As UInteger)
         Dim i As Integer
-        fprintf(vcf_file_pointer, "##fileformat=VCFv4.1" & vbLf)
-        fprintf(vcf_file_pointer, "##contig=<ID=1,length=%i>" & vbLf, CInt(length_of_genome))
-        fprintf(vcf_file_pointer, "##FORMAT=<ID=GT,Number=1,Type=String,Description=""Genotype"">" & vbLf)
-        fprintf(vcf_file_pointer, "#CHROM" & vbTab & "POS" & vbTab & "ID" & vbTab & "REF" & vbTab & "ALT" & vbTab & "QUAL" & vbTab & "FILTER" & vbTab & "INFO" & vbTab & "FORMAT")
+        vcf_file_pointer.Write("##fileformat=VCFv4.1" & vbLf)
+        vcf_file_pointer.Write("##contig=<ID=1,length=%i>" & vbLf, CInt(length_of_genome))
+        vcf_file_pointer.Write("##FORMAT=<ID=GT,Number=1,Type=String,Description=""Genotype"">" & vbLf)
+        vcf_file_pointer.Write("#CHROM" & vbTab & "POS" & vbTab & "ID" & vbTab & "REF" & vbTab & "ALT" & vbTab & "QUAL" & vbTab & "FILTER" & vbTab & "INFO" & vbTab & "FORMAT")
 
         For i = 0 To number_of_samples - 1
-            fprintf(vcf_file_pointer, vbTab & "%s", sequence_names(i))
+            vcf_file_pointer.Write(vbTab & "%s", sequence_names(i))
         Next
-        fprintf(vcf_file_pointer, vbLf)
+        vcf_file_pointer.Write(vbLf)
     End Sub
 
     Public Sub create_vcf_file(ByRef filename As String, snp_locations As Integer(), number_of_snps As Integer, ByRef bases_for_snps As String(), ByRef sequence_names As String(), number_of_samples As Integer,
         length_of_genome As UInteger, ByRef pseudo_reference_sequence As String)
-        Dim vcf_file_pointer As FILE
-        Dim base_filename As String
 
-        base_filename = DirectCast(malloc(FILENAME_MAX * 1), String)
-        base_filename = filename
-
-        vcf_file_pointer = fopen(base_filename, "w")
-        GlobalMembersVcf.output_vcf_header(vcf_file_pointer, sequence_names, number_of_samples, CInt(length_of_genome))
-        GlobalMembersVcf.output_vcf_snps(vcf_file_pointer, bases_for_snps, snp_locations, number_of_snps, number_of_samples, pseudo_reference_sequence)
-        fclose(vcf_file_pointer)
-
+        Using vcf_file_pointer As FILE = New StreamWriter(New FileStream(filename, FileMode.OpenOrCreate))
+            GlobalMembersVcf.output_vcf_header(vcf_file_pointer, sequence_names, number_of_samples, CInt(length_of_genome))
+            GlobalMembersVcf.output_vcf_snps(vcf_file_pointer, bases_for_snps, snp_locations, number_of_snps, number_of_samples, pseudo_reference_sequence)
+        End Using
     End Sub
-    Public Sub output_vcf_snps(vcf_file_pointer As FILE, ByRef bases_for_snps As String(), snp_locations As Integer(), number_of_snps As Integer, number_of_samples As Integer, ByRef pseudo_reference_sequence As String)
+    Public Sub output_vcf_snps(vcf_file_pointer As File, ByRef bases_for_snps As String(), snp_locations As Integer(), number_of_snps As Integer, number_of_samples As Integer, ByRef pseudo_reference_sequence As String)
         Dim i As Integer
         For i = 0 To number_of_snps - 1
             GlobalMembersVcf.output_vcf_row(vcf_file_pointer, bases_for_snps(i), snp_locations(i), number_of_samples, pseudo_reference_sequence)
         Next
     End Sub
 
-    Public Sub output_vcf_row(vcf_file_pointer As FILE, ByRef bases_for_snp As String, snp_location As Integer, number_of_samples As Integer, ByRef pseudo_reference_sequence As String)
+    Public Sub output_vcf_row(vcf_file_pointer As File, ByRef bases_for_snp As String, snp_location As Integer, number_of_samples As Integer, ByRef pseudo_reference_sequence As String)
         Dim reference_base As Char = pseudo_reference_sequence(snp_location)
         If reference_base = ControlChars.NullChar Then
-            fprintf(stderr, "Couldnt get the reference base for coordinate %d" & vbLf, snp_location)
-            fflush(stderr)
+            StdErr.Write("Couldnt get the reference base for coordinate {0}" & vbLf, snp_location)
             Environment.[Exit](1)
         End If
 
         ' Chromosome
-        fprintf(vcf_file_pointer, "1" & vbTab)
+        vcf_file_pointer.Write("1" & vbTab)
 
         ' Position
-        fprintf(vcf_file_pointer, "%d" & vbTab, CInt(snp_location) + 1)
+        vcf_file_pointer.Write((CInt(snp_location) + 1) & vbTab)
 
         'ID
-        fprintf(vcf_file_pointer, "." & vbTab)
+        vcf_file_pointer.Write("." & vbTab)
 
         ' REF
-        fprintf(vcf_file_pointer, "%c" & vbTab, reference_base)
+        vcf_file_pointer.Write(reference_base & vbTab)
 
         ' ALT
         ' Need to look through list and find unique characters
@@ -106,39 +101,37 @@ Public Module GlobalMembersVcf
 
         'ORIGINAL LINE: sbyte * alternative_bases_string = format_alternative_bases(alt_bases);
         Dim alternative_bases_string As Char = GlobalMembersVcf.format_alternative_bases(alt_bases)
-        fprintf(vcf_file_pointer, "%s" & vbTab, alternative_bases_string)
-
-        Free(alternative_bases_string)
+        vcf_file_pointer.Write(alternative_bases_string & vbTab)
 
         ' QUAL
-        fprintf(vcf_file_pointer, "." & vbTab)
+        vcf_file_pointer.Write("." & vbTab)
 
         ' FILTER
-        fprintf(vcf_file_pointer, "." & vbTab)
+        vcf_file_pointer.Write("." & vbTab)
 
         ' INFO
-        fprintf(vcf_file_pointer, "." & vbTab)
+        vcf_file_pointer.Write("." & vbTab)
 
         ' FORMAT
-        fprintf(vcf_file_pointer, "GT" & vbTab)
+        vcf_file_pointer.Write("GT" & vbTab)
 
         ' Bases for each sample
         GlobalMembersVcf.output_vcf_row_samples_bases(vcf_file_pointer, reference_base, alt_bases, bases_for_snp, number_of_samples)
 
-        fprintf(vcf_file_pointer, vbLf)
+        vcf_file_pointer.Write(vbLf)
 
     End Sub
 
-    Public Sub output_vcf_row_samples_bases(vcf_file_pointer As FILE, reference_base As Char, ByRef alt_bases As String, ByRef bases_for_snp As String, number_of_samples As Integer)
+    Public Sub output_vcf_row_samples_bases(vcf_file_pointer As StreamWriter, reference_base As Char, ByRef alt_bases As String, ByRef bases_for_snp As String, number_of_samples As Integer)
         Dim i As Integer
         Dim format As String
 
         For i = 0 To number_of_samples - 1
             format = GlobalMembersVcf.format_allele_index(bases_for_snp(i), reference_base, alt_bases)
-            fprintf(vcf_file_pointer, "%s", format)
+            vcf_file_pointer.Write(format)
 
             If i + 1 <> number_of_samples Then
-                fprintf(vcf_file_pointer, vbTab)
+                vcf_file_pointer.Write(vbTab)
             End If
         Next
     End Sub
@@ -157,9 +150,8 @@ Public Module GlobalMembersVcf
 
                 If GlobalMembersVcf.check_if_char_in_string(alt_bases, current_base, num_alt_bases) = 0 Then
                     If num_alt_bases >= MAXIMUM_NUMBER_OF_ALT_BASES Then
-                        fprintf(stderr, "Unexpectedly large number of alternative bases found between sequences.  Please check input file is not corrupted" & vbLf & vbLf)
-                        fflush(stderr)
-                        Environment.[Exit](1)
+                        App.StdErr.WriteLine("Unexpectedly large number of alternative bases found between sequences.  Please check input file is not corrupted" & vbLf & vbLf)
+                        App.[Exit](1)
                     End If
                     alt_bases(num_alt_bases) = current_base
                     num_alt_bases += 1
@@ -172,29 +164,32 @@ Public Module GlobalMembersVcf
 
     Public Function format_alternative_bases(ByRef alt_bases As String) As String
         Dim number_of_alt_bases As Integer = alt_bases.Length
+        Dim formatted_alt_bases As Char()
+
         Debug.Assert(number_of_alt_bases < DefineConstants.MAXIMUM_NUMBER_OF_ALT_BASES)
 
         If number_of_alt_bases = 0 Then
-            Dim formatted_alt_bases As Char() = New Char(2) {}
+            formatted_alt_bases = New Char(2) {}
             formatted_alt_bases(0) = "."c
             Return formatted_alt_bases
-        End If
+        Else
 
-        Dim formatted_alt_bases As Char() = New Char(number_of_alt_bases * 2) {}
-        Dim i As Integer
-        formatted_alt_bases(0) = alt_bases(0)
-        For i = 1 To number_of_alt_bases - 1
-            formatted_alt_bases(i * 2 - 1) = ","c
-            formatted_alt_bases(i * 2) = alt_bases(i)
-        Next
-        Return formatted_alt_bases
+            formatted_alt_bases = New Char(number_of_alt_bases * 2) {}
+            Dim i As Integer
+            formatted_alt_bases(0) = alt_bases(0)
+            For i = 1 To number_of_alt_bases - 1
+                formatted_alt_bases(i * 2 - 1) = ","c
+                formatted_alt_bases(i * 2) = alt_bases(i)
+            Next
+            Return formatted_alt_bases
+        End If
     End Function
 
     Public Function format_allele_index(base As Char, reference_base As Char, ByRef alt_bases As String) As String
         Dim length_of_alt_bases As Integer = alt_bases.Length
         Debug.Assert(length_of_alt_bases < 100)
 
-        Dim result As SByte = calloc(5, 1)
+        Dim result As SByte
         Dim index As Integer
 
         If GlobalMembersAlignmentMinusfile.is_unknown(base) <> 0 Then

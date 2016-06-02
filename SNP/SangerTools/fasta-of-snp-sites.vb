@@ -1,3 +1,6 @@
+Imports System.IO
+Imports FILE = System.IO.StreamWriter
+
 Public Module GlobalMembersFastaMinusofMinussnpMinussites
 
     '	 *  Wellcome Trust Sanger Institute
@@ -19,29 +22,28 @@ Public Module GlobalMembersFastaMinusofMinussnpMinussites
 
     Public Sub create_fasta_of_snp_sites(ByRef filename As String, number_of_snps As Integer, ByRef bases_for_snps As String(), ByRef sequence_names As String(), number_of_samples As Integer, output_reference As Integer,
         ByRef pseudo_reference_sequence As String, snp_locations As Integer())
-        Dim fasta_file_pointer As FILE
         Dim sample_counter As Integer
         Dim snp_counter As Integer
 
-        fasta_file_pointer = fopen(filename, "w")
+        Using fasta_file_pointer As New FILE(New FileStream(filename, FileMode.OpenOrCreate))
 
-        If output_reference = 1 Then
-            fprintf(fasta_file_pointer, ">pseudo_reference_sequence" & vbLf)
-            For snp_counter = 0 To number_of_snps - 1
-                fputc(pseudo_reference_sequence(snp_locations(snp_counter)), fasta_file_pointer)
+            If output_reference = 1 Then
+                fasta_file_pointer.Write(">pseudo_reference_sequence" & vbLf)
+                For snp_counter = 0 To number_of_snps - 1
+                    fasta_file_pointer.Write(pseudo_reference_sequence(snp_locations(snp_counter)))
+                Next
+                fasta_file_pointer.Write(vbLf)
+            End If
+
+            For sample_counter = 0 To number_of_samples - 1
+                fasta_file_pointer.Write(">%s" & vbLf, sequence_names(sample_counter))
+                For snp_counter = 0 To number_of_snps - 1
+                    fasta_file_pointer.Write(bases_for_snps(snp_counter)(sample_counter))
+                Next
+                fasta_file_pointer.Write(vbLf)
             Next
-            fprintf(fasta_file_pointer, vbLf)
-        End If
 
-        For sample_counter = 0 To number_of_samples - 1
-            fprintf(fasta_file_pointer, ">%s" & vbLf, sequence_names(sample_counter))
-            For snp_counter = 0 To number_of_snps - 1
-                fputc(bases_for_snps(snp_counter)(sample_counter), fasta_file_pointer)
-            Next
-            fprintf(fasta_file_pointer, vbLf)
-        Next
-
-        fclose(fasta_file_pointer)
+        End Using
     End Sub
 End Module
 

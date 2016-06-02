@@ -8,4 +8,5 @@
     Public Const MAX_SAMPLE_NAME_SIZE = 2048
     Public Const DEFAULT_NUM_SAMPLES = 65536
     Public Const PROGRAM_NAME = "snp-sites"
+    Public Const FILENAME_MAX = 256
 End Module
