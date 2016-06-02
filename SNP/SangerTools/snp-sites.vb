@@ -1,6 +1,6 @@
-Public Class snpsites
+Public Module snpsites
 
-    Friend Shared Function generate_snp_sites_generic(ByRef filename As String, output_multi_fasta_file As Integer, output_vcf_file As Integer, output_phylip_file As Integer, ByRef output_filename As String, output_reference As Integer,
+    Friend Function generate_snp_sites_generic(ByRef filename As String, output_multi_fasta_file As Integer, output_vcf_file As Integer, output_phylip_file As Integer, ByRef output_filename As String, output_reference As Integer,
         pure_mode As Integer, output_monomorphic As Integer) As Integer
         Dim i As Integer
         GlobalMembersAlignmentMinusfile.detect_snps(filename, pure_mode, output_monomorphic)
@@ -57,45 +57,20 @@ Public Class snpsites
         Return 1
     End Function
 
-    Public Shared Function generate_snp_sites(ByRef filename As String, output_multi_fasta_file As Integer, output_vcf_file As Integer, output_phylip_file As Integer, ByRef output_filename As String) As Integer
+    Public Function generate_snp_sites(ByRef filename As String, output_multi_fasta_file As Integer, output_vcf_file As Integer, output_phylip_file As Integer, ByRef output_filename As String) As Integer
         Return GlobalMembersSnpMinussites.generate_snp_sites_generic(filename, output_multi_fasta_file, output_vcf_file, output_phylip_file, output_filename, 0,
             0, 0)
     End Function
 
-    Public Shared Function generate_snp_sites_with_ref(ByRef filename As String, output_multi_fasta_file As Integer, output_vcf_file As Integer, output_phylip_file As Integer, ByRef output_filename As String) As Integer
+    Public Function generate_snp_sites_with_ref(ByRef filename As String, output_multi_fasta_file As Integer, output_vcf_file As Integer, output_phylip_file As Integer, ByRef output_filename As String) As Integer
         Return GlobalMembersSnpMinussites.generate_snp_sites_generic(filename, output_multi_fasta_file, output_vcf_file, output_phylip_file, output_filename, 1,
             0, 0)
     End Function
 
-    Public Shared Function generate_snp_sites_with_ref_pure_mono(ByRef filename As String, output_multi_fasta_file As Integer, output_vcf_file As Integer, output_phylip_file As Integer, ByRef output_filename As String, output_reference As Integer,
+    Public Function generate_snp_sites_with_ref_pure_mono(ByRef filename As String, output_multi_fasta_file As Integer, output_vcf_file As Integer, output_phylip_file As Integer, ByRef output_filename As String, output_reference As Integer,
         pure_mode As Integer, output_monomorphic As Integer) As Integer
         Return GlobalMembersSnpMinussites.generate_snp_sites_generic(filename, output_multi_fasta_file, output_vcf_file, output_phylip_file, output_filename, output_reference,
             pure_mode, output_monomorphic)
     End Function
-
-
-    ' Inefficient
-    Public Shared Sub strip_directory_from_filename(ByRef input_filename As String, ByRef output_filename As String)
-        Dim i As Integer
-        Dim end_index As Integer = 0
-        Dim last_forward_slash_index As Integer = -1
-        For i = 0 To FILENAME_MAX - 1
-            If input_filename(i) = "/"c Then
-                last_forward_slash_index = i
-            End If
-
-            If input_filename(i) = ControlChars.NullChar OrElse input_filename(i) = ControlChars.Lf Then
-                end_index = i
-                Exit For
-            End If
-        Next
-
-        Dim current_index As Integer = 0
-        For i = last_forward_slash_index + 1 To end_index - 1
-            output_filename(current_index) = input_filename(i)
-            current_index += 1
-        Next
-        output_filename(current_index) = ControlChars.NullChar
-    End Sub
-End Class
+End Module
 
