@@ -1,4 +1,5 @@
 ﻿Imports LANS.SystemsBiology.SequenceModel
+Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Parallel.Tasks
 Imports Microsoft.VisualBasic.Scripting.MetaData
@@ -55,7 +56,7 @@ The accuracy of the package on smaller test cases is similar to that of the high
 Clustal Omega also has powerful features for adding sequences to and exploiting information in existing alignments, making use of the vast amount of precomputed information in public databases like Pfam.",
       AuthorAddress:="School of Medicine and Medical Science, UCD Conway Institute of Biomolecular and Biomedical Research, University College Dublin, Dublin, Ireland.",
       PubMed:=21988835)>
-Public Class Clustal : Inherits Microsoft.VisualBasic.CommandLine.InteropService
+Public Class Clustal : Inherits InteropService
 
     Public Const CLUSTAL_ARGUMENTS As String = "--in ""{0}"" --out ""{1}"""
 
@@ -77,19 +78,24 @@ Public Class Clustal : Inherits Microsoft.VisualBasic.CommandLine.InteropService
         Dim out As String = App.GetAppSysTempFile(".fasta")
         Dim args As String = String.Format(CLUSTAL_ARGUMENTS, source, out)
         Call Console.WriteLine("EXEC --> {0} {1}", MyBase._executableAssembly, args)
-        Call New CommandLine.IORedirect(MyBase._executableAssembly, args).Start(WaitForExit:=True)
+        Call New IORedirect(MyBase._executableAssembly, args).Start(WaitForExit:=True)
 
         Dim result = FASTA.FastaFile.Read(out, False)
         Return result
     End Function
 
-    Public Function Align(source As Generic.IEnumerable(Of SequenceModel.FASTA.FastaToken)) As FASTA.FastaFile
-        Dim IO As New CommandLine.IORedirect(MyBase._executableAssembly, "")
-        Dim fa As New SequenceModel.FASTA.FastaFile(source)
+    ''' <summary>
+    ''' 这个是通过标准输入来传递序列数据的
+    ''' </summary>
+    ''' <param name="source"></param>
+    ''' <returns></returns>
+    Public Function Align(source As IEnumerable(Of FASTA.FastaToken)) As FASTA.FastaFile
+        Dim IO As New IORedirect(MyBase._executableAssembly, "")
+        Dim fa As New FASTA.FastaFile(source)
         Dim input As String = fa.Generate
         Call IO.Start(WaitForExit:=True, PushingData:={input})
         Dim out As String = IO.StandardOutput
-        Return SequenceModel.FASTA.FastaFile.DocParser(out.lTokens)
+        Return FASTA.FastaFile.DocParser(out.lTokens)
     End Function
 
     Public Function AlignmentTask(source As String) As AsyncHandle(Of FASTA.FastaFile)
