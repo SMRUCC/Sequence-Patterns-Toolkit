@@ -64,6 +64,8 @@ Public Class Clustal : Inherits InteropService
 
 #End Region
 
+    Const SourceNotExists As String = "Source data file ""{0}"" is not exists on your file system!"
+
     ''' <summary>
     ''' 目标多序列比对文件的文件路径，出错会返回空值
     ''' </summary>
@@ -71,8 +73,12 @@ Public Class Clustal : Inherits InteropService
     ''' <returns></returns>
     ''' <remarks></remarks>
     Public Function MultipleAlignment(source As String) As FASTA.FastaFile
-        If Not FileIO.FileSystem.FileExists(source) Then
-            Throw New DataException($"Source data file ""{source.ToFileURL}"" is not exists on your file system!")
+        If Not source.FileExists Then
+            Dim msg As String =
+                String.Format(SourceNotExists, source.ToFileURL)
+            Throw New Exception(
+                source.ToFileURL,
+                New DataException(msg))
         End If
 
         Dim out As String = App.GetAppSysTempFile(".fasta")

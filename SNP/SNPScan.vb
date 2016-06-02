@@ -5,6 +5,9 @@ Imports LANS.SystemsBiology.SequenceModel.Patterns
 
 Public Module SNPScan
 
+    ReadOnly clustal As ClustalOrg.Clustal =
+        ClustalOrg.Clustal.CreateSession
+
     ''' <summary>
     ''' 
     ''' </summary>
@@ -13,7 +16,7 @@ Public Module SNPScan
     ''' </param>
     ''' <returns></returns>
     Public Function ScanRaw(nt As String) As SNP()
-        Return ScanRaw(New FASTA.FastaFile(nt))
+        Return __scanRaw(nt)
     End Function
 
     ''' <summary>
@@ -23,9 +26,13 @@ Public Module SNPScan
     ''' <returns></returns>
     <Extension>
     Public Function ScanRaw(nt As FASTA.FastaFile) As SNP()
-        Dim clustal As ClustalOrg.Clustal =
-            ClustalOrg.Clustal.CreateSession
-        nt = clustal.Align(nt)
+        Dim tmp As String = App.GetAppSysTempFile(".fasta")
+        Call nt.Save(tmp, Encodings.ASCII)
+        Return __scanRaw(tmp)
+    End Function
+
+    Private Function __scanRaw([in] As String) As SNP()
+        Dim nt As FASTA.FastaFile = clustal.MultipleAlignment([in])
         Return nt.Scan(ref:=Scan0)
     End Function
 
