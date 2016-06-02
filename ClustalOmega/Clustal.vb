@@ -90,11 +90,9 @@ Public Class Clustal : Inherits InteropService
     ''' <param name="source"></param>
     ''' <returns></returns>
     Public Function Align(source As IEnumerable(Of FASTA.FastaToken)) As FASTA.FastaFile
-        Dim IO As New IORedirect(MyBase._executableAssembly, "")
         Dim fa As New FASTA.FastaFile(source)
         Dim input As String = fa.Generate
-        Call IO.Start(WaitForExit:=True, PushingData:={input})
-        Dim out As String = IO.StandardOutput
+        Dim out As String = MyBase._executableAssembly.Call("", input)
         Return FASTA.FastaFile.DocParser(out.lTokens)
     End Function
 
