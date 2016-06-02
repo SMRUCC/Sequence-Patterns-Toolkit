@@ -33,7 +33,7 @@ Public Module SNPScan
 
     Private Function __scanRaw([in] As String) As SNP()
         Dim nt As FASTA.FastaFile = clustal.MultipleAlignment([in])
-        Return nt.Scan(ref:=Scan0)
+        Return nt.Scan(refInd:=Scan0)
     End Function
 
     ''' <summary>
@@ -42,7 +42,10 @@ Public Module SNPScan
     ''' <param name="nt">序列必须都是已经经过clustal对齐了的</param>
     ''' <returns></returns>
     <Extension>
-    Public Function Scan(nt As FASTA.FastaFile, ref As Integer) As SNP()
+    Public Function Scan(nt As FASTA.FastaFile, refInd As Integer) As SNP()
         Dim pwm As PatternModel = PatternsAPI.Frequency(nt)
+        Dim ref As FASTA.FastaToken = nt(refInd)
+        Dim var As Double() = pwm.GetVariation(ref, 0.2)
+
     End Function
 End Module
