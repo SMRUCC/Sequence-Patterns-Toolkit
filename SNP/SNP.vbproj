@@ -137,6 +137,11 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="fasta-of-snp-sites.vb" />
+    <Compile Include="kseq.vb" />
+    <Compile Include="main.vb" />
+    <Compile Include="phylib-of-snp-sites.vb" />
+    <Compile Include="snp-sites.vb" />
     <Compile Include="SNPScan.vb" />
     <Compile Include="SNP.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -154,6 +159,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="StringFunctions.vb" />
+    <Compile Include="vcf.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
