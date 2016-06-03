@@ -12,6 +12,8 @@ Imports Microsoft.VisualBasic.Language.UnixBash
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Parallel.Threads
+Imports Microsoft.VisualBasic.Parallel.Linq
 
 Partial Module Utilities
 
