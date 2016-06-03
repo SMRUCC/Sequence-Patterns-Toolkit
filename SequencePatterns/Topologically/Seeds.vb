@@ -1,17 +1,24 @@
 ﻿Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Parallel.Linq
 
 Namespace Topologically
 
     Public Module Seeds
 
+        ''' <summary>
+        ''' 延伸种子的长度
+        ''' </summary>
+        ''' <param name="source"></param>
+        ''' <param name="Chars"></param>
+        ''' <returns></returns>
         <Extension>
-        Public Function ExtendSequence(source As List(Of String), Chars As Char()) As List(Of String)
+        Public Function ExtendSequence(source As IEnumerable(Of String), Chars As Char()) As List(Of String)
             Return LinqAPI.MakeList(Of String) <=
-                From str As String
-                In source.AsParallel
-                Select Seeds.Combo(str, Chars)
+                LQuerySchedule.LQuery(
+                source,
+                Function(s) Seeds.Combo(s, Chars), 20000)
         End Function
 
         ''' <summary>

@@ -1,6 +1,8 @@
 ﻿Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically
 Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports Microsoft.VisualBasic.CommandLine.Reflection
+Imports LANS.SystemsBiology.SequenceModel.Polypeptides
 
 Partial Module Utilities
 
@@ -38,5 +40,17 @@ Partial Module Utilities
         Dim out As String = args.GetValue("/out", DIR & "/rev-Repeats.Density.vector.txt")
         Dim vector As Double() = Topologically.RevRepeatsDensity(DIR, size, ref:=args("/ref"), cutoff:=args.GetValue("/cutoff", 0R))
         Return vector.FlushAllLines(out).CLICode
+    End Function
+
+    <ExportAPI("/Write.Seeds",
+               Usage:="/Write.Seeds /out <out.dat> [/prot /max <20>]")>
+    Public Function WriteSeeds(args As CommandLine.CommandLine) As Integer
+        Dim isProt As Boolean = args.GetBoolean("/prot")
+        Dim out As String = args("/out")
+        Dim max As Integer = args.GetValue("/max", 20)
+        Dim chars As Char() = If(isProt, ToChar.Values.Distinct.ToArray, {"A"c, "T"c, "G"c, "C"c})
+        Dim seeds As SeedData = SeedData.Initialize(chars, max)
+
+        Return seeds.Save(out)
     End Function
 End Module
