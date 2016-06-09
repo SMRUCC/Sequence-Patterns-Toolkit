@@ -4,6 +4,7 @@ Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic
 Imports LANS.SystemsBiology.SequenceModel
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.NeedlemanWunsch
+Imports Microsoft.VisualBasic.Language
 
 Partial Module Utilities
 
@@ -38,7 +39,7 @@ Partial Module Utilities
         Dim subject = FASTA.FastaFile.Read(args("/subject"))
         Dim outDIR As String = args.GetValue(
             "/out",
-            $"{query.FilePath.ParentPath}/{IO.Path.GetFileNameWithoutExtension(query.FilePath)}-{IO.Path.GetFileNameWithoutExtension(subject.FilePath)}/")
+            $"{query.FilePath.ParentPath}/{query.FilePath.BaseName}-{subject.FilePath.BaseName}/")
         Dim resultSet = __alignCommon(query, subject, cost, outDIR)
         Return resultSet.GetXml.SaveTo(outDIR & "/AlignmentResult.xml").CLICode
     End Function
@@ -48,16 +49,17 @@ Partial Module Utilities
 
         For Each queryToken As FASTA.FastaToken In query
             Dim queryCache As Integer() = queryToken.SequenceData.ToArray(Function(x) Asc(x))
-            Dim alignSet = (From subjectToken As FASTA.FastaToken
-                            In subject.AsParallel
-                            Let aln = AlignmentResult.SafeAlign(
-                                queryToken.Title,
-                                queryToken.SequenceData,
-                                queryCache,
-                                subjectToken,
-                                cost)
-                            Where Not aln Is Nothing
-                            Select aln).ToArray
+            Dim alignSet As AlignmentResult() =
+                LinqAPI.Exec(Of AlignmentResult) <= From subjectToken As FASTA.FastaToken
+                                                    In subject.AsParallel
+                                                    Let aln = AlignmentResult.SafeAlign(
+                                                        queryToken.Title,
+                                                        queryToken.SequenceData,
+                                                        queryCache,
+                                                        subjectToken,
+                                                        cost)
+                                                    Where Not aln Is Nothing
+                                                    Select aln
             Call resultSet.Add(alignSet)
 
             For Each result As AlignmentResult In alignSet

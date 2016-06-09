@@ -14,6 +14,7 @@ Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Parallel.Threads
 Imports Microsoft.VisualBasic.Parallel.Linq
+Imports System.Text.RegularExpressions
 
 Partial Module Utilities
 
@@ -331,12 +332,18 @@ Partial Module Utilities
         Dim inFasta As FastaToken = FastaToken.Load(input)
 
         Dim search As New TextIndexing(inFasta.SequenceData, min, max)
-        Dim resultSet = (From segment As TextSegment
-                         In search.PreCache
-                         Let result = Found(inFasta, segment, cutoff, search, maxDist, max)
-                         Where Not result Is Nothing
-                         Select result).ToArray
-
+        Dim resultSet As ImperfectPalindrome() =
+            LinqAPI.Exec(Of ImperfectPalindrome) <= From segment As TextSegment
+                                                    In search.PreCache
+                                                    Let result As ImperfectPalindrome =
+                                                        Found(inFasta,
+                                                            segment,
+                                                            cutoff,
+                                                            search,
+                                                            maxDist,
+                                                            max)
+                                                    Where Not result Is Nothing
+                                                    Select result
         Return resultSet.SaveTo(out)
     End Function
 
@@ -346,6 +353,11 @@ Partial Module Utilities
                            search As TextIndexing,
                            maxDist As Integer,
                            max As Integer) As ImperfectPalindrome
+
+        If Regex.Match(segment.Segment, "[-]+").Value.Equals(segment.Segment) Then
+            Return Nothing
+        End If
+
         Dim palin As String = PalindromeLoci.GetPalindrome(segment.Segment)  ' 当前片段所计算出来的完全匹配的回文位点
         Dim start As Integer = segment.Index + segment.Array.Length + maxDist * 0.95
         Dim parPiece As String = Mid(inFasta.SequenceData, start, max + 5)  ' 实际的位点
