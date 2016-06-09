@@ -90,7 +90,7 @@ Partial Module Utilities
     End Function
 
     <ExportAPI("/Mirror.Batch",
-               Usage:="/Mirror.Batch /nt <nt.fasta> [/out <out.csv> /mp /min <3> /max <20>]")>
+               Usage:="/Mirror.Batch /nt <nt.fasta> [/out <out.csv> /mp /min <3> /max <20> /num_threads <-1>]")>
     <ParameterInfo("/mp", True,
                    Description:="Calculation in the multiple process mode?")>
     Public Function MirrorBatch(args As CommandLine.CommandLine) As Integer
@@ -98,6 +98,9 @@ Partial Module Utilities
         Dim out As String = args.GetValue("/out", args("/nt").TrimFileExt & "-Mirror/")
         Dim Min As Integer = args.GetValue("/min", 3)
         Dim Max As Integer = args.GetValue("/max", 20)
+        Dim n As Integer = args.GetValue("/num_threads", -1)
+
+        n = LQuerySchedule.AutoConfig(n)
 
         If args.GetBoolean("/mp") Then
             Dim api As String = GetType(Utilities).API(NameOf(SearchMirrotFasta))
@@ -106,10 +109,11 @@ Partial Module Utilities
             Dim CLI As String() =
                 LinqAPI.Exec(Of String) <= From fa As FastaToken
                                            In NT
-                                           Let path As String = App.GetAppSysTempFile(".fasta")
+                                           Let norm As String = fa.Title.NormalizePathString(True).Replace(" ", "_")
+                                           Let path As String = App.AppSystemTemp & $"/{norm}.fasta"
                                            Let save As Boolean = fa.Save(path, Encodings.ASCII)
                                            Select task(path)
-            Call App.SelfFolks(CLI, LQuerySchedule.CPU_NUMBER)
+            Call App.SelfFolks(CLI, n)
         Else
             For Each seq As FastaToken In NT
                 Dim Search As New Topologically.MirrorSearchs(seq, Min, Max)
