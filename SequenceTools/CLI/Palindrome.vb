@@ -261,7 +261,7 @@ Partial Module Utilities
     ''' <param name="args"></param>
     ''' <returns></returns>
     <ExportAPI("--Hairpinks.batch.task",
-               Usage:="--Hairpinks.batch.task /in <in.fasta> [/out <outDIR> /min <6> /max <7> /cutoff <0.6> /max-dist <35 (bp)> /num_threads <-1> /interval <200>]")>
+               Usage:="--Hairpinks.batch.task /in <in.fasta> [/out <outDIR> /min <6> /max <7> /cutoff <0.6> /max-dist <35 (bp)> /num_threads <-1>]")>
     Public Function HairpinksBatch(args As CommandLine.CommandLine) As Integer
         Dim input As String = args("/in")
         Dim out As String = args.GetValue("/out", App.CurrentDirectory & "/Hairpinks/")
@@ -271,14 +271,13 @@ Partial Module Utilities
         Dim maxDist As Integer = args.GetValue("/max-dist", 35)
         Dim inFasta As FastaFile = FastaFile.LoadNucleotideData(input)
         Dim numThreads As Integer = args.GetValue("/num_threads", -1)
-        Dim interval As Integer = args.GetValue("/interval", 200)
+        Dim CLI As String() =
+            inFasta.ToArray(
+            Function(fa) __hairpinksCLI(fa, out, min, max, cutoff, maxDist))
 
-        Call BatchTask(inFasta,
-                       getCLI:=Function(fa) __hairpinksCLI(fa, out, min, max, cutoff, maxDist),
-                       getExe:=Function() App.ExecutablePath,
-                       numThreads:=numThreads,
-                       TimeInterval:=interval)
-        Return 0
+        numThreads = LQuerySchedule.AutoConfig(numThreads)
+
+        Return App.SelfFolks(CLI, numThreads)
     End Function
 
     Private Function __hairpinksCLI(fasta As FastaToken,
