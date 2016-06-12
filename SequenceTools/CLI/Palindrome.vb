@@ -17,6 +17,7 @@ Imports Microsoft.VisualBasic.Parallel.Threads
 Imports Microsoft.VisualBasic.Parallel.Linq
 Imports System.Text.RegularExpressions
 Imports LANS.SystemsBiology.SequenceModel
+Imports Microsoft.VisualBasic.DocumentFormat.Csv.DocumentStream.Linq
 
 Partial Module Utilities
 
@@ -322,12 +323,29 @@ Partial Module Utilities
         Dim [in] As String = args - "/in"
         Dim min As Integer = args.GetInt32("/min")
         Dim out As String = args.GetValue("/out", [in].TrimFileExt & "-min." & min & ".csv")
-        Dim data As IEnumerable(Of ImperfectPalindrome) =
-            LinqAPI.MakeList(Of ImperfectPalindrome) <= From x As ImperfectPalindrome
-                                                        In [in].LoadCsv(Of Topologically.ImperfectPalindrome)
-                                                        Where x.MaxMatch >= min
-                                                        Select x
-        Return data.SaveTo(out).CLICode
+
+        If FileIO.FileSystem.GetFileInfo([in]).Length > 1024 * 1024 * 16 Then
+            ' 大文件
+            Using writer As New WriteStream(Of ImperfectPalindrome)(out)
+                Dim buf As DataStream = DataStream.OpenHandle([in])
+                Call buf.ForEachBlock(Of ImperfectPalindrome)(
+                    Sub(array)
+                        Dim data As IEnumerable(Of ImperfectPalindrome) =
+                            LinqAPI.MakeList(Of ImperfectPalindrome) <= From x As ImperfectPalindrome
+                                                                        In [in].LoadCsv(Of Topologically.ImperfectPalindrome)
+                                                                        Where x.MaxMatch >= min
+                                                                        Select x
+                        Call writer.Flush(data)
+                    End Sub)
+            End Using
+        Else
+            Dim data As IEnumerable(Of ImperfectPalindrome) =
+                LinqAPI.MakeList(Of ImperfectPalindrome) <= From x As ImperfectPalindrome
+                                                            In [in].LoadCsv(Of Topologically.ImperfectPalindrome)
+                                                            Where x.MaxMatch >= min
+                                                            Select x
+            Return data.SaveTo(out).CLICode
+        End If
     End Function
 
     <ExportAPI("--PerfectPalindrome.Filtering", Usage:="--PerfectPalindrome.Filtering /in <inDIR> [/min <8> /out <outDIR>]")>
