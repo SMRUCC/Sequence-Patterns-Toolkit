@@ -332,7 +332,7 @@ Partial Module Utilities
                     Sub(array)
                         Dim data As IEnumerable(Of ImperfectPalindrome) =
                             LinqAPI.MakeList(Of ImperfectPalindrome) <= From x As ImperfectPalindrome
-                                                                        In [in].LoadCsv(Of Topologically.ImperfectPalindrome)
+                                                                        In array
                                                                         Where x.MaxMatch >= min
                                                                         Select x
                         Call writer.Flush(data)
