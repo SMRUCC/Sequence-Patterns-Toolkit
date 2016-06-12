@@ -15,7 +15,7 @@ Namespace Pattern
         End Function
 
         ''' <summary>
-        '''
+        ''' Found out all of the loci site on the target sequence.
         ''' </summary>
         ''' <param name="Sequence"></param>
         ''' <param name="Loci"></param>

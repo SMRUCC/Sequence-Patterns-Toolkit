@@ -176,16 +176,24 @@ Namespace Topologically
             End If
         End Function
 
+        ''' <summary>
+        ''' 这个函数求解的是绝对相等的
+        ''' </summary>
+        ''' <param name="Segment"></param>
+        ''' <param name="Sequence"></param>
+        ''' <returns></returns>
         <ExportAPI("Mirrors.Locis.Get")>
         Public Function CreateMirrors(Segment As String, Sequence As String) As PalindromeLoci()
-            Dim Locations = FindLocation(Sequence, Segment)
+            Dim Locations As Integer() = FindLocation(Sequence, Segment)
+
             If Locations.IsNullOrEmpty Then
                 Return Nothing
             End If
 
             Dim Mirror As String = New String(Segment.Reverse.ToArray)
             Dim l As Integer = Len(Segment)
-            Dim Result = (From loci As Integer In Locations
+            Dim Result = (From loci As Integer
+                          In Locations
                           Let ml As Integer = __haveMirror(l, loci, Mirror, Sequence)
                           Where ml > -1
                           Select loci, ml).ToArray

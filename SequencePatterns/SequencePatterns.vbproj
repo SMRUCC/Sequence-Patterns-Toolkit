@@ -188,7 +188,7 @@
     <Compile Include="Topologically\Palindrome\SearchWorker.vb" />
     <Compile Include="Topologically\SearchWorker.vb" />
     <Compile Include="Topologically\Seeds.vb" />
-    <Compile Include="Topologically\Similarity\Blast.vb" />
+    <Compile Include="Topologically\Similarity\MirrorPalindrome.vb" />
     <Compile Include="Topologically\Similarity\Loci.vb" />
     <Compile Include="Topologically\Similarity\Repeats.vb" />
   </ItemGroup>
