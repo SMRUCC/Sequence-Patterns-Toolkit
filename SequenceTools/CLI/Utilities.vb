@@ -11,6 +11,7 @@ Imports LANS.SystemsBiology.SequenceModel
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
 Imports LANS.SystemsBiology.Assembly.NCBI.GenBank
 Imports Microsoft.VisualBasic.Imaging
+Imports System.IO
 
 ''' <summary>
 ''' Sequence Utilities
@@ -23,7 +24,9 @@ Imports Microsoft.VisualBasic.Imaging
                   Publisher:="xie.guigang@gmail.com")>
 Public Module Utilities
 
-    <ExportAPI("-321", Info:="Polypeptide sequence 3 letters to 1 lettes sequence.", Usage:="-321 /in <sequence.txt> [/out <out.fasta>]")>
+    <ExportAPI("-321",
+               Info:="Polypeptide sequence 3 letters to 1 lettes sequence.",
+               Usage:="-321 /in <sequence.txt> [/out <out.fasta>]")>
     Public Function PolypeptideBriefs(args As CommandLine) As Integer
         Dim [In] As String = args.GetString("/in")
         Dim Sequence As String = FileIO.FileSystem.ReadAllText([In]).Replace(vbCr, "").Replace(vbLf, "")
@@ -42,7 +45,8 @@ Public Module Utilities
         Return 0
     End Function
 
-    <ExportAPI("-complement", Usage:="-reverse -i <input_fasta> [-o <output_fasta>]")>
+    <ExportAPI("-complement",
+               Usage:="-reverse -i <input_fasta> [-o <output_fasta>]")>
     Public Function Complement(argvs As CommandLine) As Integer
         Dim InputFasta As String = argvs("-i")
         Dim OutputFasta As String = argvs("-o")
@@ -69,28 +73,16 @@ Public Module Utilities
         Return -1
     End Function
 
-    <ExportAPI("-reverse", Usage:="-reverse -i <input_fasta> [-o <output_fasta>]")>
-    Public Function Reverse(argvs As CommandLine) As Integer
-        Dim InputFasta As String = argvs("-i")
-        Dim OutputFasta As String = argvs("-o")
+    <ExportAPI("-reverse",
+               Usage:="-reverse -i <input_fasta> [-o <output_fasta>]")>
+    Public Function Reverse(args As CommandLine) As Integer
+        Dim InputFasta As String = args("-i")
 
-        If String.IsNullOrEmpty(InputFasta) Then
-            Call Console.WriteLine("No fasta sequence was input!")
-        ElseIf Not FileIO.FileSystem.FileExists(InputFasta) Then
-            Call Console.WriteLine("Fasta file ""{0}"" is not exisist on your filesystem!", InputFasta)
+        If Not InputFasta.FileExists Then
+            Call $"Fasta file ""{InputFasta}"" is not exisist on your filesystem or file empty!".PrintException
         Else
-            If String.IsNullOrEmpty(OutputFasta) Then
-                Try
-                    Dim FileInfo = FileIO.FileSystem.GetFileInfo(InputFasta)
-                    OutputFasta = String.Format("{0}/{1}_reverse.fsa", FileInfo.Directory.FullName, FileInfo.Name)
-                    Call FastaFile.Read(InputFasta).Reverse.Save(OutputFasta)
-                Catch ex As Exception
-                    Call Console.WriteLine(ex.ToString)
-                    Return -1
-                End Try
-
-                Return 0
-            End If
+            Dim OutputFasta As String = args.GetValue("-o", InputFasta.TrimFileExt & "_reverse.fsa")
+            Return FastaFile.Read(InputFasta).Reverse.Save(OutputFasta)
         End If
 
         Return -1

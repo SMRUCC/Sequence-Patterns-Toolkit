@@ -6,6 +6,9 @@ Imports Microsoft.VisualBasic.Language
 
 Namespace Topologically
 
+    ''' <summary>
+    ''' Mirror 或者 Palindrome
+    ''' </summary>
     Public Class PalindromeLoci : Inherits Contig
         Implements I_PolymerSequenceModel
         Implements ILoci

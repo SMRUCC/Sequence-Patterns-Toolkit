@@ -22,6 +22,21 @@ Public Module LociExtensions
     End Function
 
     ''' <summary>
+    ''' --->&lt;---
+    ''' </summary>
+    ''' <param name="x"></param>
+    ''' <returns></returns>
+    <Extension>
+    Public Function MirrorsLoci(x As PalindromeLoci) As SimpleSegment
+        Return New SimpleSegment With {
+            .Strand = x.MappingLocation.Strand.GetBriefCode,
+            .Start = x.MappingLocation.Left,
+            .Ends = x.MappingLocation.Right,
+            .SequenceData = x.Loci & x.Palindrome
+        }
+    End Function
+
+    ''' <summary>
     ''' 对于简单的重复序列而言，正向链上面的重复片段，例如AAGTCT在反向链上面就是AGACTT，总是可以找得到对应的，所以在这里只需要记录下正向链的数据就好了
     ''' </summary>
     ''' <param name="x"></param>
@@ -87,6 +102,11 @@ Public Module LociExtensions
         Return x.ToArray(AddressOf ToLoci)
     End Function
 
+    ''' <summary>
+    ''' 自动根据类型转换为位点数据
+    ''' </summary>
+    ''' <param name="df"></param>
+    ''' <returns></returns>
     <Extension>
     Public Function ConvertsAuto(df As DocumentStream.File) As SimpleSegment()
         Dim types As Type() = {GetType(ImperfectPalindrome), GetType(RevRepeats), GetType(Repeats), GetType(PalindromeLoci)}
