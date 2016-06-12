@@ -1,6 +1,8 @@
 ﻿Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically
+Imports LANS.SystemsBiology.SequenceModel
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Linq
+Imports Microsoft.VisualBasic.Scripting.MetaData
 
 Namespace Topologically.SimilarityMatches
 
@@ -69,4 +71,37 @@ Namespace Topologically.SimilarityMatches
                 })
         End Function
     End Module
+
+    Public Class FuzzyMirrors : Inherits MirrorSearchs
+
+        ReadOnly _maxDist As Integer, cut As Double
+
+        ''' <summary>
+        ''' 
+        ''' </summary>
+        ''' <param name="Sequence"></param>
+        ''' <param name="Min"></param>
+        ''' <param name="Max"></param>
+        Sub New(Sequence As I_PolymerSequenceModel,
+                <Parameter("Min.Len", "The minimum length of the repeat sequence loci.")> Min As Integer,
+                <Parameter("Max.Len", "The maximum length of the repeat sequence loci.")> Max As Integer,
+                maxDist As Integer,
+                cut As Double)
+            Call MyBase.New(Sequence, Min, Max)
+
+            Me.cut = cut
+            Me._maxDist = maxDist
+        End Sub
+
+        Protected Overrides Sub __postResult(currentRemoves() As String, currentStat As Microsoft.VisualBasic.List(Of String), currLen As Integer)
+            Dim Sites As PalindromeLoci() =
+                currentStat.ToArray(
+                    Function(loci) CreateMirrors(loci,
+                                                 SequenceData,
+                                                 _maxDist,
+                                                 cut),
+                                   Parallel:=True).MatrixAsIterator.TrimNull
+            Call _ResultSet.Add(Sites)
+        End Sub
+    End Class
 End Namespace

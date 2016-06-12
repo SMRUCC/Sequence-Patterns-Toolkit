@@ -18,6 +18,7 @@ Imports Microsoft.VisualBasic.Parallel.Linq
 Imports System.Text.RegularExpressions
 Imports LANS.SystemsBiology.SequenceModel
 Imports Microsoft.VisualBasic.DocumentFormat.Csv.DocumentStream.Linq
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically.SimilarityMatches
 
 Partial Module Utilities
 
@@ -89,6 +90,23 @@ Partial Module Utilities
         Dim Search As New Topologically.MirrorSearchs(NT, Min, Max)
         Call Search.InvokeSearch()
         Call Search.ResultSet.SaveTo(Out)
+        Return 0
+    End Function
+
+    <ExportAPI("/Mirror.Fuzzy",
+               Usage:="/Mirror.Fuzzy /in <in.fasta> [/out <out.csv> /cut 0.6 /max-dist 6 /min 3 /max 20]")>
+    Public Function FuzzyMirrors(args As CommandLine.CommandLine) As Integer
+        Dim [in] As String = args - "/in"
+        Dim cut As Double = args.GetValue("/cut", 0.6)
+        Dim maxDist As Integer = args.GetValue("/max-dist", 6)
+        Dim min As Integer = args.GetValue("/min", 3)
+        Dim max As Integer = args.GetValue("/max", 20)
+        Dim out As String = args.GetValue("/out", [in].TrimFileExt & $".cut,{cut}-dist,{maxDist}-min,max={min},{max}.Csv")
+        Dim nt As New FastaToken([in])
+        Dim search As New FuzzyMirrors(nt, min, max, maxDist, cut)
+        Call search.InvokeSearch()
+        Call search.ResultSet.SaveTo(out)
+
         Return 0
     End Function
 
