@@ -263,6 +263,14 @@ RETURN_VALUE:
             Call BatchTrim(Of RevRepeatsView)(Dir, min, max, minAppear, ExportDir)
         End Sub
 
+        ''' <summary>
+        ''' Batch search for the repeats and reversed repeats sequence feature sites.
+        ''' </summary>
+        ''' <param name="Mla"></param>
+        ''' <param name="Min"></param>
+        ''' <param name="Max"></param>
+        ''' <param name="MinAppeared"></param>
+        ''' <param name="saveDIR"></param>
         <ExportAPI("Search.Batch")>
         Public Sub BatchSearch(Mla As FastaFile, Min As Integer, Max As Integer, Optional MinAppeared As Integer = 2, Optional saveDIR As String = "./")
             For Each genome As FastaToken In Mla

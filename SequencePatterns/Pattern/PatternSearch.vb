@@ -40,7 +40,7 @@ Namespace Pattern
         Public Function GenerateSegment(Seq As FastaToken, pattern As String) As RowObject()
             Dim LQuery = RowObject.Distinct((From Segment As SegLoci
                                              In Match(Seq.SequenceData, pattern)
-                                             Select Segment.ToRow).ToArray)
+                                             Select Segment.ToRow).ToArray).ToArray
             Dim Head As RowObject = {Seq.ToString}, Count As RowObject = {"Hits count:", CStr(LQuery.Count)}
             Dim RowList As List(Of RowObject) =
                 New List(Of RowObject) From {Head, Count}

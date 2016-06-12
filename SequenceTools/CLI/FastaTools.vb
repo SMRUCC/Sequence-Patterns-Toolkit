@@ -72,17 +72,19 @@ Partial Module Utilities
         Return Fasta.Save(out, Encodings.ASCII).CLICode
     End Function
 
-    <ExportAPI("/Merge", Usage:="/Merge /in <fasta.DIR> [/out <out.fasta> /trim /ext <*.fasta>]",
+    <ExportAPI("/Merge", Usage:="/Merge /in <fasta.DIR> [/out <out.fasta> /trim /ext <*.fasta> /brief]",
                Info:="Only search for 1 level folder, dit not search receve.")>
     Public Function Merge(args As CommandLine.CommandLine) As Integer
         Dim inDIR As String = args("/in")
         Dim out As String = args.GetValue("/out", inDIR & ".fasta")
         Dim ext As String = args("/ext")
         Dim fasta As FASTA.FastaFile
+        Dim raw As Boolean = Not args.GetBoolean("/brief")
+
         If String.IsNullOrEmpty(ext) Then
-            fasta = FastaExportMethods.Merge(inDIR, args.GetBoolean("/trim"))
+            fasta = FastaExportMethods.Merge(inDIR, args.GetBoolean("/trim"), raw)
         Else
-            fasta = FastaExportMethods.Merge(inDIR, ext, args.GetBoolean("/trim"))
+            fasta = FastaExportMethods.Merge(inDIR, ext, args.GetBoolean("/trim"), raw)
         End If
         Return fasta.Save(out).CLICode
     End Function

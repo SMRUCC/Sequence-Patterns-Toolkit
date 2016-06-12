@@ -1,6 +1,8 @@
 ﻿Imports System.Runtime.CompilerServices
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically
 Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
+Imports Microsoft.VisualBasic.DocumentFormat.Csv
+Imports Microsoft.VisualBasic.DocumentFormat.Csv.DocumentStream
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 
@@ -84,4 +86,43 @@ Public Module LociExtensions
     Public Function ToLocis(x As IEnumerable(Of Topologically.ImperfectPalindrome)) As SimpleSegment()
         Return x.ToArray(AddressOf ToLoci)
     End Function
+
+    <Extension>
+    Public Function ConvertsAuto(df As DocumentStream.File) As SimpleSegment()
+        Dim types As Type() = {GetType(ImperfectPalindrome), GetType(RevRepeats), GetType(Repeats), GetType(PalindromeLoci)}
+        Dim type As Type = df.GetType(types)
+        Dim handler As Func(Of DocumentStream.File, SimpleSegment()) = __types(type)
+        Dim result As SimpleSegment() = handler(df)
+
+        Return result
+    End Function
+
+    Private Function __ip(df As DocumentStream.File) As SimpleSegment()
+        Return df.AsDataSource(Of ImperfectPalindrome).ToLocis
+    End Function
+
+    Private Function __revp(df As DocumentStream.File) As SimpleSegment()
+        Return df.AsDataSource(Of RevRepeats).ToLocis
+    End Function
+
+    Private Function __rps(df As DocumentStream.File) As SimpleSegment()
+        Return df.AsDataSource(Of Repeats).ToLocis
+    End Function
+
+    Private Function __pl(df As DocumentStream.File) As SimpleSegment()
+        Return df.AsDataSource(Of PalindromeLoci).ToLocis
+    End Function
+
+    ReadOnly __types As IReadOnlyDictionary(Of Type, Func(Of DocumentStream.File, SimpleSegment()))
+
+    Sub New()
+        Dim hash As New Dictionary(Of Type, Func(Of DocumentStream.File, SimpleSegment()))
+
+        Call hash.Add(GetType(ImperfectPalindrome), AddressOf __ip)
+        Call hash.Add(GetType(RevRepeats), AddressOf __revp)
+        Call hash.Add(GetType(Repeats), AddressOf __rps)
+        Call hash.Add(GetType(PalindromeLoci), AddressOf __pl)
+
+        __types = hash
+    End Sub
 End Module
