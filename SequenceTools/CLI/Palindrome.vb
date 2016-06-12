@@ -7,6 +7,7 @@ Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.DocumentFormat.Csv
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Text
+Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.Parallel
 Imports Microsoft.VisualBasic.Language.UnixBash
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically
@@ -15,6 +16,7 @@ Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Parallel.Threads
 Imports Microsoft.VisualBasic.Parallel.Linq
 Imports System.Text.RegularExpressions
+Imports LANS.SystemsBiology.SequenceModel
 
 Partial Module Utilities
 
@@ -248,7 +250,7 @@ Partial Module Utilities
         If input.FileExists Then
             inFasta = FastaToken.Load(input)
         Else
-            inFasta = New SequenceModel.FASTA.FastaToken With {
+            inFasta = New FASTA.FastaToken With {
                 .SequenceData = input,
                 .Attributes = {"auto-generated"}
             }
@@ -296,6 +298,36 @@ Partial Module Utilities
         Call fasta.SaveTo(Temp)
 
         Return CLI
+    End Function
+
+    <ExportAPI("/Palindrome.Screen.MaxMatches.Batch",
+               Usage:="/Palindrome.Screen.MaxMatches.Batch /in <inDIR> /min <min.max-matches> [/out <out.DIR> /num_threads <-1>]")>
+    Public Function FilteringMatchesBatch(args As CommandLine.CommandLine) As Integer
+        Dim [in] As String = args - "/in"
+        Dim min As Integer = args.GetInt32("/min")
+        Dim out As String = args.GetValue("/out", [in].TrimDIR & "-min." & min & "/")
+        Dim CLI As New List(Of String)
+        Dim n As Integer = args.GetValue("/num_threads", -1)
+
+        For Each file As String In ls - l - r - wildcards("*.csv") <= [in]
+            CLI += $"{GetType(Utilities).API(NameOf(FilteringMatches))} /in {file.CliPath} /min {min} /out {(out & "/" & file.BaseName & ".Csv").CliPath}"
+        Next
+
+        Return App.SelfFolks(CLI, LQuerySchedule.AutoConfig(n))
+    End Function
+
+    <ExportAPI("/Palindrome.Screen.MaxMatches",
+               Usage:="/Palindrome.Screen.MaxMatches /in <in.csv> /min <min.max-matches> [/out <out.csv>]")>
+    Public Function FilteringMatches(args As CommandLine.CommandLine) As Integer
+        Dim [in] As String = args - "/in"
+        Dim min As Integer = args.GetInt32("/min")
+        Dim out As String = args.GetValue("/out", [in].TrimFileExt & "-min." & min & ".csv")
+        Dim data As IEnumerable(Of ImperfectPalindrome) =
+            LinqAPI.MakeList(Of ImperfectPalindrome) <= From x As ImperfectPalindrome
+                                                        In [in].LoadCsv(Of Topologically.ImperfectPalindrome)
+                                                        Where x.MaxMatch >= min
+                                                        Select x
+        Return data.SaveTo(out).CLICode
     End Function
 
     <ExportAPI("--PerfectPalindrome.Filtering", Usage:="--PerfectPalindrome.Filtering /in <inDIR> [/min <8> /out <outDIR>]")>
