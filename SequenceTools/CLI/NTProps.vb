@@ -1,14 +1,17 @@
-﻿Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
+﻿Imports System.Runtime.CompilerServices
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically
 Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
 Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.Reflection
+Imports Microsoft.VisualBasic.ComponentModel.Collection
 Imports Microsoft.VisualBasic.DocumentFormat.Csv
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.UnixBash
 Imports Microsoft.VisualBasic.Linq
+Imports Microsoft.VisualBasic.Parallel
 Imports Microsoft.VisualBasic.Parallel.Linq
 
 Partial Module Utilities
@@ -45,37 +48,64 @@ Partial Module Utilities
     ''' <param name="args"></param>
     ''' <returns></returns>
     <ExportAPI("/Mirrors.Group",
-               Usage:="/Mirrors.Group /in <mirrors.Csv> [/out <out.DIR>]")>
+               Usage:="/Mirrors.Group /in <mirrors.Csv> [/batch /fuzzy <-1> /out <out.DIR>]")>
+    <ParameterInfo("/fuzzy", True,
+                   Description:="-1 means group sequence by string equals compared, and value of 0-1 means using string fuzzy compare.")>
     Public Function MirrorGroups(args As CommandLine) As Integer
         Dim [in] As String = args("/in")
         Dim outDIR As String = args.GetValue("/out", [in].TrimFileExt)
         Dim data As PalindromeLoci() = [in].LoadCsv(Of PalindromeLoci)
+        Dim cut As Double = args.GetValue("/fuzzy", -1.0R)
+        Dim batch As Boolean = args.GetBoolean("/batch")
 
-        For Each g In (From x As PalindromeLoci In data Select x Group x By x.Loci Into Group)
-            Dim fa As FastaToken() =
-                LinqAPI.Exec(Of FastaToken) <= From x As PalindromeLoci
-                                               In g.Group
-                                               Let uid As String = x.MappingLocation.ToString.NormalizePathString(True).Replace(" ", "_")
-                                               Let atrs As String() = {uid, x.Loci}
-                                               Select New FastaToken With {
-                                                   .Attributes = atrs,
-                                                   .SequenceData = x.Loci & x.Palindrome
-                                               }
-            Dim path As String = $"{outDIR}/{g.Loci}.fasta"
+        If cut > 0 Then
+            For Each g As GroupResult(Of PalindromeLoci, String) In data.FuzzyGroups(
+                Function(x) x.Loci, cut, parallel:=Not batch)
 
-            Call New FastaFile(fa).Save(path, Encodings.ASCII)
-        Next
+                Dim fa As FastaToken() =
+                    LinqAPI.Exec(Of FastaToken) <= From x As PalindromeLoci In g.Group Select x.__lociFa
+                Dim path As String = $"{outDIR}/{g.Tag}.fasta"
+
+                Call New FastaFile(fa).Save(path, Encodings.ASCII)
+            Next
+        Else
+            For Each g In (From x As PalindromeLoci In data Select x Group x By x.Loci Into Group)
+                Dim fa As FastaToken() =
+                    LinqAPI.Exec(Of FastaToken) <= From x As PalindromeLoci In g.Group Select x.__lociFa
+                Dim path As String = $"{outDIR}/{g.Loci}.fasta"
+
+                Call New FastaFile(fa).Save(path, Encodings.ASCII)
+            Next
+        End If
 
         Return 0
     End Function
 
+    ''' <summary>
+    ''' Converts the mirror palindrome site into a fasta sequence
+    ''' </summary>
+    ''' <param name="x"></param>
+    ''' <returns></returns>
+    <Extension>
+    Private Function __lociFa(x As PalindromeLoci) As FastaToken
+        Dim uid As String = x.MappingLocation.ToString.Replace(" ", "_")
+        Dim atrs As String() = {uid, x.Loci}
+
+        Return New FastaToken With {
+            .Attributes = atrs,
+            .SequenceData = x.Loci & x.Palindrome
+        }
+    End Function
+
     <ExportAPI("/Mirrors.Group.Batch",
-               Usage:="/Mirrors.Group.Batch /in <mirrors.DIR> [/out <out.DIR>]")>
+               Usage:="/Mirrors.Group.Batch /in <mirrors.DIR> [/fuzzy <-1> /out <out.DIR>]")>
     Public Function MirrorGroupsBatch(args As CommandLine) As Integer
         Dim inDIR As String = args - "/in"
         Dim CLI As New List(Of String)
+        Dim fuzzy As String = args.GetValue("/fuzzy", "-1")
         Dim task As Func(Of String, String) =
-            Function(path) $"{GetType(Utilities).API(NameOf(MirrorGroups))} /in {path.CliPath}"
+            Function(path) _
+                $"{GetType(Utilities).API(NameOf(MirrorGroups))} /in {path.CliPath} /batch /fuzzy {fuzzy}"
 
         For Each file As String In ls - l - r - wildcards("*.csv") <= inDIR
             CLI += task(file)
