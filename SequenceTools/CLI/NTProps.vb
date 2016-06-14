@@ -6,6 +6,8 @@ Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.DocumentFormat.Csv
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Language.UnixBash
+Imports LANS.SystemsBiology.SequenceModel.FASTA
+Imports Microsoft.VisualBasic.Language
 
 Partial Module Utilities
 
@@ -33,6 +35,34 @@ Partial Module Utilities
         Dim sites As SimpleSegment() = data.ToArray(AddressOf MirrorsLoci)
 
         Return sites.SaveTo(out).CLICode
+    End Function
+
+    ''' <summary>
+    ''' 对位点进行分组操作方便进行MEME分析
+    ''' </summary>
+    ''' <param name="args"></param>
+    ''' <returns></returns>
+    <ExportAPI("/Mirrors.Group",
+               Usage:="/Mirrors.Group /in <mirrors.Csv> /out <out.DIR>")>
+    Public Function MirrorGroups(args As CommandLine) As Integer
+        Dim [in] As String = args("/in")
+        Dim outDIR As String = args.GetValue("/out", [in].TrimFileExt)
+        Dim data As PalindromeLoci() = [in].LoadCsv(Of PalindromeLoci)
+
+        For Each g In (From x As PalindromeLoci In data Select x Group x By x.Loci Into Group)
+            Dim fa As FastaToken() =
+                LinqAPI.Exec(Of FastaToken) <= From x As PalindromeLoci
+                                               In g.Group
+                                               Let uid As String = x.MappingLocation.ToString.NormalizePathString(True).Replace(" ", "_")
+                                               Let atrs As String() = {uid, x.Loci}
+                                               Select New FastaToken With {
+                                                   .Attributes = atrs,
+                                                   .SequenceData = x.Loci & x.Palindrome
+                                               }
+            Dim path As String = $"{outDIR}/{g.Loci}.fasta"
+        Next
+
+        Return 0
     End Function
 
     <ExportAPI("/SimpleSegment.Mirrors.Batch",
