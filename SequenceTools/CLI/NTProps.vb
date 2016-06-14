@@ -1,13 +1,15 @@
 ﻿Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically
+Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
+Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.DocumentFormat.Csv
-Imports Microsoft.VisualBasic.Linq
-Imports Microsoft.VisualBasic.Language.UnixBash
-Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Language.UnixBash
+Imports Microsoft.VisualBasic.Linq
+Imports Microsoft.VisualBasic.Parallel.Linq
 
 Partial Module Utilities
 
@@ -43,7 +45,7 @@ Partial Module Utilities
     ''' <param name="args"></param>
     ''' <returns></returns>
     <ExportAPI("/Mirrors.Group",
-               Usage:="/Mirrors.Group /in <mirrors.Csv> /out <out.DIR>")>
+               Usage:="/Mirrors.Group /in <mirrors.Csv> [/out <out.DIR>]")>
     Public Function MirrorGroups(args As CommandLine) As Integer
         Dim [in] As String = args("/in")
         Dim outDIR As String = args.GetValue("/out", [in].TrimFileExt)
@@ -63,6 +65,21 @@ Partial Module Utilities
         Next
 
         Return 0
+    End Function
+
+    <ExportAPI("/Mirrors.Group.Batch",
+               Usage:="/Mirrors.Group.Batch /in <mirrors.DIR> [/out <out.DIR>]")>
+    Public Function MirrorGroupsBatch(args As CommandLine) As Integer
+        Dim inDIR As String = args - "/in"
+        Dim CLI As New List(Of String)
+        Dim task As Func(Of String, String) =
+            Function(path) $"{GetType(Utilities).API(NameOf(MirrorGroups))} /in {path.CliPath}"
+
+        For Each file As String In ls - l - r - wildcards("*.csv") <= inDIR
+            CLI += task(file)
+        Next
+
+        Return App.SelfFolks(CLI, LQuerySchedule.CPU_NUMBER)
     End Function
 
     <ExportAPI("/SimpleSegment.Mirrors.Batch",
