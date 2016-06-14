@@ -62,6 +62,8 @@ Partial Module Utilities
                                                    .SequenceData = x.Loci & x.Palindrome
                                                }
             Dim path As String = $"{outDIR}/{g.Loci}.fasta"
+
+            Call New FastaFile(fa).Save(path, Encodings.ASCII)
         Next
 
         Return 0
