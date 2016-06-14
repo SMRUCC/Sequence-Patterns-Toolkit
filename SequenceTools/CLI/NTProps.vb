@@ -98,11 +98,12 @@ Partial Module Utilities
     End Function
 
     <ExportAPI("/Mirrors.Group.Batch",
-               Usage:="/Mirrors.Group.Batch /in <mirrors.DIR> [/fuzzy <-1> /out <out.DIR>]")>
+               Usage:="/Mirrors.Group.Batch /in <mirrors.DIR> [/fuzzy <-1> /out <out.DIR> /num_threads <-1>]")>
     Public Function MirrorGroupsBatch(args As CommandLine) As Integer
         Dim inDIR As String = args - "/in"
         Dim CLI As New List(Of String)
         Dim fuzzy As String = args.GetValue("/fuzzy", "-1")
+        Dim num_threads As Integer = args.GetValue("/num_threads", -1)
         Dim task As Func(Of String, String) =
             Function(path) _
                 $"{GetType(Utilities).API(NameOf(MirrorGroups))} /in {path.CliPath} /batch /fuzzy {fuzzy}"
@@ -111,7 +112,7 @@ Partial Module Utilities
             CLI += task(file)
         Next
 
-        Return App.SelfFolks(CLI, LQuerySchedule.CPU_NUMBER)
+        Return App.SelfFolks(CLI, LQuerySchedule.AutoConfig(num_threads))
     End Function
 
     <ExportAPI("/SimpleSegment.Mirrors.Batch",
