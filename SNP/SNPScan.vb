@@ -88,5 +88,6 @@ Public Module SNPScan
         Dim ref As FASTA.FastaToken = nt(refInd)
         Dim var As Double() = pwm.GetVariation(ref, 0.2)
 
+        Throw New NotImplementedException
     End Function
 End Module

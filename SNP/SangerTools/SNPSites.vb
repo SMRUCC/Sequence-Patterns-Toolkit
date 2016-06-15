@@ -56,7 +56,7 @@ Public Module SNPSites
                 phylip_output_filename += ".phylip"
             End If
 
-            PhylibMinusofMinussnpMinussites.create_phylib_of_snp_sites(
+            PhylibMinusofMinussnpMinussites.PhylibOfSNPSites(
                 phylip_output_filename,
                 AlignmentMinusfile.number_of_snps,
                 SNPsBases,
