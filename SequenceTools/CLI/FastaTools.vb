@@ -13,6 +13,7 @@ Imports Microsoft.VisualBasic.Serialization
 Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports Microsoft.VisualBasic.Language.UnixBash
 Imports LANS.SystemsBiology.Assembly.NCBI.GenBank
+Imports Microsoft.VisualBasic.Language
 
 Partial Module Utilities
 
@@ -92,26 +93,26 @@ Partial Module Utilities
     ''' <summary>
     ''' 取单个片段的方法
     ''' </summary>
-    ''' <param name="argvs"></param>
+    ''' <param name="args"></param>
     ''' <returns></returns>
     <ExportAPI("-segment",
                Usage:="-segment /fasta <Fasta_Token> [-loci <loci>] [/left <left> /length <length> /right <right> [/reverse]] [/ptt <ptt> /geneID <gene_id> /dist <distance> /downstream] -o <saved> [-line.break 100]")>
-    Public Function GetSegment(argvs As CommandLine.CommandLine) As Integer
-        Dim FastaFile As String = argvs("/fasta")
-        Dim Loci As String = argvs("-loci")
-        Dim SaveTo As String = argvs("-o")
+    Public Function GetSegment(args As CommandLine.CommandLine) As Integer
+        Dim FastaFile As String = args("/fasta")
+        Dim Loci As String = args("-loci")
+        Dim SaveTo As String = args("-o")
         Dim LociData As NucleotideLocation
 
         If String.IsNullOrEmpty(Loci) Then
 
-            Dim PTT As String = argvs("/ptt")
+            Dim PTT As String = args("/ptt")
 
             If String.IsNullOrEmpty(PTT) Then
 
-                Dim Left As Integer = argvs.GetInt32("/left")
-                Dim Right As Integer = argvs.GetInt32("/right")
-                Dim Length As Integer = argvs.GetInt32("/length")
-                Dim Reverse As Boolean = argvs.HavebFlag("/reverse")
+                Dim Left As Integer = args.GetInt32("/left")
+                Dim Right As Integer = args.GetInt32("/right")
+                Dim Length As Integer = args.GetInt32("/length")
+                Dim Reverse As Boolean = args.HavebFlag("/reverse")
 
                 If Length > 0 Then
                     LociData = NucleotideLocation.CreateObject(Left, Length, Reverse)
@@ -121,11 +122,11 @@ Partial Module Utilities
 
             Else
 
-                Dim GeneID As String = argvs("/geneid")
-                Dim Distance As Integer = argvs.GetInt32("/dist")
+                Dim GeneID As String = args("/geneid")
+                Dim Distance As Integer = args.GetInt32("/dist")
                 Dim PTTData = TabularFormat.PTT.Load(PTT)
                 Dim GeneObject = PTTData.GeneObject(GeneID)
-                Dim DownStream As Boolean = argvs.HavebFlag("/downstream")
+                Dim DownStream As Boolean = args.HavebFlag("/downstream")
 
                 If Not DownStream Then
                     LociData = GeneObject.Location.GetUpStreamLoci(Distance)
@@ -145,7 +146,7 @@ Partial Module Utilities
             SegmentFasta = New NucleotideModels.SegmentReader(SegmentFasta).TryParse(LociData).GetFasta
         End If
 
-        Dim LineBreak As Integer = If(argvs.ContainsParameter("-line.break", False), argvs.GetInt32("-line.break"), 100)  '默认100个碱基换行
+        Dim LineBreak As Integer = If(args.ContainsParameter("-line.break", False), args.GetInt32("-line.break"), 100)  ' 默认100个碱基换行
 
         Return If(SegmentFasta.SaveTo(LineBreak, SaveTo), 0, -1)
     End Function
@@ -173,11 +174,14 @@ Partial Module Utilities
             Function(segment) New FASTA.FastaToken With {
                     .SequenceData = segment.SequenceData,
                     .Attributes = dumpMethod(segment)})
-        Dim Complements = (From segment In Segments
-                           Where segment.MappingLocation.Strand <> Strands.Forward
-                           Select New FASTA.FastaToken With {
-                               .SequenceData = segment.Complement,
-                               .Attributes = dumpMethod(segment)}).ToArray
+        Dim Complements As FastaToken() =
+            LinqAPI.Exec(Of FastaToken) <= From segment As SimpleSegment
+                                           In Segments
+                                           Where segment.MappingLocation.Strand <> Strands.Forward
+                                           Select New FastaToken With {
+                                               .SequenceData = segment.Complement,
+                                               .Attributes = dumpMethod(segment)
+                                           }
         Dim PTT As PTT = Segments.CreatePTTObject
         PTT.Title = IO.Path.GetFileNameWithoutExtension(args("/fasta"))
         PTT.Size = Fasta.Length
@@ -199,18 +203,17 @@ Partial Module Utilities
         Return New String() {segment.ID}
     End Function
 
-    Private Function __fillSegment(region As NucleotideModels.SimpleSegment, reader As NucleotideModels.SegmentReader, Complement As Boolean, Reversed As Boolean) As NucleotideModels.SimpleSegment
-        Dim sequence As String
-        'If region.MappingLocation.Strand = Strands.Forward Then
-        sequence = reader.GetSegmentSequence(region.MappingLocation.Left + 1, region.MappingLocation.Right + 1)
-        '    Else
-        '       sequence = reader.GetSegmentSequence(region.MappingLocation.Left - 1, region.MappingLocation.Right - 1)
-        '      End If
+    Private Function __fillSegment(region As NucleotideModels.SimpleSegment,
+                                   reader As NucleotideModels.SegmentReader,
+                                   Complement As Boolean,
+                                   Reversed As Boolean) As NucleotideModels.SimpleSegment
+        Dim seq As String =
+            reader.GetSegmentSequence(region.MappingLocation.Left + 1,
+                                      region.MappingLocation.Right + 1)
 
         If region.MappingLocation.Strand = Strands.Reverse Then
-
             If Complement Then
-                region.Complement = NucleotideModels.NucleicAcid.Complement(sequence)
+                region.Complement = NucleotideModels.NucleicAcid.Complement(seq)
                 If Reversed Then
                     region.Complement = New String(region.Complement.Reverse.ToArray)
                 End If
@@ -218,24 +221,11 @@ Partial Module Utilities
 
             region.SequenceData = region.Complement
         Else
-            region.SequenceData = sequence
+            region.SequenceData = seq
         End If
 
         Return region
     End Function
-
-#If DEBUG Then
-
-    <ExportAPI("/TrimTest", Usage:="/TrimTest /in <in.fasta>")>
-    Public Function TrimTest(args As CommandLine.CommandLine) As Integer
-        Dim inFile As String = args("/in")
-        Dim fa As New FastaToken(inFile)
-        fa = FastaExportMethods.FastaTrimCorrupt(fa)
-        Call fa.GenerateDocument(60).__DEBUG_ECHO
-
-        Return 0
-    End Function
-#End If
 
     ''' <summary>
     ''' 假若你的fasta序列里面既有大写字母又有小写字母，并且希望将序列放在一行显示，则可以使用这个方法来统一这些序列的格式
@@ -340,7 +330,10 @@ Partial Module Utilities
                         id,
                         seq
                     Group By uid Into Group)
-        fasta = New FastaFile(From x In uids Let fa = x.Group.First Select New FastaToken({fa.id}, fa.seq))
+        fasta = New FastaFile(From x
+                              In uids
+                              Let fa = x.Group.First
+                              Select New FastaToken({fa.id}, fa.seq))
 
         Return fasta.Save(out, Encodings.ASCII)
     End Function
