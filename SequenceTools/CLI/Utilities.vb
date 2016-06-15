@@ -45,34 +45,33 @@ Public Module Utilities
         Return 0
     End Function
 
+    ''' <summary>
+    ''' 进行核酸fasta序列的互补
+    ''' </summary>
+    ''' <param name="args"></param>
+    ''' <returns></returns>
     <ExportAPI("-complement",
-               Usage:="-reverse -i <input_fasta> [-o <output_fasta>]")>
-    Public Function Complement(argvs As CommandLine) As Integer
-        Dim InputFasta As String = argvs("-i")
-        Dim OutputFasta As String = argvs("-o")
+               Usage:="-complement -i <input_fasta> [-o <output_fasta>]")>
+    Public Function Complement(args As CommandLine) As Integer
+        Dim InputFasta As String = args("-i")
 
         If String.IsNullOrEmpty(InputFasta) Then
-            Call Console.WriteLine("No fasta sequence was input!")
+            Call "No fasta sequence was input!".PrintException
         ElseIf Not FileIO.FileSystem.FileExists(InputFasta) Then
-            Call Console.WriteLine("Fasta file ""{0}"" is not exisist on your filesystem!", InputFasta)
+            Call $"Fasta file ""{InputFasta}"" is not exisist on your filesystem!".PrintException
         Else
-            If String.IsNullOrEmpty(OutputFasta) Then
-                Try
-                    Dim FileInfo = FileIO.FileSystem.GetFileInfo(InputFasta)
-                    OutputFasta = String.Format("{0}/{1}_reverse.fsa", FileInfo.Directory.FullName, FileInfo.Name)
-                    Call FastaFile.Read(InputFasta).Complement.Save(OutputFasta)
-                Catch ex As Exception
-                    Call Console.WriteLine(ex.ToString)
-                    Return -1
-                End Try
-
-                Return 0
-            End If
+            Dim outFasta As String = args.GetValue("-o", InputFasta.TrimFileExt & "-complement.fasta")
+            Return FastaFile.LoadNucleotideData(InputFasta).Complement.Save(outFasta)
         End If
 
         Return -1
     End Function
 
+    ''' <summary>
+    ''' 对蛋白质序列或者核酸序列进行反向
+    ''' </summary>
+    ''' <param name="args"></param>
+    ''' <returns></returns>
     <ExportAPI("-reverse",
                Usage:="-reverse -i <input_fasta> [-o <output_fasta>]")>
     Public Function Reverse(args As CommandLine) As Integer
