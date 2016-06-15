@@ -54,7 +54,7 @@ Public Module FastaMinusofMinussnpMinussites
             End If
 
             For sample_counter = 0 To number_of_samples - 1
-                fasta_file_pointer.Write(">%s" & vbLf, sequence_names(sample_counter))
+                fasta_file_pointer.Write(">{0}" & vbLf, sequence_names(sample_counter))
                 For snp_counter = 0 To number_of_snps - 1
                     fasta_file_pointer.Write(bases_for_snps(snp_counter)(sample_counter))
                 Next

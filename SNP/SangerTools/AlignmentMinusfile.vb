@@ -24,14 +24,19 @@ Public Module AlignmentMinusfile
         Dim sequence_number As Integer = 0
         Dim length_of_genome_found As UInteger = 0
 
+        For i As Integer = 0 To bases_for_snps.Length - 1
+            bases_for_snps(i) = New Char(length_of_genome - 1) {}
+        Next
+
         For Each fa As FastaToken In fasta
             Dim seq As Char() = fa.SequenceData.ToCharArray
 
             If sequence_number = 0 Then
                 length_of_genome_found = fa.Length
             End If
+
             For i As Integer = 0 To number_of_snps - 1
-                bases_for_snps(i)(sequence_number) = Char.ToUpper(seq(snp_locations(i)))
+                bases_for_snps(sequence_number)(i) = Char.ToUpper(seq(snp_locations(i)))
             Next
 
             If seq.Length <> length_of_genome_found Then
@@ -124,7 +129,9 @@ Public Module AlignmentMinusfile
 
         Dim current_snp_index As Integer = 0
 
-        For i = 0 To length_of_genome - 1
+        snp_locations = New Int32(length_of_genome - 1) {}
+
+        For i As Integer = 0 To length_of_genome - 1
             If first_sequence(i) = ">"c OrElse (output_monomorphic <> 0 AndAlso first_sequence(i) <> "#"c) Then
                 snp_locations(current_snp_index) = i
                 current_snp_index += 1

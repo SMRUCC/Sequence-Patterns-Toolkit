@@ -46,19 +46,19 @@ Public Module PhylibMinusofMinussnpMinussites
 
         Using phylip_file_pointer As FILE = New StreamWriter(New FileStream(filename, FileMode.OpenOrCreate))
             If output_reference = 1 Then
-                phylip_file_pointer.Write("%d %d" & vbLf, number_of_samples + 1, number_of_snps)
+                phylip_file_pointer.Write("{0} {1}" & vbLf, number_of_samples + 1, number_of_snps)
                 phylip_file_pointer.Write("pseudo_reference_sequence" & vbTab)
                 For snp_counter = 0 To number_of_snps - 1
                     phylip_file_pointer.Write(pseudo_reference_sequence(snp_locations(snp_counter)))
                 Next
                 phylip_file_pointer.Write(vbLf)
             Else
-                phylip_file_pointer.Write("%d %d" & vbLf, number_of_samples, number_of_snps)
+                phylip_file_pointer.Write("{0} {1}" & vbLf, number_of_samples, number_of_snps)
             End If
 
             For sample_counter = 0 To number_of_samples - 1
 
-                phylip_file_pointer.WriteLine("%s" & vbTab, sequence_names(sample_counter))
+                phylip_file_pointer.WriteLine(sequence_names(sample_counter) & vbTab)
 
                 For snp_counter = 0 To number_of_snps - 1
                     phylip_file_pointer.Write(bases_for_snps(snp_counter)(sample_counter))

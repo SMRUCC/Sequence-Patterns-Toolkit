@@ -74,6 +74,7 @@ Public Module SNPScan
 
     Private Function __scanRaw([in] As String) As SNP()
         Dim nt As FASTA.FastaFile = clustal.MultipleAlignment([in])
+        nt.FilePath = [in]
         Return nt.Scan(refInd:=Scan0)
     End Function
 
@@ -84,6 +85,6 @@ Public Module SNPScan
     ''' <returns></returns>
     <Extension>
     Public Function Scan(nt As FASTA.FastaFile, refInd As Integer) As SNP()
-        Call nt.SNPSitesGeneric("", "", "", "", refInd, 0, 0)
+        Call nt.SNPSitesGeneric(1, 1, 1, App.GetAppSysTempFile, refInd, 0, 0)
     End Function
 End Module

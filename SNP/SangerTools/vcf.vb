@@ -34,7 +34,7 @@ Public Module Vcf
         Call file.Write("#CHROM" & vbTab & "POS" & vbTab & "ID" & vbTab & "REF" & vbTab & "ALT" & vbTab & "QUAL" & vbTab & "FILTER" & vbTab & "INFO" & vbTab & "FORMAT")
 
         For i As Integer = 0 To number_of_samples - 1
-            Call file.Write(vbTab & "%s", sequence_names(i))
+            Call file.Write(vbTab & sequence_names(i))
         Next
 
         Call file.Write(vbLf)
@@ -139,6 +139,13 @@ Public Module Vcf
         Next
     End Sub
 
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <param name="reference_base"></param>
+    ''' <param name="bases_for_snp"></param>
+    ''' <param name="number_of_samples">序列的数量</param>
+    ''' <returns></returns>
     Private Function __alternativeBases(reference_base As Char, ByRef bases_for_snp As String, number_of_samples As Integer) As String
         Dim num_alt_bases As Integer = 0
         Dim alt_bases As Char() = New Char(MAXIMUM_NUMBER_OF_ALT_BASES) {}
@@ -214,7 +221,7 @@ Public Module Vcf
 
     Private Function FormatAlleleIndex(base As Char, refBase As Char, ByRef altBases As String) As String
         Dim length_of_alt_bases As Integer = altBases.Length
-        Dim result As SByte
+        Dim result As String
         Dim index As Integer
 
         Call Debug.Assert(length_of_alt_bases < 100)
