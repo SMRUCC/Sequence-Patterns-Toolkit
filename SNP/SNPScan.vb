@@ -1,5 +1,6 @@
 ﻿Imports System.Runtime.CompilerServices
 Imports LANS.SystemsBiology.AnalysisTools
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SNP.SangerSNPs
 Imports LANS.SystemsBiology.SequenceModel
 Imports LANS.SystemsBiology.SequenceModel.Patterns
 

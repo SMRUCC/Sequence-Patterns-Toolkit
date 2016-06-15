@@ -167,11 +167,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SangerTools\AlignmentMinusfile.vb" />
-    <Compile Include="SangerTools\FastaMinusofMinussnpMinussites.vb" />
-    <Compile Include="SangerTools\DefineConstants.vb" />
-    <Compile Include="SangerTools\PhylibMinusofMinussnpMinussites.vb" />
-    <Compile Include="SangerTools\SNPSites.vb" />
+    <Compile Include="SNPVcf.vb" />
+    <Compile Include="SangerSNPs\AlignmentMinusfile.vb" />
+    <Compile Include="SangerSNPs\FastaMinusofMinussnpMinussites.vb" />
+    <Compile Include="SangerSNPs\DefineConstants.vb" />
+    <Compile Include="SangerSNPs\PhylibMinusofMinussnpMinussites.vb" />
+    <Compile Include="SangerSNPs\SNPSites.vb" />
     <Compile Include="SNPScan.vb" />
     <Compile Include="SNP.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -189,7 +190,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="SangerTools\Vcf.vb" />
+    <Compile Include="SangerSNPs\Vcf.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
