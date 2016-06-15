@@ -34,13 +34,13 @@ Namespace SangerSNPs
         ''' <param name="pseudo_reference_sequence"></param>
         ''' <param name="snp_locations"></param>
         Public Sub CreateFastaOfSNPSites(ByRef filename As String,
-                                     number_of_snps As Integer,
-                                     ByRef bases_for_snps As String(),
-                                     ByRef sequence_names As String(),
-                                     number_of_samples As Integer,
-                                     output_reference As Integer,
-                                     ByRef pseudo_reference_sequence As String,
-                                     snp_locations As Integer())
+                                         number_of_snps As Integer,
+                                         ByRef bases_for_snps As String(),
+                                         ByRef sequence_names As String(),
+                                         number_of_samples As Integer,
+                                         output_reference As Integer,
+                                         ByRef pseudo_reference_sequence As String,
+                                         snp_locations As Integer())
 
             Dim sample_counter As Integer
             Dim snp_counter As Integer

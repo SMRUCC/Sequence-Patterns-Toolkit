@@ -1,4 +1,6 @@
-﻿Namespace SangerSNPs
+﻿Imports Microsoft.VisualBasic.Serialization
+
+Namespace SangerSNPs
 
     Module DefineConstants
 
@@ -12,4 +14,17 @@
         Public Const PROGRAM_NAME = "snp-sites"
         Public Const FILENAME_MAX = 256
     End Module
+
+    Public Structure SNPsAln
+        Public number_of_samples As Integer
+        Public number_of_snps As Integer
+        Public sequence_names As String()
+        Public snp_locations As Integer()
+        Public pseudo_reference_sequence As Char()
+        Public length_of_genome As Integer
+
+        Public Overrides Function ToString() As String
+            Return Me.GetJson
+        End Function
+    End Structure
 End Namespace

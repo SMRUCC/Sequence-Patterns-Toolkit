@@ -184,6 +184,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CLI\Aligner.vb" />
+    <Compile Include="CLI\SNP.vb" />
     <Compile Include="CLI\PalindromeBatch.vb" />
     <Compile Include="CLI\NTProps.vb" />
     <Compile Include="CLI\Repeats.vb" />
@@ -257,6 +258,10 @@
     <ProjectReference Include="..\SmithWaterman\SmithWaterman.vbproj">
       <Project>{96973118-8964-49c4-b34f-086c4f9e2cdf}</Project>
       <Name>SmithWaterman</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SNP\SNP.vbproj">
+      <Project>{b43c4103-91b0-40d2-9b2b-c4124deb8d2f}</Project>
+      <Name>SNP</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

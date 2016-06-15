@@ -16,7 +16,7 @@ Namespace SangerSNPs
                                        ByRef output_filename As String,
                                        output_reference As Integer,
                                        pure_mode As Integer,
-                                       output_monomorphic As Integer) As Integer
+                                       output_monomorphic As Integer) As SNPsAln
 
             Return New FastaFile(filename).SNPSitesGeneric(
             output_multi_fasta_file,
@@ -36,12 +36,13 @@ Namespace SangerSNPs
                                     ByRef output_filename As String,
                                     output_reference As Integer,
                                     pure_mode As Integer,
-                                    output_monomorphic As Integer) As Integer
+                                    output_monomorphic As Integer) As SNPsAln
 
             Dim bases_for_snps As Char()() = New Char(fasta.NumberOfFasta - 1)() {}
+            Dim args As New SNPsAln
 
-            AlignmentMinusfile.DetectSNPs(fasta, pure_mode, output_monomorphic)
-            AlignmentMinusfile.GetBasesForEachSNP(fasta, bases_for_snps)
+            AlignmentMinusfile.DetectSNPs(fasta, pure_mode, output_monomorphic, args)
+            AlignmentMinusfile.GetBasesForEachSNP(fasta, bases_for_snps, args)
 
             Dim SNPsBases As String() = bases_for_snps.MatrixTranspose.ToArray(Function(x) New String(x))
             Dim output_filename_base As String = fasta.FileName
@@ -54,13 +55,13 @@ Namespace SangerSNPs
                 End If
 
                 Vcf.create_vcf_file(vcf_output_filename,
-                                AlignmentMinusfile.snp_locations,
-                                AlignmentMinusfile.number_of_snps,
-                                SNPsBases,
-                                AlignmentMinusfile.sequence_names,
-                                AlignmentMinusfile.number_of_samples,
-                                AlignmentMinusfile.length_of_genome,
-                                AlignmentMinusfile.pseudo_reference_sequence)
+                                    args.snp_locations,
+                                    args.number_of_snps,
+                                    SNPsBases,
+                                    args.sequence_names,
+                                    args.number_of_samples,
+                                    args.length_of_genome,
+                                    args.pseudo_reference_sequence)
             End If
 
 
@@ -73,13 +74,13 @@ Namespace SangerSNPs
 
                 PhylibMinusofMinussnpMinussites.PhylibOfSNPSites(
                 phylip_output_filename,
-                AlignmentMinusfile.number_of_snps,
+                args.number_of_snps,
                 SNPsBases,
-                AlignmentMinusfile.sequence_names,
-                AlignmentMinusfile.number_of_samples,
+                args.sequence_names,
+                args.number_of_samples,
                 output_reference,
-                AlignmentMinusfile.pseudo_reference_sequence,
-                AlignmentMinusfile.snp_locations)
+                args.pseudo_reference_sequence,
+                args.snp_locations)
             End If
 
             If (output_multi_fasta_file) OrElse (output_vcf_file = 0 AndAlso output_phylip_file = 0 AndAlso output_multi_fasta_file = 0) Then
@@ -90,17 +91,17 @@ Namespace SangerSNPs
                 End If
 
                 FastaMinusofMinussnpMinussites.CreateFastaOfSNPSites(
-                multi_fasta_output_filename,
-                AlignmentMinusfile.number_of_snps,
-                SNPsBases,
-                AlignmentMinusfile.sequence_names,
-                AlignmentMinusfile.number_of_samples,
-                output_reference,
-                AlignmentMinusfile.pseudo_reference_sequence,
-                AlignmentMinusfile.snp_locations)
+                    multi_fasta_output_filename,
+                    args.number_of_snps,
+                    SNPsBases,
+                    args.sequence_names,
+                    args.number_of_samples,
+                    output_reference,
+                    args.pseudo_reference_sequence,
+                    args.snp_locations)
             End If
 
-            Return 1
+            Return args
         End Function
 
         ''' <summary>
@@ -116,7 +117,7 @@ Namespace SangerSNPs
                                    output_multi_fasta_file As Integer,
                                    output_vcf_file As Integer,
                                    output_phylip_file As Integer,
-                                   ByRef output_filename As String) As Integer
+                                   ByRef output_filename As String) As SNPsAln
 
             Return __snpSitesGeneric(filename,
                                  output_multi_fasta_file,
@@ -138,7 +139,7 @@ Namespace SangerSNPs
                                           output_multi_fasta_file As Integer,
                                           output_vcf_file As Integer,
                                           output_phylip_file As Integer,
-                                          ByRef output_filename As String) As Integer
+                                          ByRef output_filename As String) As SNPsAln
 
             Return __snpSitesGeneric(filename,
                                  output_multi_fasta_file,
@@ -166,7 +167,7 @@ Namespace SangerSNPs
                                                   ByRef output_filename As String,
                                                   output_reference As Integer,
                                                   pure_mode As Integer,
-                                                  output_monomorphic As Integer) As Integer
+                                                  output_monomorphic As Integer) As SNPsAln
 
             Return __snpSitesGeneric(filename,
                                  output_multi_fasta_file,

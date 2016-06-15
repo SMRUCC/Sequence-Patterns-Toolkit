@@ -57,7 +57,7 @@ Public Module SNPScan
     ''' The file path of the input nt fasta sequence file.
     ''' </param>
     ''' <returns></returns>
-    Public Function ScanRaw(nt As String) As SNP()
+    Public Function ScanRaw(nt As String) As SNPsAln
         Return __scanRaw(nt)
     End Function
 
@@ -67,13 +67,13 @@ Public Module SNPScan
     ''' <param name="nt">可以不经过任何处理，程序在这里会自动使用clustal进行对齐操作</param>
     ''' <returns></returns>
     <Extension>
-    Public Function ScanRaw(nt As FASTA.FastaFile) As SNP()
+    Public Function ScanRaw(nt As FASTA.FastaFile) As SNPsAln
         Dim tmp As String = App.GetAppSysTempFile(".fasta")
         Call nt.Save(tmp, Encodings.ASCII)
         Return __scanRaw(tmp)
     End Function
 
-    Private Function __scanRaw([in] As String) As SNP()
+    Private Function __scanRaw([in] As String) As SNPsAln
         Dim nt As FASTA.FastaFile = clustal.MultipleAlignment([in])
         nt.FilePath = [in]
         Return nt.ScanSNPs(refInd:=Scan0)
@@ -85,7 +85,10 @@ Public Module SNPScan
     ''' <param name="nt">序列必须都是已经经过clustal对齐了的，并且拥有FileName属性值</param>
     ''' <returns></returns>
     <Extension>
-    Public Function ScanSNPs(nt As FASTA.FastaFile, refInd As Integer) As SNP()
-        Call nt.SNPSitesGeneric(1, 1, 1, App.GetAppSysTempFile, refInd, 0, 0)
+    Public Function ScanSNPs(nt As FASTA.FastaFile,
+                             refInd As Integer,
+                             Optional pureMode As Boolean = False,
+                             Optional monomorphic As Boolean = False) As SNPsAln
+        Return nt.SNPSitesGeneric(1, 1, 1, App.GetAppSysTempFile, refInd, If(pureMode, 1, 0), If(monomorphic, 1, 0))
     End Function
 End Module
