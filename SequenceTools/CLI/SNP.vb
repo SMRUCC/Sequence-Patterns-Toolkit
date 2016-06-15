@@ -2,6 +2,7 @@
 Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.Reflection
+Imports Microsoft.VisualBasic.Serialization
 
 Partial Module Utilities
 
@@ -13,9 +14,7 @@ Partial Module Utilities
         Dim monomorphic As Boolean = args.GetBoolean("/monomorphic")
         Dim nt As New FastaFile([in])
         Dim ref As Integer = args.GetInt32("/ref")
-
-        Call nt.ScanSNPs(ref, pure, monomorphic)
-
-        Return 0
+        Dim json As String = [in].TrimFileExt & ".SNPs.args.json"
+        Return nt.ScanSNPs(ref, pure, monomorphic).GetJson.SaveTo(json)
     End Function
 End Module
