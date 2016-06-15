@@ -1,3 +1,5 @@
+Imports Microsoft.VisualBasic.Linq
+
 ''' <summary>
 ''' SNP functions entry point at here
 ''' </summary>
@@ -14,9 +16,9 @@ Public Module SNPSites
 
         AlignmentMinusfile.DetectSNPs(filename, pure_mode, output_monomorphic)
 
-        Dim bases_for_snps As String() = New String(AlignmentMinusfile.number_of_snps - 1) {}
+        Dim bases_for_snps As Char()() = New Char(AlignmentMinusfile.number_of_snps - 1)() {}
 
-        AlignmentMinusfile.get_bases_for_each_snp(filename, bases_for_snps)
+        AlignmentMinusfile.GetBasesForEachSNP(filename, bases_for_snps)
 
         Dim output_filename_base As New String(New Char(FILENAME_MAX - 1) {})
         Dim filename_without_directory As New String(New Char(FILENAME_MAX - 1) {})
@@ -26,6 +28,8 @@ Public Module SNPSites
         If output_filename IsNot Nothing AndAlso output_filename <> ControlChars.NullChar Then
             output_filename_base = output_filename.Substring(0, FILENAME_MAX)
         End If
+
+        Dim SNPsBases As String() = bases_for_snps.ToArray(Function(x) New String(x))
 
         If output_vcf_file <> 0 Then
             Dim vcf_output_filename As New String(New Char(FILENAME_MAX - 1) {})
@@ -37,7 +41,7 @@ Public Module SNPSites
             Vcf.create_vcf_file(vcf_output_filename,
                                 AlignmentMinusfile.snp_locations,
                                 AlignmentMinusfile.number_of_snps,
-                                bases_for_snps,
+                                SNPsBases,
                                 AlignmentMinusfile.sequence_names,
                                 AlignmentMinusfile.number_of_samples,
                                 AlignmentMinusfile.length_of_genome,
@@ -55,7 +59,7 @@ Public Module SNPSites
             GlobalMembersPhylibMinusofMinussnpMinussites.create_phylib_of_snp_sites(
                 phylip_output_filename,
                 AlignmentMinusfile.number_of_snps,
-                bases_for_snps,
+                SNPsBases,
                 AlignmentMinusfile.sequence_names,
                 AlignmentMinusfile.number_of_samples,
                 output_reference,
@@ -73,7 +77,7 @@ Public Module SNPSites
             GlobalMembersFastaMinusofMinussnpMinussites.create_fasta_of_snp_sites(
                 multi_fasta_output_filename,
                 AlignmentMinusfile.number_of_snps,
-                bases_for_snps,
+                SNPsBases,
                 AlignmentMinusfile.sequence_names,
                 AlignmentMinusfile.number_of_samples,
                 output_reference,
