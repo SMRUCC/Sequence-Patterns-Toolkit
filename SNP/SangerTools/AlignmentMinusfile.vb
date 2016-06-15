@@ -4,6 +4,7 @@ Imports System.IO
 Imports FILE = System.IO.StreamWriter
 Imports System.Runtime.CompilerServices
 Imports LANS.SystemsBiology.SequenceModel.FASTA
+Imports Microsoft.VisualBasic.Terminal
 
 Public Module AlignmentMinusfile
 
@@ -14,28 +15,31 @@ Public Module AlignmentMinusfile
     Public pseudo_reference_sequence As Char()
     Public length_of_genome As Integer
 
-    Public Sub get_bases_for_each_snp(ByRef filename As String, ByRef bases_for_snps As String())
-        'Dim l As Integer
-        'Dim i As Integer = 0
-        'Dim sequence_number As Integer = 0
-        'Dim length_of_genome_found As UInteger = 0
+    Public Sub GetBasesForEachSNP(ByRef filename As String, ByRef bases_for_snps As Char()())
+        Dim sequence_number As Integer = 0
+        Dim length_of_genome_found As UInteger = 0
+        Dim fasta As New FastaFile(filename)
 
+        For Each fa As FastaToken In fasta
+            Dim seq As Char() = fa.SequenceData.ToCharArray
 
-        'While (InlineAssignHelper(l, GlobalMembersAlignmentMinusfile.kseq_read(seq))) >= 0
-        '    If sequence_number = 0 Then
-        '        length_of_genome_found = seq.seq.l
-        '    End If
-        '    For i = 0 To number_of_snps - 1
-        '        bases_for_snps(i)(sequence_number) = Char.ToUpper(DirectCast(seq.seq.s, String)(snp_locations(i)))
-        '    Next
+            If sequence_number = 0 Then
+                length_of_genome_found = fa.Length
+            End If
+            For i As Integer = 0 To number_of_snps - 1
+                bases_for_snps(i)(sequence_number) = Char.ToUpper(seq(snp_locations(i)))
+            Next
 
-        '    If seq.seq.l <> length_of_genome_found Then
-        '        StdErr.Write("Alignment %s contains sequences of unequal length. Expected length is %i but got %i in sequence %s" & vbLf & vbLf, filename, CInt(length_of_genome_found), CInt(seq.seq.l), seq.name.s)
-        '        Environment.[Exit](1)
-        '    End If
-        '    sequence_number += 1
-        'End While
+            If seq.Length <> length_of_genome_found Then
+                Dim msg As String = STDIO.Format(UnEqualLength, filename, CInt(length_of_genome_found), CInt(seq.Length), fa.Title)
+                StdErr.Write(msg)
+                Environment.[Exit](1)
+            End If
+            sequence_number += 1
+        Next
     End Sub
+
+    Const UnEqualLength As String = "Alignment %s contains sequences of unequal length. Expected length is %i but got %i in sequence %s" & vbLf & vbLf
 
     ''' <summary>
     ''' Detection of the SNP sites based on a set of fasta sequence.
