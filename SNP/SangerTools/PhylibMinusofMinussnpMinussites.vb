@@ -1,7 +1,7 @@
 Imports System.IO
 Imports FILE = System.IO.StreamWriter
 
-Public Module GlobalMembersPhylibMinusofMinussnpMinussites
+Public Module PhylibMinusofMinussnpMinussites
 
     '	 *  Wellcome Trust Sanger Institute
     '	 *  Copyright (C) 2013  Wellcome Trust Sanger Institute
@@ -21,14 +21,19 @@ Public Module GlobalMembersPhylibMinusofMinussnpMinussites
     '	 *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
     '	 
 
+    Public Sub create_phylib_of_snp_sites(ByRef filename As String,
+                                          number_of_snps As Integer,
+                                          ByRef bases_for_snps As String(),
+                                          ByRef sequence_names As String(),
+                                          number_of_samples As Integer,
+                                          output_reference As Integer,
+                                          ByRef pseudo_reference_sequence As String,
+                                          snp_locations As Integer())
 
-    Public Sub create_phylib_of_snp_sites(ByRef filename As String, number_of_snps As Integer, ByRef bases_for_snps As String(), ByRef sequence_names As String(), number_of_samples As Integer, output_reference As Integer,
-        ByRef pseudo_reference_sequence As String, snp_locations As Integer())
         Dim sample_counter As Integer
         Dim snp_counter As Integer
 
         Using phylip_file_pointer As FILE = New StreamWriter(New FileStream(filename, FileMode.OpenOrCreate))
-
             If output_reference = 1 Then
                 phylip_file_pointer.Write("%d %d" & vbLf, number_of_samples + 1, number_of_snps)
                 phylip_file_pointer.Write("pseudo_reference_sequence" & vbTab)

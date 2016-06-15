@@ -1,7 +1,7 @@
 Imports System.IO
 Imports FILE = System.IO.StreamWriter
 
-Public Module GlobalMembersFastaMinusofMinussnpMinussites
+Public Module FastaMinusofMinussnpMinussites
 
     '	 *  Wellcome Trust Sanger Institute
     '	 *  Copyright (C) 2011  Wellcome Trust Sanger Institute
@@ -20,8 +20,26 @@ Public Module GlobalMembersFastaMinusofMinussnpMinussites
     '	 *  along with this program; if not, write to the Free Software
     '	 *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    Public Sub create_fasta_of_snp_sites(ByRef filename As String, number_of_snps As Integer, ByRef bases_for_snps As String(), ByRef sequence_names As String(), number_of_samples As Integer, output_reference As Integer,
-        ByRef pseudo_reference_sequence As String, snp_locations As Integer())
+    ''' <summary>
+    ''' Create fasta file of snps sites.
+    ''' </summary>
+    ''' <param name="filename"></param>
+    ''' <param name="number_of_snps"></param>
+    ''' <param name="bases_for_snps"></param>
+    ''' <param name="sequence_names"></param>
+    ''' <param name="number_of_samples"></param>
+    ''' <param name="output_reference"></param>
+    ''' <param name="pseudo_reference_sequence"></param>
+    ''' <param name="snp_locations"></param>
+    Public Sub CreateFastaOfSNPSites(ByRef filename As String,
+                                     number_of_snps As Integer,
+                                     ByRef bases_for_snps As String(),
+                                     ByRef sequence_names As String(),
+                                     number_of_samples As Integer,
+                                     output_reference As Integer,
+                                     ByRef pseudo_reference_sequence As String,
+                                     snp_locations As Integer())
+
         Dim sample_counter As Integer
         Dim snp_counter As Integer
 

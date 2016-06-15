@@ -168,11 +168,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="SangerTools\AlignmentMinusfile.vb" />
-    <Compile Include="SangerTools\fasta-of-snp-sites.vb" />
-    <Compile Include="SangerTools\kseq.vb" />
+    <Compile Include="SangerTools\FastaMinusofMinussnpMinussites.vb" />
     <Compile Include="SangerTools\main.vb" />
     <Compile Include="SangerTools\DefineConstants.vb" />
-    <Compile Include="SangerTools\phylib-of-snp-sites.vb" />
+    <Compile Include="SangerTools\PhylibMinusofMinussnpMinussites.vb" />
     <Compile Include="SangerTools\SNPSites.vb" />
     <Compile Include="SNPScan.vb" />
     <Compile Include="SNP.vb" />

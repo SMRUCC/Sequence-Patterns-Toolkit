@@ -56,7 +56,7 @@ Public Module SNPSites
                 phylip_output_filename += ".phylip"
             End If
 
-            GlobalMembersPhylibMinusofMinussnpMinussites.create_phylib_of_snp_sites(
+            PhylibMinusofMinussnpMinussites.create_phylib_of_snp_sites(
                 phylip_output_filename,
                 AlignmentMinusfile.number_of_snps,
                 SNPsBases,
@@ -74,7 +74,7 @@ Public Module SNPSites
                 multi_fasta_output_filename += ".snp_sites.aln"
             End If
 
-            GlobalMembersFastaMinusofMinussnpMinussites.create_fasta_of_snp_sites(
+            FastaMinusofMinussnpMinussites.CreateFastaOfSNPSites(
                 multi_fasta_output_filename,
                 AlignmentMinusfile.number_of_snps,
                 SNPsBases,
