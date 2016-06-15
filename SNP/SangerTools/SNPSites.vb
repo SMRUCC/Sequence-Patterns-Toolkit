@@ -27,7 +27,7 @@ Public Module SNPSites
     End Function
 
     <Extension>
-    Private Function SNPSitesGeneric(fasta As FastaFile,
+    Public Function SNPSitesGeneric(fasta As FastaFile,
                                      output_multi_fasta_file As Integer,
                                      output_vcf_file As Integer,
                                      output_phylip_file As Integer,

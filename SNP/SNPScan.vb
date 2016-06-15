@@ -84,10 +84,6 @@ Public Module SNPScan
     ''' <returns></returns>
     <Extension>
     Public Function Scan(nt As FASTA.FastaFile, refInd As Integer) As SNP()
-        Dim pwm As PatternModel = PatternsAPI.Frequency(nt)
-        Dim ref As FASTA.FastaToken = nt(refInd)
-        Dim var As Double() = pwm.GetVariation(ref, 0.2)
-
-        Throw New NotImplementedException
+        Call nt.SNPSitesGeneric("", "", "", "", refInd, 0, 0)
     End Function
 End Module
