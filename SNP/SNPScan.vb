@@ -76,7 +76,7 @@ Public Module SNPScan
     Private Function __scanRaw([in] As String) As SNP()
         Dim nt As FASTA.FastaFile = clustal.MultipleAlignment([in])
         nt.FilePath = [in]
-        Return nt.Scan(refInd:=Scan0)
+        Return nt.ScanSNPs(refInd:=Scan0)
     End Function
 
     ''' <summary>
@@ -85,7 +85,7 @@ Public Module SNPScan
     ''' <param name="nt">序列必须都是已经经过clustal对齐了的，并且拥有FileName属性值</param>
     ''' <returns></returns>
     <Extension>
-    Public Function Scan(nt As FASTA.FastaFile, refInd As Integer) As SNP()
+    Public Function ScanSNPs(nt As FASTA.FastaFile, refInd As Integer) As SNP()
         Call nt.SNPSitesGeneric(1, 1, 1, App.GetAppSysTempFile, refInd, 0, 0)
     End Function
 End Module
