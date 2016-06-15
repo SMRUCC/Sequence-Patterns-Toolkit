@@ -28,13 +28,13 @@ Public Module SNPSites
 
     <Extension>
     Public Function SNPSitesGeneric(fasta As FastaFile,
-                                     output_multi_fasta_file As Integer,
-                                     output_vcf_file As Integer,
-                                     output_phylip_file As Integer,
-                                     ByRef output_filename As String,
-                                     output_reference As Integer,
-                                     pure_mode As Integer,
-                                     output_monomorphic As Integer) As Integer
+                                    output_multi_fasta_file As Integer,
+                                    output_vcf_file As Integer,
+                                    output_phylip_file As Integer,
+                                    ByRef output_filename As String,
+                                    output_reference As Integer,
+                                    pure_mode As Integer,
+                                    output_monomorphic As Integer) As Integer
 
         Dim bases_for_snps As Char()() = New Char(fasta.NumberOfFasta - 1)() {}
 

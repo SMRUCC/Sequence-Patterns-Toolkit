@@ -79,9 +79,9 @@ Public Module SNPScan
     End Function
 
     ''' <summary>
-    ''' 
+    ''' Scan snp sites from the given fasta sequence file.
     ''' </summary>
-    ''' <param name="nt">序列必须都是已经经过clustal对齐了的</param>
+    ''' <param name="nt">序列必须都是已经经过clustal对齐了的，并且拥有FileName属性值</param>
     ''' <returns></returns>
     <Extension>
     Public Function Scan(nt As FASTA.FastaFile, refInd As Integer) As SNP()
