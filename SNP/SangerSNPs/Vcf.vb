@@ -78,8 +78,7 @@ Namespace SangerSNPs
             Dim reference_base As Char = pseudo_reference_sequence(snp_location)
 
             If reference_base = ControlChars.NullChar Then
-                StdErr.Write("Couldnt get the reference base for coordinate {0}" & vbLf, snp_location)
-                Environment.[Exit](1)
+                Throw New Exception("Couldnt get the reference base for coordinate " & snp_location)
             End If
 
             ' Chromosome
@@ -162,11 +161,11 @@ Namespace SangerSNPs
 
                     If Vcf.__checkIfBaseInAlts(alt_bases, current_base, num_alt_bases) = 0 Then
                         If num_alt_bases >= MAXIMUM_NUMBER_OF_ALT_BASES Then
-                            App.StdErr.WriteLine(AltBasesNotFound)
-                            App.[Exit](1)
+                            Throw New Exception(AltBasesNotFound)
+                        Else
+                            alt_bases(num_alt_bases) = current_base
+                            num_alt_bases += 1
                         End If
-                        alt_bases(num_alt_bases) = current_base
-                        num_alt_bases += 1
                     End If
                 End If
             Next

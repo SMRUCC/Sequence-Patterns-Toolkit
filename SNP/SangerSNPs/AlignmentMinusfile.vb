@@ -37,8 +37,7 @@ Namespace SangerSNPs
 
                 If seq.Length <> lenOfgenomeFound Then
                     Dim msg As String = STDIO.Format(UnEqualLength, fasta.FileName, lenOfgenomeFound, seq.Length, fa.Title)
-                    StdErr.Write(msg)
-                    Environment.[Exit](1)
+                    Throw New Exception(msg)
                 End If
 
                 sequenceNumber += 1
@@ -118,9 +117,7 @@ Namespace SangerSNPs
             Next
 
             If snps.number_of_snps = 0 Then
-                StdErr.Write(NoSNPs & vbLf)
-                StdErr.Flush()
-                Environment.[Exit](1)
+                Throw New Exception(NoSNPs)
             End If
 
             Dim current_snp_index As Integer = 0
