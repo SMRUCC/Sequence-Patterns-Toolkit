@@ -169,7 +169,6 @@
   <ItemGroup>
     <Compile Include="SangerTools\AlignmentMinusfile.vb" />
     <Compile Include="SangerTools\FastaMinusofMinussnpMinussites.vb" />
-    <Compile Include="SangerTools\main.vb" />
     <Compile Include="SangerTools\DefineConstants.vb" />
     <Compile Include="SangerTools\PhylibMinusofMinussnpMinussites.vb" />
     <Compile Include="SangerTools\SNPSites.vb" />

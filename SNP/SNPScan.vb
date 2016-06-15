@@ -5,6 +5,47 @@ Imports LANS.SystemsBiology.SequenceModel.Patterns
 
 Public Module SNPScan
 
+    '
+    '	 *  Wellcome Trust Sanger Institute
+    '	 *  Copyright (C) 2013  Wellcome Trust Sanger Institute
+    '	 *  
+    '	 *  This program is free software; you can redistribute it and/or
+    '	 *  modify it under the terms of the GNU General Public License
+    '	 *  as published by the Free Software Foundation; either version 3
+    '	 *  of the License, or (at your option) any later version.
+    '	 *  
+    '	 *  This program is distributed in the hope that it will be useful,
+    '	 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+    '	 *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    '	 *  GNU General Public License for more details.
+    '	 *  
+    '	 *  You should have received a copy of the GNU General Public License
+    '	 *  along with this program; if not, write to the Free Software
+    '	 *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+    '	 
+    Public Sub CLIUsage()
+        Console.Write("Usage: snp-sites [-rmvpcbhV] [-o output_filename] <file>" & vbLf)
+        Console.Write("This program finds snp sites from a multi FASTA alignment file." & vbLf)
+        Console.Write(" -r     output internal pseudo reference sequence" & vbLf)
+        Console.Write(" -m     output a multi fasta alignment file (default)" & vbLf)
+        Console.Write(" -v     output a VCF file" & vbLf)
+        Console.Write(" -p     output a phylip file" & vbLf)
+        Console.Write(" -o STR specify an output filename" & vbLf)
+        Console.Write(" -c     only output columns containing exclusively ACGT" & vbLf)
+        Console.Write(" -b     output monomorphic sites, used for BEAST" & vbLf)
+        Console.Write(" -h     this help message" & vbLf)
+        Console.Write(" -V     print version and exit" & vbLf)
+        Console.Write(" <file> input alignment file which can optionally be gzipped" & vbLf & vbLf)
+
+        Console.Write("Example: creating files for BEAST" & vbLf)
+        Console.Write(" snp-sites -cb -o outputfile.aln inputfile.aln" & vbLf & vbLf)
+
+        Console.Write("If you use this program, please cite:" & vbLf)
+        Console.Write("""SNP-sites: rapid efficient extraction of SNPs from multi-FASTA alignments""," & vbLf)
+        Console.Write("Andrew J. Page, Ben Taylor, Aidan J. Delaney, Jorge Soares, Torsten Seemann, Jacqueline A. Keane, Simon R. Harris," & vbLf)
+        Console.Write("Microbial Genomics 2(4), (2016). http://dx.doi.org/10.1099/mgen.0.000056" & vbLf)
+    End Sub
+
     ReadOnly clustal As ClustalOrg.Clustal =
         ClustalOrg.Clustal.CreateSession
 

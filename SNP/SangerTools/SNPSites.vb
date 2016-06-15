@@ -88,6 +88,15 @@ Public Module SNPSites
         Return 1
     End Function
 
+    ''' <summary>
+    ''' SNPs from the input alignment fasta file
+    ''' </summary>
+    ''' <param name="filename">input alignment file</param>
+    ''' <param name="output_multi_fasta_file"></param>
+    ''' <param name="output_vcf_file"></param>
+    ''' <param name="output_phylip_file"></param>
+    ''' <param name="output_filename"></param>
+    ''' <returns></returns>
     Public Function OutputSNPSites(ByRef filename As String,
                                    output_multi_fasta_file As Integer,
                                    output_vcf_file As Integer,
@@ -101,6 +110,15 @@ Public Module SNPSites
                                  output_filename, 0, 0, 0)
     End Function
 
+    ''' <summary>
+    ''' SNPs from the input alignment fasta file
+    ''' </summary>
+    ''' <param name="filename">input alignment file</param>
+    ''' <param name="output_multi_fasta_file"></param>
+    ''' <param name="output_vcf_file"></param>
+    ''' <param name="output_phylip_file"></param>
+    ''' <param name="output_filename"></param>
+    ''' <returns></returns>
     Public Function OutputSNPSitesWithRef(ByRef filename As String,
                                           output_multi_fasta_file As Integer,
                                           output_vcf_file As Integer,
@@ -114,6 +132,18 @@ Public Module SNPSites
                                  output_filename, 1, 0, 0)
     End Function
 
+    ''' <summary>
+    ''' SNPs from the input alignment fasta file
+    ''' </summary>
+    ''' <param name="filename">input alignment file</param>
+    ''' <param name="output_multi_fasta_file"></param>
+    ''' <param name="output_vcf_file"></param>
+    ''' <param name="output_phylip_file"></param>
+    ''' <param name="output_filename"></param>
+    ''' <param name="output_reference"></param>
+    ''' <param name="pure_mode"></param>
+    ''' <param name="output_monomorphic"></param>
+    ''' <returns></returns>
     Public Function OutputSNPSitesWithRefPureMono(ByRef filename As String,
                                                   output_multi_fasta_file As Integer,
                                                   output_vcf_file As Integer,
