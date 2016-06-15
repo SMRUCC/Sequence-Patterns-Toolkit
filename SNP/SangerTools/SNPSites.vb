@@ -1,3 +1,5 @@
+Imports System.Runtime.CompilerServices
+Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports Microsoft.VisualBasic.Linq
 
 ''' <summary>
@@ -14,11 +16,31 @@ Public Module SNPSites
                                        pure_mode As Integer,
                                        output_monomorphic As Integer) As Integer
 
-        AlignmentMinusfile.DetectSNPs(filename, pure_mode, output_monomorphic)
+        Return New FastaFile(filename).SNPSitesGeneric(
+            output_multi_fasta_file,
+            output_vcf_file,
+            output_phylip_file,
+            output_filename,
+            output_reference,
+            pure_mode,
+            output_monomorphic)
+    End Function
+
+    <Extension>
+    Private Function SNPSitesGeneric(fasta As FastaFile,
+                                     output_multi_fasta_file As Integer,
+                                     output_vcf_file As Integer,
+                                     output_phylip_file As Integer,
+                                     ByRef output_filename As String,
+                                     output_reference As Integer,
+                                     pure_mode As Integer,
+                                     output_monomorphic As Integer) As Integer
+
+        AlignmentMinusfile.DetectSNPs(fasta, pure_mode, output_monomorphic)
 
         Dim bases_for_snps As Char()() = New Char(AlignmentMinusfile.number_of_snps - 1)() {}
 
-        AlignmentMinusfile.GetBasesForEachSNP(filename, bases_for_snps)
+        AlignmentMinusfile.GetBasesForEachSNP(fasta, bases_for_snps)
 
         Dim output_filename_base As New String(New Char(FILENAME_MAX - 1) {})
         Dim filename_without_directory As New String(New Char(FILENAME_MAX - 1) {})

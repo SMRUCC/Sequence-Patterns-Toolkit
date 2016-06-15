@@ -16,9 +16,13 @@ Public Module AlignmentMinusfile
     Public length_of_genome As Integer
 
     Public Sub GetBasesForEachSNP(ByRef filename As String, ByRef bases_for_snps As Char()())
+        Call New FastaFile(filename).GetBasesForEachSNP(bases_for_snps)
+    End Sub
+
+    <Extension>
+    Public Sub GetBasesForEachSNP(fasta As FastaFile, ByRef bases_for_snps As Char()())
         Dim sequence_number As Integer = 0
         Dim length_of_genome_found As UInteger = 0
-        Dim fasta As New FastaFile(filename)
 
         For Each fa As FastaToken In fasta
             Dim seq As Char() = fa.SequenceData.ToCharArray
@@ -31,10 +35,11 @@ Public Module AlignmentMinusfile
             Next
 
             If seq.Length <> length_of_genome_found Then
-                Dim msg As String = STDIO.Format(UnEqualLength, filename, CInt(length_of_genome_found), CInt(seq.Length), fa.Title)
+                Dim msg As String = STDIO.Format(UnEqualLength, fasta.FileName, CInt(length_of_genome_found), CInt(seq.Length), fa.Title)
                 StdErr.Write(msg)
                 Environment.[Exit](1)
             End If
+
             sequence_number += 1
         Next
     End Sub
@@ -48,8 +53,19 @@ Public Module AlignmentMinusfile
     ''' <param name="pure_mode"></param>
     ''' <param name="output_monomorphic"></param>
     Public Sub DetectSNPs(ByRef filename As String, pure_mode As Integer, output_monomorphic As Integer)
+        Call New FastaFile(filename).DetectSNPs(pure_mode, output_monomorphic)
+    End Sub
+
+    ''' <summary>
+    ''' Detection of the SNP sites based on a set of fasta sequence.
+    ''' </summary>
+    ''' <param name="fasta">The input fasta sequence.</param>
+    ''' <param name="pure_mode"></param>
+    ''' <param name="output_monomorphic"></param>
+    ''' 
+    <Extension>
+    Public Sub DetectSNPs(fasta As FastaFile, pure_mode As Integer, output_monomorphic As Integer)
         Dim first_sequence As String = Nothing
-        Dim fasta As New FastaFile(filename)
 
         number_of_snps = 0
         number_of_samples = 0
