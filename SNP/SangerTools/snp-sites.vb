@@ -24,7 +24,7 @@ Public Module snpsites
                 vcf_output_filename += ".vcf"
             End If
 
-            GlobalMembersVcf.create_vcf_file(vcf_output_filename,
+            Vcf.create_vcf_file(vcf_output_filename,
                                              GlobalMembersAlignmentMinusfile.snp_locations, GlobalMembersAlignmentMinusfile.number_of_snps, bases_for_snps, GlobalMembersAlignmentMinusfile.sequence_names, GlobalMembersAlignmentMinusfile.number_of_samples,
                 GlobalMembersAlignmentMinusfile.length_of_genome, GlobalMembersAlignmentMinusfile.pseudo_reference_sequence)
         End If

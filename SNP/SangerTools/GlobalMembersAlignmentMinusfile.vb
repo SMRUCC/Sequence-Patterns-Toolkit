@@ -2,6 +2,7 @@
 Imports System.Diagnostics
 Imports System.IO
 Imports FILE = System.IO.StreamWriter
+Imports System.Runtime.CompilerServices
 
 Public Class GlobalMembersAlignmentMinusfile
 
@@ -109,23 +110,4 @@ Public Class GlobalMembersAlignmentMinusfile
 
         'Return
     End Sub
-
-    Public Shared Function is_unknown(base As Char) As Integer
-        Select Case base
-            Case "N"c, "n"c, "-"c, "?"c
-                Return 1
-            Case Else
-                Return 0
-        End Select
-    End Function
-
-    Public Shared Function is_pure(base As Char) As Integer
-        Select Case base
-            Case "A"c, "C"c, "G"c, "T"c, "a"c, "c"c,
-                "g"c, "t"c
-                Return 1
-            Case Else
-                Return 0
-        End Select
-    End Function
 End Class
