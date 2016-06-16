@@ -96,8 +96,8 @@ Public Module ShellScriptAPI
     End Function
 
     <ExportAPI("loci.match.location")>
-    Public Function MatchLocation(Sequence As String, Loci As String, Optional cutoff As Double = 0.65) As Topologically.SimilarityMatches.LociMatchedResult()
-        Return Topologically.SimilarityMatches.MatchLociLocations(Sequence, Loci, Len(Loci) / 3, Len(Loci) * 5, cutoff)
+    Public Function MatchLocation(seq As String, loci As String, Optional cutoff As Double = 0.65) As Topologically.SimilarityMatches.LociMatchedResult()
+        Return Topologically.SimilarityMatches.MatchLociLocations(seq, loci, Len(loci) / 3, Len(loci) * 5, cutoff)
     End Function
 
     <ExportAPI("Align")>

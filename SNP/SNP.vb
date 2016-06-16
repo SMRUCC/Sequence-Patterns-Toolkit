@@ -32,6 +32,7 @@ Public Class SNP : Inherits ClassObject
     <Column(Name:="CDS Codon Number")> Public Property CodonNumber As String
     Public Property CDSPosition As String
     Public Property PositionWithinCodon As String
+
     ''' <summary>
     ''' 
     ''' </summary>

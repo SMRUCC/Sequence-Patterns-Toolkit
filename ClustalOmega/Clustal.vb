@@ -58,6 +58,9 @@ Clustal Omega also has powerful features for adding sequences to and exploiting 
       PubMed:=21988835)>
 Public Class Clustal : Inherits InteropService
 
+    ''' <summary>
+    ''' 
+    ''' </summary>
     Public Const CLUSTAL_ARGUMENTS As String = "--in ""{0}"" --out ""{1}"""
 
 #Region "CLI"

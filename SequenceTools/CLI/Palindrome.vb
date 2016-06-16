@@ -1,24 +1,24 @@
-﻿Imports LANS.SystemsBiology.Assembly.NCBI
+﻿Imports System.Text.RegularExpressions
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically.SimilarityMatches
+Imports LANS.SystemsBiology.Assembly.NCBI
 Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat.ComponentModels
 Imports LANS.SystemsBiology.ComponentModel.Loci
-Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports LANS.SystemsBiology.ContextModel
+Imports LANS.SystemsBiology.SequenceModel
+Imports LANS.SystemsBiology.SequenceModel.FASTA
+Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.DocumentFormat.Csv
-Imports Microsoft.VisualBasic.Linq.Extensions
-Imports Microsoft.VisualBasic.Text
-Imports Microsoft.VisualBasic
-Imports Microsoft.VisualBasic.Parallel
-Imports Microsoft.VisualBasic.Language.UnixBash
-Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically
-Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
-Imports Microsoft.VisualBasic.Language
-Imports Microsoft.VisualBasic.Parallel.Threads
-Imports Microsoft.VisualBasic.Parallel.Linq
-Imports System.Text.RegularExpressions
-Imports LANS.SystemsBiology.SequenceModel
 Imports Microsoft.VisualBasic.DocumentFormat.Csv.DocumentStream.Linq
-Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically.SimilarityMatches
+Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Language.UnixBash
+Imports Microsoft.VisualBasic.Linq.Extensions
+Imports Microsoft.VisualBasic.Parallel
+Imports Microsoft.VisualBasic.Parallel.Linq
+Imports Microsoft.VisualBasic.Parallel.Threads
+Imports Microsoft.VisualBasic.Text
 
 Partial Module Utilities
 
@@ -273,7 +273,8 @@ Partial Module Utilities
                                                 maxDist As Integer) As String
         Dim csv As String = $"{EXPORT}/{fasta.Title.NormalizePathString(True)}.csv"
         Dim Temp As String = App.GetAppSysTempFile(".fasta")
-        Dim CLI As String = $"--Palindrome.Imperfects /in {Temp.CliPath} /out {csv.CliPath} /min {min} /max {max} /cutoff {cutoff} /max-dist {maxDist}"
+        Dim CLI As String =
+            $"--Palindrome.Imperfects /in {Temp.CliPath} /out {csv.CliPath} /min {min} /max {max} /cutoff {cutoff} /max-dist {maxDist}"
         Call fasta.SaveTo(Temp)
 
         Return CLI
@@ -380,6 +381,8 @@ Partial Module Utilities
                                                                         Select x
                         Call writer.Flush(data)
                     End Sub)
+
+                Return 0
             End Using
         Else
             Dim data As IEnumerable(Of ImperfectPalindrome) =

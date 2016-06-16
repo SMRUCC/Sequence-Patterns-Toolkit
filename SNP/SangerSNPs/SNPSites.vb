@@ -1,4 +1,5 @@
 Imports System.Runtime.CompilerServices
+Imports System.Text
 Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports Microsoft.VisualBasic.Linq
 
@@ -19,13 +20,13 @@ Namespace SangerSNPs
                                        output_monomorphic As Integer) As SNPsAln
 
             Return New FastaFile(filename).SNPSitesGeneric(
-            output_multi_fasta_file,
-            output_vcf_file,
-            output_phylip_file,
-            output_filename,
-            output_reference,
-            pure_mode,
-            output_monomorphic)
+                output_multi_fasta_file,
+                output_vcf_file,
+                output_phylip_file,
+                output_filename,
+                output_reference,
+                pure_mode,
+                output_monomorphic)
         End Function
 
         <Extension>
@@ -41,8 +42,8 @@ Namespace SangerSNPs
             Dim bases_for_snps As Char()() = New Char(fasta.NumberOfFasta - 1)() {}
             Dim args As New SNPsAln
 
-            AlignmentMinusfile.DetectSNPs(fasta, pure_mode, output_monomorphic, args)
-            AlignmentMinusfile.GetBasesForEachSNP(fasta, bases_for_snps, args)
+            SNPsAlignment.DetectSNPs(fasta, pure_mode, output_monomorphic, args)
+            SNPsAlignment.GetBasesForEachSNP(fasta, bases_for_snps, args)
 
             Dim SNPsBases As String() = bases_for_snps.MatrixTranspose.ToArray(Function(x) New String(x))
             Dim output_filename_base As String = fasta.FileName
@@ -72,15 +73,14 @@ Namespace SangerSNPs
                     phylip_output_filename += ".phylip"
                 End If
 
-                PhylibMinusofMinussnpMinussites.PhylibOfSNPSites(
-                phylip_output_filename,
-                args.number_of_snps,
-                SNPsBases,
-                args.sequence_names,
-                args.number_of_samples,
-                output_reference,
-                args.pseudo_reference_sequence,
-                args.snp_locations)
+                SNPsPhylib.PhylibOfSNPSites(
+                    args.number_of_snps,
+                    SNPsBases,
+                    args.sequence_names,
+                    args.number_of_samples,
+                    output_reference,
+                    args.pseudo_reference_sequence,
+                    args.snp_locations).Doc.SaveTo(phylip_output_filename, Encoding.ASCII)
             End If
 
             If (output_multi_fasta_file) OrElse (output_vcf_file = 0 AndAlso output_phylip_file = 0 AndAlso output_multi_fasta_file = 0) Then
@@ -90,15 +90,14 @@ Namespace SangerSNPs
                     multi_fasta_output_filename += ".snp_sites.aln"
                 End If
 
-                FastaMinusofMinussnpMinussites.CreateFastaOfSNPSites(
-                    multi_fasta_output_filename,
+                SNPsFasta.SNPSitesFasta(
                     args.number_of_snps,
                     SNPsBases,
                     args.sequence_names,
                     args.number_of_samples,
                     output_reference,
                     args.pseudo_reference_sequence,
-                    args.snp_locations)
+                    args.snp_locations).Save(multi_fasta_output_filename, Encodings.ASCII)
             End If
 
             Return args

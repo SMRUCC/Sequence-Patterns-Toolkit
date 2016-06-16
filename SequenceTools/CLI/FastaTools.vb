@@ -1,19 +1,19 @@
-﻿Imports LANS.SystemsBiology.ComponentModel.Loci
+﻿Imports LANS.SystemsBiology.Assembly.NCBI.GenBank
+Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat
+Imports LANS.SystemsBiology.ComponentModel.Loci
 Imports LANS.SystemsBiology.SequenceModel
+Imports LANS.SystemsBiology.SequenceModel.FASTA
+Imports LANS.SystemsBiology.SequenceModel.FASTA.Reflection
+Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
+Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.DocumentFormat.Csv
 Imports Microsoft.VisualBasic.DocumentFormat.Csv.Extensions
 Imports Microsoft.VisualBasic.DocumentFormat.Csv.StorageProvider.ComponentModels
-Imports Microsoft.VisualBasic.Linq.Extensions
-Imports Microsoft.VisualBasic
-Imports LANS.SystemsBiology.SequenceModel.FASTA.Reflection
-Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat
-Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
-Imports Microsoft.VisualBasic.Serialization
-Imports LANS.SystemsBiology.SequenceModel.FASTA
-Imports Microsoft.VisualBasic.Language.UnixBash
-Imports LANS.SystemsBiology.Assembly.NCBI.GenBank
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Language.UnixBash
+Imports Microsoft.VisualBasic.Linq.Extensions
+Imports Microsoft.VisualBasic.Serialization
 
 Partial Module Utilities
 
@@ -73,7 +73,8 @@ Partial Module Utilities
         Return Fasta.Save(out, Encodings.ASCII).CLICode
     End Function
 
-    <ExportAPI("/Merge", Usage:="/Merge /in <fasta.DIR> [/out <out.fasta> /trim /ext <*.fasta> /brief]",
+    <ExportAPI("/Merge",
+               Usage:="/Merge /in <fasta.DIR> [/out <out.fasta> /trim /ext <*.fasta> /brief]",
                Info:="Only search for 1 level folder, dit not search receve.")>
     Public Function Merge(args As CommandLine.CommandLine) As Integer
         Dim inDIR As String = args("/in")

@@ -169,9 +169,9 @@
   <ItemGroup>
     <Compile Include="SNPVcf.vb" />
     <Compile Include="SangerSNPs\AlignmentMinusfile.vb" />
-    <Compile Include="SangerSNPs\FastaMinusofMinussnpMinussites.vb" />
+    <Compile Include="SangerSNPs\SNPsFasta.vb" />
     <Compile Include="SangerSNPs\DefineConstants.vb" />
-    <Compile Include="SangerSNPs\PhylibMinusofMinussnpMinussites.vb" />
+    <Compile Include="SangerSNPs\SNPsPhylib.vb" />
     <Compile Include="SangerSNPs\SNPSites.vb" />
     <Compile Include="SNPScan.vb" />
     <Compile Include="SNP.vb" />

@@ -9,7 +9,7 @@ Imports Microsoft.VisualBasic.Serialization
 
 Namespace SangerSNPs
 
-    Public Module AlignmentMinusfile
+    Public Module SNPsAlignment
 
         Public Sub GetBasesForEachSNP(ByRef filename As String, ByRef bases_for_snps As Char()(), ByRef snps As SNPsAln)
             Call New FastaFile(filename).GetBasesForEachSNP(bases_for_snps, snps)
