@@ -1,6 +1,11 @@
 ﻿Imports System.Runtime.CompilerServices
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
 Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically
+Imports LANS.SystemsBiology.Assembly.NCBI.GenBank
+Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat
+Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat.ComponentModels
+Imports LANS.SystemsBiology.ComponentModel.Loci
+Imports LANS.SystemsBiology.ContextModel
 Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
 Imports Microsoft.VisualBasic
@@ -8,6 +13,7 @@ Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.ComponentModel.Collection
 Imports Microsoft.VisualBasic.DocumentFormat.Csv
+Imports Microsoft.VisualBasic.DocumentFormat.Csv.DocumentStream.Linq
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.UnixBash
 Imports Microsoft.VisualBasic.Linq
@@ -130,5 +136,50 @@ Partial Module Utilities
         Next
 
         Return 0
+    End Function
+
+    ''' <summary>
+    ''' 过滤得到基因组上下文之中的上游回文位点
+    ''' </summary>
+    ''' <param name="args"></param>
+    ''' <returns></returns>
+    <ExportAPI("/Mirrors.Context",
+               Usage:="/Mirrors.Context /in <mirrors.csv> /PTT <genome.ptt> [/strand <+/-> /out <out.csv> /stranded /dist <500bp>]")>
+    Public Function MirrorContext(args As CommandLine) As Integer
+        Dim [in] As String = args("/in")
+        Dim PTT As String = args("/PTT")
+        Dim strand As String = args.GetValue("/strand", "+")
+        Dim stranded As Boolean = args.GetBoolean("/stranded")
+        Dim out As String = args.GetValue("/out", [in].TrimFileExt & "." & PTT.BaseName & "." & strand & ".csv")
+        Dim context As PTT = TabularFormat.PTT.Load(PTT)
+        Dim genome As New GenomeContextProvider(Of GeneBrief)(context)  ' 构建基因组的上下文模型
+        Dim lStrand As Strands = strand.GetStrand
+        Dim dist As Integer = args.GetValue("/dist", 500)
+
+        Dim task As Func(Of PalindromeLoci, KeyValuePair(Of PalindromeLoci, Relationship(Of GeneBrief)())) =
+            Function(x)
+                Dim loci = New NucleotideLocation(x.MappingLocation, lStrand) ' 在这里用户自定义链的方向
+                Dim rels = genome.GetAroundRelated(loci, stranded, dist)
+                Return New KeyValuePair(Of PalindromeLoci, Relationship(Of GeneBrief)())(x, rels)
+            End Function
+
+        Using writer As New WriteStream(Of PalindromeLoci)(out)
+            Call DataStream.OpenHandle([in]) _
+                .ForEachBlock(Of PalindromeLoci)(
+                    Sub(array) Call writer.Flush(LQuerySchedule.LQuery(
+                        array,
+                        task,
+                        AddressOf __where,
+                        TaskPartitions.PartTokens(array.Length)).Select(Function(x) x.Key)))
+        End Using
+
+        Return 0
+    End Function
+
+    Private Function __where(rels As KeyValuePair(Of PalindromeLoci, Relationship(Of GeneBrief)())) As Boolean
+        Return rels.Value.Length > 0 AndAlso
+            rels.Value.Any(Function(r) _
+                 r.Relation = SegmentRelationships.UpStream OrElse
+                 r.Relation = SegmentRelationships.UpStreamOverlap)   ' 只会将包含有上游位点的位点过滤出来
     End Function
 End Module
