@@ -1,11 +1,11 @@
-﻿Imports Microsoft.VisualBasic.Language.C
-Imports System.Diagnostics
+﻿Imports System.Diagnostics
 Imports System.IO
-Imports FILE = System.IO.StreamWriter
 Imports System.Runtime.CompilerServices
 Imports LANS.SystemsBiology.SequenceModel.FASTA
-Imports Microsoft.VisualBasic.Terminal
+Imports Microsoft.VisualBasic.Language.C
 Imports Microsoft.VisualBasic.Serialization
+Imports Microsoft.VisualBasic.Terminal.STDIO__
+Imports FILE = System.IO.StreamWriter
 
 Namespace SangerSNPs
 
@@ -36,7 +36,7 @@ Namespace SangerSNPs
                 Next
 
                 If seq.Length <> lenOfgenomeFound Then
-                    Dim msg As String = STDIO.Format(UnEqualLength, fasta.FileName, lenOfgenomeFound, seq.Length, fa.Title)
+                    Dim msg As String = sprintf(UnEqualLength, fasta.FilePath, lenOfgenomeFound, seq.Length, fa.Title)
                     Throw New Exception(msg)
                 End If
 

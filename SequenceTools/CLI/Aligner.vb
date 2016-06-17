@@ -161,7 +161,7 @@ Partial Module Utilities
 
         Dim out = aln.Mid(leftOffset, rightOffset)
         Dim outFile As String =
-            args.GetValue("/out", aln.FileName.TrimFileExt & $"{leftOffset}-{rightOffset}.fasta")
+            args.GetValue("/out", aln.FilePath.TrimFileExt & $"{leftOffset}-{rightOffset}.fasta")
         Return out.Save(-1, outFile, Encodings.ASCII).CLICode
     End Function
 End Module

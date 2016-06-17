@@ -78,8 +78,8 @@ For example, we identified a new domain, likely to have a role downstream of the
 #End If
 
             If String.IsNullOrEmpty(title) Then
-                If Not String.IsNullOrEmpty(Fasta.FileName) Then
-                    Model.ModelsId = Fasta.FileName.BaseName
+                If Not String.IsNullOrEmpty(Fasta.FilePath) Then
+                    Model.ModelsId = Fasta.FilePath.BaseName
                 Else
                     Model.ModelsId = New String(PWM.PWM.ToArray(Function(r) r.AsChar))
                 End If

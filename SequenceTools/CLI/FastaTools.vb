@@ -14,6 +14,7 @@ Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.UnixBash
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Serialization
+Imports Microsoft.VisualBasic.Terminal.STDIO
 
 Partial Module Utilities
 
