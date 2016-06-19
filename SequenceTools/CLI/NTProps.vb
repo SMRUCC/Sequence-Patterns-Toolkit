@@ -180,6 +180,9 @@ Partial Module Utilities
                If trans Then
                    left = gsize - left
                    right = gsize - right
+
+                   x.Start = left
+                   x.PalEnd = right
                End If
 
                Dim loci As New NucleotideLocation(left, right, lStrand) ' 在这里用户自定义链的方向
@@ -200,7 +203,7 @@ Partial Module Utilities
                             LinqAPI.Exec(Of SimpleSegment) <= result.Select(AddressOf __segments)
 
                         Call writer.Flush(segs)
-                    End Sub)
+                    End Sub, 1024)
         End Using
 
         Return 0

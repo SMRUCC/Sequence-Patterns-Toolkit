@@ -18,12 +18,20 @@ Namespace Topologically
         ''' </summary>
         ''' <returns></returns>
         Public Property Loci As String Implements I_PolymerSequenceModel.SequenceData
+        ''' <summary>
+        ''' <see cref="NucleotideLocation.Left"/>
+        ''' </summary>
+        ''' <returns></returns>
         Public Property Start As Integer Implements ILoci.Left
         ''' <summary>
         ''' 回文序列，在生成Mirror镜像位点数据的时候是使用这个和<see cref="Loci"/>组合产生的
         ''' </summary>
         ''' <returns></returns>
         Public Property Palindrome As String
+        ''' <summary>
+        ''' <see cref="NucleotideLocation.Right"/>
+        ''' </summary>
+        ''' <returns></returns>
         Public Property PalEnd As Integer
         ''' <summary>
         ''' 和<see cref="loci"/>相对应的反向序列
