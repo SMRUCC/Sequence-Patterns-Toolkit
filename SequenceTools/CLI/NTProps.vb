@@ -144,6 +144,7 @@ Partial Module Utilities
     ''' <param name="args"></param>
     ''' <returns></returns>
     <ExportAPI("/Mirrors.Context",
+               Info:="This function will convert the mirror data to the simple segment object data",
                Usage:="/Mirrors.Context /in <mirrors.csv> /PTT <genome.ptt> [/strand <+/-> /out <out.csv> /stranded /dist <500bp>]")>
     Public Function MirrorContext(args As CommandLine) As Integer
         Dim [in] As String = args("/in")
@@ -166,14 +167,36 @@ Partial Module Utilities
         Using writer As New WriteStream(Of PalindromeLoci)(out)
             Call DataStream.OpenHandle([in]) _
                 .ForEachBlock(Of PalindromeLoci)(
-                    Sub(array) Call writer.Flush(LQuerySchedule.LQuery(
+                    Sub(array)
+                        Dim result = LQuerySchedule.LQuery(
                         array,
                         task,
                         AddressOf __where,
-                        TaskPartitions.PartTokens(array.Length)).Select(Function(x) x.Key)))
+                        TaskPartitions.PartTokens(array.Length))
+                        Dim segs As SimpleSegment() =
+                            LinqAPI.Exec(Of SimpleSegment) <= result.Select(AddressOf __segments)
+
+                        Call writer.Flush(segs)
+                    End Sub)
         End Using
 
         Return 0
+    End Function
+
+    <Extension>
+    Private Iterator Function __segments(rels As KeyValuePair(Of PalindromeLoci, Relationship(Of GeneBrief)())) As IEnumerable(Of SimpleSegment)
+        Dim seg As SimpleSegment = rels.Key.MirrorsLoci
+
+        For Each gene As Relationship(Of GeneBrief)
+            In rels.Value.Where(Function(x) x.Relation = SegmentRelationships.UpStream OrElse
+            x.Relation = SegmentRelationships.UpStreamOverlap)
+
+            Dim loci As New SimpleSegment(seg, gene.Gene.Synonym)
+            Dim atg As Integer = loci.GetsATGDist(gene.Gene)
+            loci.ID = loci.ID & ":" & atg
+
+            Yield loci
+        Next
     End Function
 
     Private Function __where(rels As KeyValuePair(Of PalindromeLoci, Relationship(Of GeneBrief)())) As Boolean
