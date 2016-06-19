@@ -145,7 +145,9 @@ Partial Module Utilities
     ''' <returns></returns>
     <ExportAPI("/Mirrors.Context",
                Info:="This function will convert the mirror data to the simple segment object data",
-               Usage:="/Mirrors.Context /in <mirrors.csv> /PTT <genome.ptt> [/strand <+/-> /out <out.csv> /stranded /dist <500bp>]")>
+               Usage:="/Mirrors.Context /in <mirrors.csv> /PTT <genome.ptt> [/trans /strand <+/-> /out <out.csv> /stranded /dist <500bp>]")>
+    <ParameterInfo("/trans", True,
+                   Description:="Enable this option will using genome_size minus loci location for the location correction, only works in reversed strand.")>
     Public Function MirrorContext(args As CommandLine) As Integer
         Dim [in] As String = args("/in")
         Dim PTT As String = args("/PTT")
@@ -156,15 +158,36 @@ Partial Module Utilities
         Dim genome As New GenomeContextProvider(Of GeneBrief)(context)  ' 构建基因组的上下文模型
         Dim lStrand As Strands = strand.GetStrand
         Dim dist As Integer = args.GetValue("/dist", 500)
+        Dim trans As Boolean = args.GetBoolean("/trans")
 
+        If trans Then
+            If lStrand <> Strands.Reverse Then
+                trans = False   ' 只允许反向链的情况下使用
+            End If
+        End If
+
+        If trans Then
+            Call $"Reversed strand location will be transformed by genome size!".__DEBUG_ECHO
+            out = out.TrimFileExt & ".trans.Csv"
+        End If
+
+        Dim gsize As Integer = context.Size
         Dim task As Func(Of PalindromeLoci, KeyValuePair(Of PalindromeLoci, Relationship(Of GeneBrief)())) =
-            Function(x)
-                Dim loci = New NucleotideLocation(x.MappingLocation, lStrand) ' 在这里用户自定义链的方向
-                Dim rels = genome.GetAroundRelated(loci, stranded, dist)
-                Return New KeyValuePair(Of PalindromeLoci, Relationship(Of GeneBrief)())(x, rels)
-            End Function
+           Function(x)
+               Dim left As Integer = x.MappingLocation.Left
+               Dim right As Integer = x.MappingLocation.Right
 
-        Using writer As New WriteStream(Of PalindromeLoci)(out)
+               If trans Then
+                   left = gsize - left
+                   right = gsize - right
+               End If
+
+               Dim loci As New NucleotideLocation(left, right, lStrand) ' 在这里用户自定义链的方向
+               Dim rels = genome.GetAroundRelated(loci, stranded, dist)
+               Return New KeyValuePair(Of PalindromeLoci, Relationship(Of GeneBrief)())(x, rels)
+           End Function
+
+        Using writer As New WriteStream(Of SimpleSegment)(out)
             Call DataStream.OpenHandle([in]) _
                 .ForEachBlock(Of PalindromeLoci)(
                     Sub(array)
