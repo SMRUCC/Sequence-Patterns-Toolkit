@@ -183,6 +183,8 @@ Partial Module Utilities
 
                    x.Start = left
                    x.PalEnd = right
+
+                   Dim null = x.MappingLocation(reset:=True)
                End If
 
                Dim loci As New NucleotideLocation(left, right, lStrand) ' 在这里用户自定义链的方向

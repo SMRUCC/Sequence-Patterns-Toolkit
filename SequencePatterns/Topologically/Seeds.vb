@@ -18,7 +18,7 @@ Namespace Topologically
             Return LinqAPI.MakeList(Of String) <=
                 LQuerySchedule.LQuery(
                 source,
-                Function(s) Seeds.Combo(s, Chars), 20000)
+                Function(s) Seeds.Combo(s, Chars), 200000)
         End Function
 
         ''' <summary>
