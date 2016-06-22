@@ -23,13 +23,43 @@ Imports Microsoft.VisualBasic.Terminal.STDIO
 Namespace gwANI
 
     ''' <summary>
+    ''' ### pANIto
+    ''' Given a multi-FASTA alignment, output the genome wide average nucleotide identity (gwANI) 
+    ''' For Each sample against all other samples. A matrix containing the percentages Is outputted. 
+    ''' This software loads the whole file into memory.
+    '''
+    ''' #### Usage
     ''' ```
+    ''' $ panito
     ''' Usage: panito [-hV] &lt;file>
     ''' This program calculates the genome wide ANI for a multiFASTA alignment.
     '''   -h          this help message
     '''   -V          print version and exit
     '''   &lt;file>   input alignment file which can optionally be gzipped
     ''' ```
+    '''
+    ''' #### Input format
+    ''' The input file must be a multi-FASTA file, where all sequences are the same length:
+    '''
+    ''' ```
+    ''' >sample1
+    ''' AAAAAAAAAA
+    ''' >sample2
+    ''' AAAAAAAAAC
+    ''' >sample3
+    ''' AAAAAAAACC
+    ''' ```
+    '''
+    ''' #### Output
+    ''' ```
+    '''         sample1	    sample2	    sample3
+    ''' sample1	100.000000	90.00000	80.000000
+    ''' sample2	-			100.000000	90.000000
+    ''' sample3	-			-			100.000000
+    ''' ```
+    '''
+    ''' #### Etymology
+    ''' pANIto has 'ani' in the middle. In Spanish it means babylon.
     ''' </summary>
     ''' <remarks>
     ''' ```vbnet
