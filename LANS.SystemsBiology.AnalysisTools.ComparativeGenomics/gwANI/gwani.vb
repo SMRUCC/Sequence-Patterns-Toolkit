@@ -105,14 +105,17 @@ Namespace gwANI
     ''' </remarks>
     Public NotInheritable Class gwANI
 
-        Private Sub New(file As StreamWriter)
+        Private Sub New(file As TextWriter)
             out = file
+            If out Is Nothing Then
+                out = Console.Out
+            End If
         End Sub
 
         ''' <summary>
         ''' The result output stream
         ''' </summary>
-        ReadOnly out As StreamWriter
+        ReadOnly out As TextWriter
 
         Private Sub check_input_file_and_calc_dimensions(ByRef filename As String)
             _number_of_samples = 0
@@ -142,7 +145,7 @@ Namespace gwANI
         ''' </summary>
         ''' <param name="filename"></param>
         ''' <param name="out">默认是打印在终端之上</param>
-        Public Shared Sub calculate_and_output_gwani(ByRef filename As String, Optional out As StreamWriter = Nothing)
+        Public Shared Sub calculate_and_output_gwani(ByRef filename As String, Optional out As TextWriter = Nothing)
             Call New gwANI(out).__calculate_and_output_gwani(filename)
         End Sub
 
@@ -175,11 +178,11 @@ Namespace gwANI
             Call out.WriteLine()
         End Sub
 
-        Public Sub calc_gwani_between_a_sample_and_everything_afterwards(ByRef filename As String, comparison_index As Integer, similarity_percentage As Double())
+        Private Sub calc_gwani_between_a_sample_and_everything_afterwards(ByRef filename As String, comparison_index As Integer, similarity_percentage As Double())
             Dim current_index As Integer = 0
             Dim bases_in_common As Integer
             Dim length_without_gaps As Integer
-            Dim comparison_sequence As String
+            Dim comparison_sequence As String = New String("-"c, length_of_genome + 1)
 
             For Each seq As FastaToken In New FastaFile(filename)
 
@@ -256,7 +259,7 @@ Namespace gwANI
         ''' </summary>
         ''' <param name="filename"></param>
         ''' <param name="out">默认是打印在终端之上</param>
-        Public Shared Sub fast_calculate_gwani(ByRef filename As String, Optional out As StreamWriter = Nothing)
+        Public Shared Sub fast_calculate_gwani(ByRef filename As String, Optional out As TextWriter = Nothing)
             Call New gwANI(out).__fast_calculate_gwani(filename)
         End Sub
 
@@ -276,7 +279,7 @@ Namespace gwANI
             ' Store all sequences in a giant array - eek
 
             For Each seq As FastaToken In New FastaFile(filename)
-                comparison_sequence(i) = seq.Title
+                comparison_sequence(i) = seq.SequenceData
                 i += 1
             Next
 
