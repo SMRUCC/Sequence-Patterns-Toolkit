@@ -117,6 +117,10 @@ Namespace gwANI
         ''' </summary>
         ReadOnly out As TextWriter
 
+        Public ReadOnly Property length_of_genome As Integer
+        Public ReadOnly Property number_of_samples As Integer
+        Public ReadOnly Property sequence_names As String()
+
         Private Sub check_input_file_and_calc_dimensions(ByRef filename As String)
             _number_of_samples = 0
             _length_of_genome = 0
@@ -220,7 +224,7 @@ Namespace gwANI
             Next
         End Sub
 
-        Public Sub calc_gwani_between_a_sample_and_everything_afterwards_memory(ByRef comparison_sequence As Char()(), comparison_index As Integer, similarity_percentage As Double())
+        Private Sub calc_gwani_between_a_sample_and_everything_afterwards_memory(ByRef comparison_sequence As Char()(), comparison_index As Integer, similarity_percentage As Double())
             Dim current_index As Integer = 0
             Dim bases_in_common As Integer
             Dim length_without_gaps As Integer
@@ -311,10 +315,5 @@ Namespace gwANI
                 out.Write(vbLf)
             Next
         End Sub
-
-        Public ReadOnly Property length_of_genome As Integer
-        Public ReadOnly Property number_of_samples As Integer
-        Public ReadOnly Property sequence_names As String()
-
     End Class
 End Namespace
