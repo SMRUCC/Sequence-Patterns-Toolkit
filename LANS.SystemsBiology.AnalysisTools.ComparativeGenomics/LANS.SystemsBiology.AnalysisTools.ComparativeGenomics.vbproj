@@ -169,9 +169,8 @@
     <Compile Include="CAI\CAITable.vb" />
     <Compile Include="CAI\CodonFrequency.vb" />
     <Compile Include="CAI\CodonFrequencyCAI.vb" />
-    <Compile Include="gwANI\gwani.vb" />
+    <Compile Include="gwANI\gwANI.vb" />
     <Compile Include="gwANI\identity_result.vb" />
-    <Compile Include="gwANI\main.vb" />
     <Compile Include="ToolsAPI\ChromosomePartitioningEntry.vb" />
     <Compile Include="ToolsAPI\SegmentRenderData.vb" />
     <Compile Include="ToolsAPI\SiteSigma.vb" />

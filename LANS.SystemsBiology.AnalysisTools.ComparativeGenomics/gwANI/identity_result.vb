@@ -17,13 +17,30 @@
 ' *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ' 
 
+Imports Microsoft.VisualBasic.Serialization
 
+Namespace gwANI
 
+    Public Class IdentityResult
 
-Public Class IdentityResult
-	Public percentage_identity As Double
-	Public num_matching_bases As Integer
-	Public num_gaps As Integer
-	Public length_without_gaps As Integer
-	Public calculation_skipped As Boolean
-End Class
+        Public Property percentage_identity As Double
+        Public Property num_matching_bases As Integer
+        Public Property num_gaps As Integer
+        Public Property length_without_gaps As Integer
+        Public Property calculation_skipped As Boolean
+
+        Public Overrides Function ToString() As String
+            Return Me.GetJson
+        End Function
+    End Class
+
+    Public Module DefineConstants
+
+        Public Const KS_SEP_SPACE As Integer = 0
+        Public Const KS_SEP_TAB As Integer = 1
+        Public Const KS_SEP_LINE As Integer = 2
+        Public Const KS_SEP_MAX As Integer = 2
+        Public Const DEFAULT_NUM_SAMPLES As Integer = 65536
+        Public Const PROGRAM_NAME As String = "panito"
+    End Module
+End Namespace
