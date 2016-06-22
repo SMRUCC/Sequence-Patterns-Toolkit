@@ -177,7 +177,6 @@
     <Compile Include="ToolsAPI\PartitioningData.vb" />
     <Compile Include="NucleicAcid.vb" />
     <Compile Include="PlasmidComparative.vb" />
-    <Compile Include="DeltaRenderings.vb" />
     <Compile Include="GenomeSignatures.vb" />
     <Compile Include="DifferenceMeasurement.vb" />
     <Compile Include="CAI\RelativeCodonBiases.vb" />

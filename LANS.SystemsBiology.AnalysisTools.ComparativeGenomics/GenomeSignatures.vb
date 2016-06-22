@@ -16,13 +16,15 @@ Imports Microsoft.VisualBasic.Scripting.MetaData
 Public Module GenomeSignatures
 
     ''' <summary>
-    ''' Dinucleotide relative abundance values (dinucleotide bias) are assessed through the odds ratio p(XY) = f(XY)/f(X)f(Y), 
-    ''' where fX denotes the frequency of the nucleotide X and fXY is the frequency of the dinucleotide XY in the sequence under study.
+    ''' Dinucleotide relative abundance values (dinucleotide bias) are assessed through the odds ratio ``p(XY) = f(XY)/f(X)f(Y)``, 
+    ''' where ``fX`` denotes the frequency of the nucleotide ``X`` and ``fXY`` is the frequency of the dinucleotide ``XY`` in the 
+    ''' sequence under study.
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
     ''' 
-    <ExportAPI("Dinucleotide.BIAS", Info:="Dinucleotide relative abundance values (dinucleotide bias) are assessed through the odds ratio p(XY) = f(XY)/f(X)f(Y), 
+    <ExportAPI("Dinucleotide.BIAS",
+               Info:="Dinucleotide relative abundance values (dinucleotide bias) are assessed through the odds ratio p(XY) = f(XY)/f(X)f(Y), 
 where fX denotes the frequency of the nucleotide X and fXY is the frequency of the dinucleotide XY in the sequence under study.")>
     Public Function DinucleotideBIAS(Sequence As NucleotideModels.NucleicAcid, X As DNA, Y As DNA) As Double
         Dim Len As Integer = Sequence.Length
@@ -66,8 +68,10 @@ where fX denotes the frequency of the nucleotide X and fXY is the frequency of t
     End Function
 
     ''' <summary>
-    ''' Dinucleotide relative abundance values (dinucleotide bias) are assessed through the odds ratio p(XY) = f(XY)/f(X)f(Y), 
-    ''' where fX denotes the frequency of the nucleotide X and fXY is the frequency of the dinucleotide XY in the sequence under study.(并行版本)
+    ''' Dinucleotide relative abundance values (dinucleotide bias) are assessed through the 
+    ''' odds ratio ``p(XY) = f(XY)/f(X)f(Y)``, where fX denotes the frequency of 
+    ''' the nucleotide X and fXY is the frequency of the dinucleotide XY in the 
+    ''' sequence under study.(并行版本)
     ''' </summary>
     ''' <returns></returns>
     ''' <remarks></remarks>
@@ -129,9 +133,11 @@ where fX denotes the frequency of the nucleotide X and fXY is the frequency of t
     ''' contrasts are assessed through the odds ratio pXY = f(XY)/f(X)f(Y). 
     ''' In the context of codons, we define
     ''' 
+    ''' ```
     '''    pXY(1, 2) = fXY(1, 2)/fX(1)fY(2)
     '''    pYZ(2, 3) = fYZ(2, 3)/fY(2)fZ(3)
     '''    pXZ(1, 3) = fXZ(1, 3)/fX(1)fZ(3)
+    ''' ```
     ''' 
     ''' We refer to the profiles {pXY(1, 2)}; {pXZ(1, 3)}; {pYZ(2, 3)}, and also {pZW(3, 4)}, where 4(=1) is the first position of the next codon, as the 
     ''' codon signature to be distinguished from the global genome signature

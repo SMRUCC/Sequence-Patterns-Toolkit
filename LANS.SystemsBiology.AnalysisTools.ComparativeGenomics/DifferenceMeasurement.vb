@@ -23,7 +23,9 @@ Public Module DifferenceMeasurement
     ''' A measure of difference between two sequences f and g (from different organisms or from different regions of the same genome) 
     ''' is the average absolute dinucleotide relative abundance difference calculated as
     '''
+    ''' ```
     ''' sigma(f, g) = (1/16)*∑|pXY(f)-pXY(g)|
+    ''' ```
     ''' 
     ''' where the sum extends over all dinucleotides (abbreviated sigma-differences).
     ''' </summary>
