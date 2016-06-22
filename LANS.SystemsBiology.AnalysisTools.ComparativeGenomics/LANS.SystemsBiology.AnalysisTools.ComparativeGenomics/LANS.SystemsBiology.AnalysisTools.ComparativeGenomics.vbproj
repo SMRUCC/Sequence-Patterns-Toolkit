@@ -169,6 +169,9 @@
     <Compile Include="CAI\CAITable.vb" />
     <Compile Include="CAI\CodonFrequency.vb" />
     <Compile Include="CAI\CodonFrequencyCAI.vb" />
+    <Compile Include="gwANI\gwani.vb" />
+    <Compile Include="gwANI\identity_result.vb" />
+    <Compile Include="gwANI\main.vb" />
     <Compile Include="ToolsAPI\ChromosomePartitioningEntry.vb" />
     <Compile Include="ToolsAPI\SegmentRenderData.vb" />
     <Compile Include="ToolsAPI\SiteSigma.vb" />
@@ -233,9 +236,7 @@
       <Name>+Microsoft.VisualBasic.Architecture.Framework</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="NewFolder1\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
