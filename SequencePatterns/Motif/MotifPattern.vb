@@ -1,6 +1,6 @@
 ﻿Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
 Imports Microsoft.VisualBasic.ComponentModel.Collection.Generic
-Imports Microsoft.VisualBasic.Serialization
+Imports Microsoft.VisualBasic.Serialization.JSON
 
 Namespace Motif
 

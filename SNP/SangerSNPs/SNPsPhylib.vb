@@ -4,6 +4,7 @@ Imports LANS.SystemsBiology.SequenceModel.FASTA
 Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Serialization
+Imports Microsoft.VisualBasic.Serialization.JSON
 Imports FILE = System.IO.StreamWriter
 
 Namespace SangerSNPs

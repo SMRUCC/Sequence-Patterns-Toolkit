@@ -2,6 +2,7 @@
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Serialization
 Imports Microsoft.VisualBasic
+Imports Microsoft.VisualBasic.Serialization.JSON
 
 ''' <summary>
 ''' HMMER3/f [3.1b2 | February 2015]

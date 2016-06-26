@@ -2,6 +2,7 @@
 Imports Microsoft.VisualBasic.Serialization
 Imports Microsoft.VisualBasic.Linq
 Imports System.Text.RegularExpressions
+Imports Microsoft.VisualBasic.Serialization.JSON
 
 ''' <summary>
 ''' active_site.dat
