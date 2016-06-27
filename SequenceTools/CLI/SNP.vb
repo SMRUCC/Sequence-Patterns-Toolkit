@@ -8,6 +8,9 @@ Partial Module Utilities
 
     <ExportAPI("/SNP",
                Usage:="/SNP /in <nt.fasta> [/ref 0 /pure /monomorphic]")>
+    <ParameterInfo("/in", False, AcceptTypes:={GetType(FastaFile)}, Description:="")>
+    <ParameterInfo("/ref", True, AcceptTypes:={GetType(Integer)})>
+    <ParameterInfo("/pure", True, AcceptTypes:={GetType(Boolean)})>
     Public Function SNP(args As CommandLine) As Integer
         Dim [in] As String = args - "/in"
         Dim pure As Boolean = args.GetBoolean("/pure")
