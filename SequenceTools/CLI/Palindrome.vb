@@ -59,7 +59,10 @@ Partial Module Utilities
 
     <ExportAPI("--Palindrome.From.FASTA",
                Usage:="--Palindrome.From.Fasta /nt <nt-sequence.fasta> [/out <out.csv> /min <3> /max <20>]")>
-    <ParameterInfo("/nt", False, Description:="Fasta sequence file, and this file should just contains only one sequence.")>
+    <ParameterInfo("/nt", False,
+                   Description:="Fasta sequence file, and this file should just contains only one sequence.",
+                   AcceptTypes:={GetType(FastaToken)})>
+    <ParameterInfo("/out", True, AcceptTypes:={(GetType(PalindromeLoci))})>
     Public Function SearchPalindromeFasta(args As CommandLine.CommandLine) As Integer
         Dim nt As FastaToken = FastaToken.Load(args("/nt"))
         Dim Out As String = args.GetValue("/out", args("/nt").TrimFileExt & ".csv")
@@ -95,6 +98,8 @@ Partial Module Utilities
 
     <ExportAPI("/Mirror.Fuzzy",
                Usage:="/Mirror.Fuzzy /in <in.fasta> [/out <out.csv> /cut 0.6 /max-dist 6 /min 3 /max 20]")>
+    <ParameterInfo("/in", False, AcceptTypes:={GetType(FastaToken)})>
+    <ParameterInfo("/out", True, AcceptTypes:={GetType(PalindromeLoci)})>
     Public Function FuzzyMirrors(args As CommandLine.CommandLine) As Integer
         Dim [in] As String = args - "/in"
         Dim cut As Double = args.GetValue("/cut", 0.6)
@@ -138,7 +143,9 @@ Partial Module Utilities
     <ExportAPI("/Mirror.Batch",
                Usage:="/Mirror.Batch /nt <nt.fasta> [/out <out.csv> /mp /min <3> /max <20> /num_threads <-1>]")>
     <ParameterInfo("/mp", True,
-                   Description:="Calculation in the multiple process mode?")>
+                   Description:="Calculation in the multiple process mode?",
+                   AcceptTypes:={GetType(Boolean)})>
+    <ParameterInfo("/nt", False, AcceptTypes:={GetType(FastaFile)})>
     Public Function MirrorBatch(args As CommandLine.CommandLine) As Integer
         Dim NT As New FastaFile(args - "/nt")
         Dim out As String = args.GetValue("/out", args("/nt").TrimFileExt & "-Mirror/")
@@ -181,7 +188,8 @@ Partial Module Utilities
                Usage:="--Mirror.From.Fasta /nt <nt-sequence.fasta> [/out <out.csv> /min <3> /max <20>]",
                Info:="Mirror Palindrome, search from a fasta file.")>
     <ParameterInfo("/nt", False,
-                   Description:="This fasta file should contains only just one sequence.")>
+                   Description:="This fasta file should contains only just one sequence.",
+                   AcceptTypes:={GetType(FastaToken)})>
     Public Function SearchMirrotFasta(args As CommandLine.CommandLine) As Integer
         Dim Nt = FastaToken.Load(args("/nt"))
         Dim Out As String = args.GetValue("/out", args("/nt").TrimFileExt & ".csv")
@@ -394,7 +402,8 @@ Partial Module Utilities
         End If
     End Function
 
-    <ExportAPI("--PerfectPalindrome.Filtering", Usage:="--PerfectPalindrome.Filtering /in <inDIR> [/min <8> /out <outDIR>]")>
+    <ExportAPI("--PerfectPalindrome.Filtering",
+               Usage:="--PerfectPalindrome.Filtering /in <inDIR> [/min <8> /out <outDIR>]")>
     Public Function FilterPerfectPalindrome(args As CommandLine.CommandLine) As Integer
         Dim LQuery = (From file As String
                       In FileIO.FileSystem.GetFiles(args("/in"), FileIO.SearchOption.SearchTopLevelOnly, "*.csv")
@@ -420,7 +429,8 @@ Partial Module Utilities
         Return True
     End Function
 
-    <ExportAPI("--Hairpinks", Usage:="--Hairpinks /in <in.fasta> [/out <out.csv> /min <6> /max <7> /cutoff 3 /max-dist <35 (bp)>]")>
+    <ExportAPI("--Hairpinks",
+               Usage:="--Hairpinks /in <in.fasta> [/out <out.csv> /min <6> /max <7> /cutoff 3 /max-dist <35 (bp)>]")>
     Public Function Hairpinks(args As CommandLine.CommandLine) As Integer
         Dim input As String = args("/in")
         Dim out As String = args.GetValue("/out", input.TrimFileExt & ".hairpink.csv")
@@ -482,7 +492,8 @@ Partial Module Utilities
         Return result
     End Function
 
-    <ExportAPI("--ToVector", Usage:="--ToVector /in <in.DIR> /min <4> /max <8> /out <out.txt> /size <genome.size>")>
+    <ExportAPI("--ToVector",
+               Usage:="--ToVector /in <in.DIR> /min <4> /max <8> /out <out.txt> /size <genome.size>")>
     Public Function ToVector(args As CommandLine.CommandLine) As Integer
         Dim inDIR As String = args("/in")
         Dim min = args.GetInt32("/min")
@@ -493,7 +504,8 @@ Partial Module Utilities
         Return vector.ToArray(Function(n) CStr(n)).FlushAllLines(out).CLICode
     End Function
 
-    <ExportAPI("/Mirror.Vector", Usage:="/Mirror.Vector /in <inDIR> /size <genome.size> [/out out.txt]")>
+    <ExportAPI("/Mirror.Vector",
+               Usage:="/Mirror.Vector /in <inDIR> /size <genome.size> [/out out.txt]")>
     Public Function MirrorsVector(args As CommandLine.CommandLine) As Integer
         Dim inDIR As String = args("/in")
         Dim out As String = args.GetValue("/out", inDIR.TrimDIR & ".Mirror.Vector.txt")

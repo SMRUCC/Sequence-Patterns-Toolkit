@@ -96,17 +96,17 @@ Public Module Utilities
     <ExportAPI("-pattern_search", Info:="Parsing the sequence segment from the sequence source using regular expression.",
         Usage:="-pattern_search -i <file_name> -p <regex_pattern>[ -o <output_directory> -f <format:fsa/gbk>]",
         Example:="-pattern_search -i ~/xcc8004.txt -p TTA{3}N{1,2} -f fsa")>
-    <Reflection.ParameterInfo("-i",
+    <ParameterInfo("-i",
         Description:="The sequence input data source file, it can be a fasta or genbank file.",
         Example:="~/Desktop/xcc8004.txt")>
-    <Reflection.ParameterInfo("-p",
+    <ParameterInfo("-p",
         Description:="This switch specific the regular expression pattern for search the sequence segment,\n" &
                      "for more detail information about the regular expression please read the user manual.",
         Example:="N{1,5}TA")>
-    <Reflection.ParameterInfo("-o", True,
+    <ParameterInfo("-o", True,
         Description:="Optional, this switch value specific the output directory for the result data, default is user Desktop folder.",
         Example:="~/Documents/")>
-    <Reflection.ParameterInfo("-f", True,
+    <ParameterInfo("-f", True,
         Description:="Optional, specific the input file format for the sequence reader, default value is FASTA sequence file.\n" &
                      " fsa - The input sequence data file is a FASTA format file;\n" &
                      " gbk - The input sequence data file is a NCBI genbank flat file.",
@@ -157,7 +157,7 @@ Public Module Utilities
     <ExportAPI("/logo",
                Info:="* Drawing the sequence logo from the clustal alignment result.",
                Usage:="/logo /in <clustal.fasta> [/out <out.png> /title """"]")>
-    <ParameterInfo("/in", False, Description:="The file path of the clustal output fasta file.")>
+    <ParameterInfo("/in", False, Description:="The file path of the clustal output fasta file.", AcceptTypes:={GetType(FastaFile)})>
     <ParameterInfo("/out", True, Description:="The output sequence logo image file path. default is the same name as the input fasta sequence file.")>
     <ParameterInfo("/title", True, Description:="The display title on the sequence logo, default is using the fasta file name.")>
     Public Function SequenceLogo(args As CommandLine) As Integer
