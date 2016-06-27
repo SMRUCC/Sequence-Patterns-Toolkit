@@ -29,6 +29,8 @@ Partial Module Utilities
     ''' <returns></returns>
     <ExportAPI("/SimpleSegment.AutoBuild",
                Usage:="/SimpleSegment.AutoBuild /in <locis.csv> [/out <out.csv>]")>
+    <ParameterInfo("/in", False, AcceptTypes:={GetType(DocumentStream.File)})>
+    <ParameterInfo("/out", True, AcceptTypes:={GetType(SimpleSegment)}, Out:=True)>
     Public Function ConvertsAuto(args As CommandLine) As Integer
         Dim [in] As String = args("/in")
         Dim out As String = args.GetValue("/out", [in].TrimFileExt & ".Locis.Csv")
@@ -39,6 +41,8 @@ Partial Module Utilities
 
     <ExportAPI("/SimpleSegment.Mirrors",
                Usage:="/SimpleSegment.Mirrors /in <in.csv> [/out <out.csv>]")>
+    <ParameterInfo("/in", False, AcceptTypes:={GetType(PalindromeLoci)})>
+    <ParameterInfo("/out", True, AcceptTypes:={GetType(SimpleSegment)}, Out:=True)>
     Public Function ConvertMirrors(args As CommandLine) As Integer
         Dim [in] As String = args - "/in"
         Dim out As String = args.GetValue("/out", [in].TrimFileExt & ".SimpleSegments.Csv")

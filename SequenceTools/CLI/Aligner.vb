@@ -1,14 +1,25 @@
-﻿Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SmithWaterman
-Imports Microsoft.VisualBasic.CommandLine.Reflection
-Imports Microsoft.VisualBasic.Linq.Extensions
-Imports Microsoft.VisualBasic
+﻿Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.NeedlemanWunsch
+Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SmithWaterman
 Imports LANS.SystemsBiology.SequenceModel
-Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.NeedlemanWunsch
+Imports LANS.SystemsBiology.SequenceModel.FASTA
+Imports Microsoft.VisualBasic
+Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Linq.Extensions
 
 Partial Module Utilities
 
-    <ExportAPI("/nw", Usage:="/nw /query <query.fasta> /subject <subject.fasta> /out <out.txt>")>
+    ''' <summary>
+    ''' <see cref="RunNeedlemanWunsch.RunAlign(FASTA.FastaToken, FASTA.FastaToken, Boolean, String)"/>
+    ''' </summary>
+    ''' <param name="args"></param>
+    ''' <returns></returns>
+    <ExportAPI("/nw",
+               Info:="RunNeedlemanWunsch",
+               Usage:="/nw /query <query.fasta> /subject <subject.fasta> [/out <out.txt>]")>
+    <ParameterInfo("/query", False, AcceptTypes:={GetType(FastaToken)})>
+    <ParameterInfo("/subject", False, AcceptTypes:={GetType(FastaToken)})>
+    <ParameterInfo("/out", True, AcceptTypes:={GetType(String)})>
     Public Function NW(args As CommandLine.CommandLine) As Integer
         Dim query As String = args("/query")
         Dim subject As String = args("/subject")
