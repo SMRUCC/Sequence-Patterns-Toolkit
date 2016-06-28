@@ -4,13 +4,26 @@ Imports Microsoft.VisualBasic.ComponentModel
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Text
 Imports Microsoft.VisualBasic
+Imports Microsoft.VisualBasic.Serialization.JSON
 
 Public Module hmmsearchParser
 
     Public Function LoadDoc(path As String) As hmmsearch
         Dim lines As IEnumerable(Of String) = BufferedStream.LinesIterator(path)
-        Dim head As String() = lines.Take(10).ToArray
-        Dim sections As IEnumerable(Of String()) = lines.Skip(10).Split("//")
+        Dim i As Integer = 0
+        Dim head As New List(Of String)
+
+        For Each line As String In lines
+            i += 1
+
+            If line.IsBlank Then
+                Exit For
+            Else
+                head += line
+            End If
+        Next
+
+        Dim sections As IEnumerable(Of String()) = lines.Skip(i).Split("//")
         Dim query As PfamQuery() = sections.ToArray(AddressOf QueryParser)
         Dim searchResult As New hmmsearch With {
             .HMM = Mid(head(5), 22).Trim,
@@ -22,12 +35,23 @@ Public Module hmmsearchParser
         Return searchResult
     End Function
 
+    Const Ml As String = "M=\d+"
+
     Private Function QueryParser(buf As String()) As PfamQuery
         Dim query As String = Mid(buf(Scan0), 7).Trim
         Dim accession As String = Mid(buf(1), 11).Trim
         Dim describ As String
         Dim offset As Integer
-        Dim len As Integer = CInt(Regex.Match(query, "M=\d+", RegexICSng).Value.Split("="c).Last)
+        Dim len As Integer
+
+        Try
+            len = CInt(Regex.Match(query, Ml, RegexICSng).Value.Split("="c).Last)
+        Catch ex As Exception
+            '  ex = New Exception(buf.GetJson, ex)
+            ex = New Exception(query, ex)
+            ex = New Exception(Ml, ex)
+            Throw ex
+        End Try
 
         If InStr(buf(2), "Description:") = 1 Then
             describ = Mid(buf(2), 13).Trim
