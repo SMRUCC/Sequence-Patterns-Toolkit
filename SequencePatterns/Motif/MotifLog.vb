@@ -37,6 +37,24 @@ Public Class MotifLog : Inherits SimpleSegment
         End Get
     End Property
 
+    ''' <summary>
+    ''' Does this loci site object have any regprecise data base value?
+    ''' </summary>
+    ''' <returns></returns>
+    ''' <remarks>
+    ''' 只要有任何一个属性不是空的，就判定为具有RegPrecise数据库之中的值，返回<see cref="System.Boolean.TrueString"/>
+    ''' </remarks>
+    ''' 
+    <ScriptIgnore>
+    <Ignored>
+    Public ReadOnly Property HaveRegPreciseValue As Boolean
+        Get
+            Return Not String.IsNullOrEmpty(Me.BiologicalProcess) OrElse
+                Not String.IsNullOrEmpty(Me.Regulog) OrElse
+                Not String.IsNullOrEmpty(Me.Taxonomy)
+        End Get
+    End Property
+
     <Meta(GetType(String))>
     Public Property tags As Dictionary(Of String, String)
 
