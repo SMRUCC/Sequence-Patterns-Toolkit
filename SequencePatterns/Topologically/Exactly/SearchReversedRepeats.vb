@@ -1,27 +1,27 @@
 ﻿#Region "Microsoft.VisualBasic::4acae75a4722a4d4b29250492f60e5eb, ..\SequencePatterns\Topologically\Exactly\SearchReversedRepeats.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2016 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
@@ -31,6 +31,8 @@ Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Pattern
 Imports Microsoft.VisualBasic.DocumentFormat.Csv
 Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports Microsoft.VisualBasic
+Imports Microsoft.VisualBasic.Linq
+Imports Microsoft.VisualBasic.Language
 
 Namespace Topologically
 
@@ -69,16 +71,19 @@ Namespace Topologically
         ''' <param name="currentStat"></param>
         ''' <param name="currLen"></param>
         Protected Overrides Sub __postResult(currentRemoves() As String, currentStat As List(Of String), currLen As Integer)
-            Dim ResultExport = (From NotAppearsSegment As String
-                                In currentRemoves.AsParallel
-                                Let revSegment As String = NucleicAcid.Complement(
-                                    New String(NotAppearsSegment.ToArray.Reverse.ToArray))
-                                Let Repeats = GenerateRepeats(SequenceData, revSegment, MinAppeared)
-                                Where Not Repeats Is Nothing
-                                Let RepeatsLeftLoci = GenerateRepeats(SequenceData, NotAppearsSegment, MinAppeared, Rev:=True)
-                                Let RevRepeats = RevRepeats.GenerateFromBase(Repeats)
-                                Select RevRepeats.InvokeSet(NameOf(RevRepeats.RepeatLoci), RepeatsLeftLoci.Locations)).ToArray
-
+            Dim setValue = New SetValue(Of Topologically.RevRepeats)().GetSet(NameOf(RevRepeats.RepeatLoci))
+            Dim ResultExport As RevRepeats() =
+                LinqAPI.Exec(Of RevRepeats) <= From NotAppearsSegment As String
+                                               In currentRemoves.AsParallel
+                                               Let revSegment As String = NucleicAcid.Complement(
+                                                   New String(NotAppearsSegment.ToArray.Reverse.ToArray))
+                                               Let Repeats As Repeats =
+                                                   GenerateRepeats(SequenceData, revSegment, MinAppeared)
+                                               Where Not Repeats Is Nothing
+                                               Let RepeatsLeftLoci =
+                                                   GenerateRepeats(SequenceData, NotAppearsSegment, MinAppeared, Rev:=True)
+                                               Let RevRepeats = RevRepeats.GenerateFromBase(Repeats)
+                                               Select setValue(RevRepeats, RepeatsLeftLoci.Locations)
             Call ResultSet.AddRange(ResultExport)
             Call CountStatics.AppendLine(New String() {currLen, currentStat.Count, ResultExport.Count})
             Call $"Length={currLen}, Chunk={currentStat.Count}, Removed={currentRemoves.Length}  .......{100 * (currLen - Min) / (Max - Min)}%".__DEBUG_ECHO
