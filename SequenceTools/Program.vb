@@ -1,9 +1,8 @@
 ﻿Imports System.Text.RegularExpressions
-Imports LANS.SystemsBiology.SequenceModel.FASTA
+Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.DocumentFormat.Csv
 Imports Microsoft.VisualBasic.DocumentFormat.Csv.StorageProvider.Reflection
-Imports Microsoft.VisualBasic
-Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
+Imports SMRUCC.genomics.SequenceModel.FASTA
 
 Module Program
 

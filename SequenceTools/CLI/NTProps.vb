@@ -1,13 +1,4 @@
 ﻿Imports System.Runtime.CompilerServices
-Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
-Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically
-Imports LANS.SystemsBiology.Assembly.NCBI.GenBank
-Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat
-Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat.ComponentModels
-Imports LANS.SystemsBiology.ComponentModel.Loci
-Imports LANS.SystemsBiology.ContextModel
-Imports LANS.SystemsBiology.SequenceModel.FASTA
-Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
 Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.Reflection
@@ -19,6 +10,15 @@ Imports Microsoft.VisualBasic.Language.UnixBash
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Parallel
 Imports Microsoft.VisualBasic.Parallel.Linq
+Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns
+Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns.Topologically
+Imports SMRUCC.genomics.Assembly.NCBI.GenBank
+Imports SMRUCC.genomics.Assembly.NCBI.GenBank.TabularFormat
+Imports SMRUCC.genomics.Assembly.NCBI.GenBank.TabularFormat.ComponentModels
+Imports SMRUCC.genomics.ComponentModel.Loci
+Imports SMRUCC.genomics.ContextModel
+Imports SMRUCC.genomics.SequenceModel.FASTA
+Imports SMRUCC.genomics.SequenceModel.NucleotideModels
 
 Partial Module Utilities
 

@@ -1,44 +1,5 @@
-﻿#Region "Microsoft.VisualBasic::2a3a7208585982b48d5a57d6af32abf6, ..\LANS.SystemsBiology.AnalysisTools.ComparativeGenomics\ToolsAPI\ToolsAPI.vb"
-
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-#End Region
-
-Imports System.Runtime.CompilerServices
+﻿Imports System.Runtime.CompilerServices
 Imports System.Text.RegularExpressions
-Imports LANS.SystemsBiology.Assembly.NCBI.GenBank
-Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.CsvExports
-Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.Extensions
-Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat
-Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat.ComponentModels
-Imports LANS.SystemsBiology.ComponentModel
-Imports LANS.SystemsBiology.ComponentModel.Loci
-Imports LANS.SystemsBiology.NCBI.Extensions.Analysis
-Imports LANS.SystemsBiology.SequenceModel
-Imports LANS.SystemsBiology.SequenceModel.FASTA
-Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
-Imports LANS.SystemsBiology.SequenceModel.NucleotideModels.NucleicAcid
 Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.ComponentModel
@@ -56,6 +17,18 @@ Imports Microsoft.VisualBasic.Serialization.JSON
 Imports Microsoft.VisualBasic.Terminal.Utility
 Imports Microsoft.VisualBasic.Text
 Imports Microsoft.VisualBasic.Text.Similarity
+Imports SMRUCC.genomics.Assembly.NCBI.GenBank
+Imports SMRUCC.genomics.Assembly.NCBI.GenBank.CsvExports
+Imports SMRUCC.genomics.Assembly.NCBI.GenBank.Extensions
+Imports SMRUCC.genomics.Assembly.NCBI.GenBank.TabularFormat
+Imports SMRUCC.genomics.Assembly.NCBI.GenBank.TabularFormat.ComponentModels
+Imports SMRUCC.genomics.ComponentModel
+Imports SMRUCC.genomics.ComponentModel.Loci
+Imports SMRUCC.genomics.Interops.NCBI.Extensions.Analysis
+Imports SMRUCC.genomics.SequenceModel
+Imports SMRUCC.genomics.SequenceModel.FASTA
+Imports SMRUCC.genomics.SequenceModel.NucleotideModels
+Imports SMRUCC.genomics.SequenceModel.NucleotideModels.NucleicAcid
 
 <[PackageNamespace]("ComparativeGenomics.Sigma-Difference",
                     Description:="Calculates the nucleotide sequence Delta similarity to measure how closed between the two sequence.",
@@ -146,14 +119,15 @@ Public Module ToolsAPI
     Public Function PartitionSimilarity(<Parameter("Partitioning.Data")> data As IEnumerable(Of PartitioningData)) As <FunctionReturns("")> DocumentStream.File
         Dim DF As DataFrame = DocumentStream.DataFrame.CreateObject(data.ToCsvDoc(False))
         Dim DataSource = DF.CreateDataSource
-        Dim DeltaLQuery = (From i As Integer In data.Sequence
+        Dim DeltaLQuery = (From i As Integer
+                           In data.Sequence
                            Let pInfo As PartitioningData = data(i)
                            Let nt1 = New NucleotideModels.NucleicAcid(pInfo)
                            Select (From j As Integer
                                    In data.Sequence
                                    Let pInfo2 As PartitioningData = data(j)
                                    Let nt2 = New NucleotideModels.NucleicAcid(pInfo2)
-                                   Let Delta As String = (1000 * ComparativeGenomics.Sigma(nt1, nt2)).ToString
+                                   Let Delta As String = (1000 * DNA_Comparative.Sigma(nt1, nt2)).ToString
                                    Select Idx = i, j, Delta)).MatrixToList '为了保证顺序，这里也不可以使用并行化
 
         For Each Row In DeltaLQuery
@@ -674,7 +648,7 @@ Public Module ToolsAPI
         Dim ResultList = New List(Of KeyValuePair(Of String, CAITable))
 
         For i As Integer = 0 To gene_source.Count - 1
-            Dim Sequence As LANS.SystemsBiology.SequenceModel.FASTA.FastaToken = gene_source(i)
+            Dim Sequence As SMRUCC.genomics.SequenceModel.FASTA.FastaToken = gene_source(i)
             Dim Path As String = String.Format("({0}){1}", InternalID, Sequence.Attributes.First.NormalizePathString)
             Dim SeqID As String = Path
             Dim CAIData As CAITable
@@ -856,7 +830,7 @@ Public Module ToolsAPI
         '加载基因组双向BLAST同源片段染色数据
         Dim LoadCRendering = render_source.LoadXml(Of BestHit)() ' (From path As String In FileIO.FileSystem.GetFiles(render_source, FileIO.SearchOption.SearchTopLevelOnly, "*.xml").AsParallel
         '                      Select id = IO.Path.GetFileNameWithoutExtension(path),
-        '                      data = path.LoadXml(Of LANS.SystemsBiology.AnalysisTools.DataVisualization.VennDiagram.ShellScriptAPI.BestHit)()).ToArray
+        '                      data = path.LoadXml(Of SMRUCC.genomics.AnalysisTools.DataVisualization.VennDiagram.ShellScriptAPI.BestHit)()).ToArray
         '基因按照正向进行标识 ，当比对上去的时候，会进行delta染色，即基因号为相应的比对上的基因号，当没有比对上去的时候，基因号为空
         '   Dim LQuery = (From item In LoadData Let ptt = LoadPTT(item.Key) Let render = LoadCRendering(item.Key) Select ID = item.Key, renderData = InternalColorRender(item.Key, item.Value.ToArray, ptt, render.data, sitesData)).ToArray
         '合并数据，得到染色矩阵，并写入文件
@@ -1068,7 +1042,7 @@ Public Module ToolsAPI
 
         Call Console.WriteLine("[DEBUG] start to load fasta data from " & source)
         Dim pb As New CBusyIndicator(_start:=True)
-        Dim FastaObjects = (From path As String In FileIO.FileSystem.GetFiles(source, FileIO.SearchOption.SearchTopLevelOnly, "*.fasta", "*.fsa").AsParallel Select LANS.SystemsBiology.SequenceModel.FASTA.FastaToken.Load(path)).ToArray
+        Dim FastaObjects = (From path As String In FileIO.FileSystem.GetFiles(source, FileIO.SearchOption.SearchTopLevelOnly, "*.fasta", "*.fsa").AsParallel Select SMRUCC.genomics.SequenceModel.FASTA.FastaToken.Load(path)).ToArray
 
         Call Console.WriteLine("[DEBUG] fasta data load done!, start to calculates the sigma differences in window_size {0}KB....", windowsSize / 1000)
 
@@ -1146,4 +1120,3 @@ Public Module ToolsAPI
         Return File.Save(FileName, False)
     End Function
 End Module
-

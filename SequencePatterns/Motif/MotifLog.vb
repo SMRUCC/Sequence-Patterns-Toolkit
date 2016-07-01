@@ -1,32 +1,5 @@
-﻿#Region "Microsoft.VisualBasic::857ac31b95f97fd7f07dfaec3476b373, ..\SequencePatterns\Motif\MotifLog.vb"
-
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-#End Region
-
-Imports System.Web.Script.Serialization
-Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
+﻿Imports System.Web.Script.Serialization
+Imports SMRUCC.genomics.SequenceModel.NucleotideModels
 Imports Microsoft.VisualBasic.DocumentFormat.Csv.StorageProvider.Reflection
 
 ''' <summary>
@@ -61,24 +34,6 @@ Public Class MotifLog : Inherits SimpleSegment
             End If
             Return InStr(Location, "In the promoter region of", CompareMethod.Text) > 0 OrElse
                 InStr(Location, "Overlap on up_stream with", CompareMethod.Text) > 0
-        End Get
-    End Property
-
-    ''' <summary>
-    ''' Does this loci site object have any regprecise data base value?
-    ''' </summary>
-    ''' <returns></returns>
-    ''' <remarks>
-    ''' 只要有任何一个属性不是空的，就判定为具有RegPrecise数据库之中的值，返回<see cref="System.Boolean.TrueString"/>
-    ''' </remarks>
-    ''' 
-    <ScriptIgnore>
-    <Ignored>
-    Public ReadOnly Property HaveRegPreciseValue As Boolean
-        Get
-            Return Not String.IsNullOrEmpty(Me.BiologicalProcess) OrElse
-                Not String.IsNullOrEmpty(Me.Regulog) OrElse
-                Not String.IsNullOrEmpty(Me.Taxonomy)
         End Get
     End Property
 

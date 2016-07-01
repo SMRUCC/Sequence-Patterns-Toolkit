@@ -1,10 +1,4 @@
-﻿Imports LANS.SystemsBiology.Assembly.NCBI.GenBank
-Imports LANS.SystemsBiology.Assembly.NCBI.GenBank.TabularFormat
-Imports LANS.SystemsBiology.ComponentModel.Loci
-Imports LANS.SystemsBiology.SequenceModel
-Imports LANS.SystemsBiology.SequenceModel.FASTA
-Imports LANS.SystemsBiology.SequenceModel.FASTA.Reflection
-Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
+﻿Imports System.Text
 Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.DocumentFormat.Csv
@@ -16,6 +10,14 @@ Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Serialization.JSON
 Imports Microsoft.VisualBasic.Terminal.STDIO
+Imports SMRUCC.genomics
+Imports SMRUCC.genomics.Assembly.NCBI.GenBank
+Imports SMRUCC.genomics.Assembly.NCBI.GenBank.TabularFormat
+Imports SMRUCC.genomics.ComponentModel.Loci
+Imports SMRUCC.genomics.SequenceModel
+Imports SMRUCC.genomics.SequenceModel.FASTA
+Imports SMRUCC.genomics.SequenceModel.FASTA.Reflection
+Imports SMRUCC.genomics.SequenceModel.NucleotideModels
 
 Partial Module Utilities
 
@@ -255,6 +257,7 @@ Partial Module Utilities
                               In Fasta
                               Where Not String.IsNullOrEmpty(fa.SequenceData.Trim)
                               Select fa) ' 过滤掉零长度的序列
+
         Dim setSeq = New SetValue(Of FastaToken) <= NameOf(FastaToken.SequenceData)
 
         If UpperCase Then
@@ -268,7 +271,7 @@ Partial Module Utilities
             Fasta = New FastaFile(Fasta.ToArray(Function(fa) setAttrs(fa, {fa.Attributes.First})))
         End If
 
-        Return Fasta.Save(break, out, System.Text.Encoding.ASCII)
+        Return Fasta.Save(break, out, Encoding.ASCII)
     End Function
 
     <ExportAPI("/subset", Usage:="/subset /lstID <lstID.txt> /fa <source.fasta>")>

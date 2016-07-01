@@ -1,8 +1,8 @@
-﻿Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SNP
-Imports LANS.SystemsBiology.SequenceModel.FASTA
-Imports Microsoft.VisualBasic.CommandLine
+﻿Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Serialization.JSON
+Imports SMRUCC.genomics.Analysis.SequenceTools.SNP
+Imports SMRUCC.genomics.SequenceModel.FASTA
 
 Partial Module Utilities
 

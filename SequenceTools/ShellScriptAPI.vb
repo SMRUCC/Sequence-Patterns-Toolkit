@@ -1,12 +1,13 @@
-﻿Imports LANS.SystemsBiology.SequenceModel.FASTA
-Imports LANS.SystemsBiology.SequenceModel.FASTA.Reflection
-Imports LANS.SystemsBiology.SequenceModel
-Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Pattern
-Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns
+﻿Imports Microsoft.VisualBasic
+Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Scripting.MetaData
-Imports Microsoft.VisualBasic
-Imports Microsoft.VisualBasic.CommandLine.Reflection
+Imports SMRUCC.genomics.Analysis.SequenceTools
+Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns
+Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns.Pattern
+Imports SMRUCC.genomics.SequenceModel
+Imports SMRUCC.genomics.SequenceModel.FASTA
+Imports SMRUCC.genomics.SequenceModel.FASTA.Reflection
 
 <[PackageNamespace]("SequenceTools",
                     Category:=APICategories.ResearchTools,

@@ -1,37 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::08f18237668e6a998a8864bbd496c983, ..\SequencePatterns\LociExtensions.vb"
-
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-#End Region
-
-Imports System.Runtime.CompilerServices
-Imports LANS.SystemsBiology.AnalysisTools.SequenceTools.SequencePatterns.Topologically
-Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
+﻿Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.DocumentFormat.Csv
 Imports Microsoft.VisualBasic.DocumentFormat.Csv.DocumentStream
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
+Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns.Topologically
+Imports SMRUCC.genomics.SequenceModel.NucleotideModels
 
 ''' <summary>
 ''' 将序列特征的搜索结果转换为<see cref="SimpleSegment"/>对象类型
@@ -173,4 +146,3 @@ Public Module LociExtensions
         __types = hash
     End Sub
 End Module
-

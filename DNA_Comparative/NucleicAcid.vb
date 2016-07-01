@@ -1,33 +1,6 @@
-﻿#Region "Microsoft.VisualBasic::8d27625639c64abc5beac378976b9d10, ..\LANS.SystemsBiology.AnalysisTools.ComparativeGenomics\NucleicAcid.vb"
-
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-#End Region
-
-Imports LANS.SystemsBiology.SequenceModel
-Imports LANS.SystemsBiology.SequenceModel.FASTA
-Imports LANS.SystemsBiology.SequenceModel.NucleotideModels
+﻿Imports SMRUCC.genomics.SequenceModel
+Imports SMRUCC.genomics.SequenceModel.FASTA
+Imports SMRUCC.genomics.SequenceModel.NucleotideModels
 
 ''' <summary>
 ''' 为了加快计算速度而生成的窗口计算缓存，请注意，在生成缓存的时候已经进行了并行化，所以在内部生成缓存的时候，不需要再进行并行化了
@@ -90,4 +63,3 @@ Public Class NucleicAcid : Inherits NucleotideModels.NucleicAcid
         Return New KeyValuePair(Of KeyValuePair(Of DNA, DNA), Double)(KEY, n)
     End Function
 End Class
-
