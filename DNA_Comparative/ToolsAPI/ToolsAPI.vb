@@ -1,4 +1,31 @@
-﻿Imports System.Runtime.CompilerServices
+﻿#Region "Microsoft.VisualBasic::5252853a350fe477ce3f85fd87d3c4fa, ..\GCModeller\analysis\SequenceToolkit\DNA_Comparative\ToolsAPI\ToolsAPI.vb"
+
+    ' Author:
+    ' 
+    '       asuka (amethyst.asuka@gcmodeller.org)
+    '       xieguigang (xie.guigang@live.com)
+    ' 
+    ' Copyright (c) 2016 GPL3 Licensed
+    ' 
+    ' 
+    ' GNU GENERAL PUBLIC LICENSE (GPL3)
+    ' 
+    ' This program is free software: you can redistribute it and/or modify
+    ' it under the terms of the GNU General Public License as published by
+    ' the Free Software Foundation, either version 3 of the License, or
+    ' (at your option) any later version.
+    ' 
+    ' This program is distributed in the hope that it will be useful,
+    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ' GNU General Public License for more details.
+    ' 
+    ' You should have received a copy of the GNU General Public License
+    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+#End Region
+
+Imports System.Runtime.CompilerServices
 Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.CommandLine.Reflection
@@ -1044,7 +1071,7 @@ Public Module ToolsAPI
         Dim pb As New CBusyIndicator(_start:=True)
         Dim FastaObjects = (From path As String In FileIO.FileSystem.GetFiles(source, FileIO.SearchOption.SearchTopLevelOnly, "*.fasta", "*.fsa").AsParallel Select SMRUCC.genomics.SequenceModel.FASTA.FastaToken.Load(path)).ToArray
 
-        Call Console.WriteLine("[DEBUG] fasta data load done!, start to calculates the sigma differences in window_size {0}KB....", windowsSize / 1000)
+        Call $"Fasta data load done!, start to calculates the sigma differences in window_size {windowsSize / 1000}KB....".__DEBUG_ECHO
 
         Dim MAT = Comb(Of FastaToken).CreateCompleteObjectPairs(FastaObjects)
         Dim ChunkBuffer = (From pairedList In MAT.AsParallel
@@ -1083,14 +1110,16 @@ Public Module ToolsAPI
     ''' <summary>
     ''' 
     ''' </summary>
-    ''' <param name="dat">每一个文件之中的行数都是一样的，因为都是以同一个菌株作为计算的参照</param>
+    ''' <param name="dat">
+    ''' 每一个文件之中的行数都是一样的，因为都是以同一个菌株作为计算的参照
+    ''' </param>
     ''' <param name="export"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
     Private Function __compileSigma(dat As KeyValuePair(Of String, String)(), export As String) As Boolean
         Dim FileName As String = String.Format("{0}/Compiled/{1}.csv", export, dat.First.Key)
         Dim File As DocumentStream.File = New DocumentStream.File
-        Dim Data = (From path In dat Select String.Format("{0}/{1}-{2}.csv", export, path.Key, path.Value).LoadCsv(Of SiteSigma)(False)).ToArray '为了保持一一对应关系，这里不能够再使用并行化
+        Dim Data = (From path In dat Select String.Format("{0}/{1}-{2}.csv", export, path.Key, path.Value).LoadCsv(Of SiteSigma)(False)).ToArray ' 为了保持一一对应关系，这里不能够再使用并行化
         Dim Head As New DocumentStream.RowObject
 
         Call Head.Add("Site")
@@ -1120,3 +1149,4 @@ Public Module ToolsAPI
         Return File.Save(FileName, False)
     End Function
 End Module
+
