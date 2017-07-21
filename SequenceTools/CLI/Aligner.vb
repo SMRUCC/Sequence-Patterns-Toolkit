@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::154b6a40574a7f02938c77be4da6cfe2, ..\GCModeller\analysis\SequenceToolkit\SequenceTools\CLI\Aligner.vb"
+﻿#Region "Microsoft.VisualBasic::eb9518fe89c62cb30101e5db71626d48, ..\GCModeller\analysis\SequenceToolkit\SequenceTools\CLI\Aligner.vb"
 
 ' Author:
 ' 
 '       asuka (amethyst.asuka@gcmodeller.org)
 '       xieguigang (xie.guigang@live.com)
+'       xie (genetics@smrucc.org)
 ' 
 ' Copyright (c) 2016 GPL3 Licensed
 ' 
@@ -25,14 +26,14 @@
 
 #End Region
 
-Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.Reflection
-Imports Microsoft.VisualBasic.DocumentFormat.Csv
-Imports Microsoft.VisualBasic.DocumentFormat.Csv.DocumentStream.Linq
+Imports Microsoft.VisualBasic.Data.csv
+Imports Microsoft.VisualBasic.Data.csv.IO.Linq
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq.Extensions
-Imports Microsoft.VisualBasic.Parallel.Linq
+Imports Microsoft.VisualBasic.Text
+Imports Microsoft.VisualBasic.Text.Levenshtein
 Imports SMRUCC.genomics.Analysis
 Imports SMRUCC.genomics.Analysis.SequenceTools
 Imports SMRUCC.genomics.Analysis.SequenceTools.DNA_Comparative
@@ -50,9 +51,10 @@ Partial Module Utilities
     <ExportAPI("/nw",
                Info:="RunNeedlemanWunsch",
                Usage:="/nw /query <query.fasta> /subject <subject.fasta> [/out <out.txt>]")>
-    <ParameterInfo("/query", False, AcceptTypes:={GetType(FastaToken)})>
-    <ParameterInfo("/subject", False, AcceptTypes:={GetType(FastaToken)})>
-    <ParameterInfo("/out", True, AcceptTypes:={GetType(String)})>
+    <Argument("/query", False, AcceptTypes:={GetType(FastaToken)})>
+    <Argument("/subject", False, AcceptTypes:={GetType(FastaToken)})>
+    <Argument("/out", True, AcceptTypes:={GetType(String)})>
+    <Group(CLIGrouping.Aligner)>
     Public Function NW(args As CommandLine) As Integer
         Dim query As String = args("/query")
         Dim subject As String = args("/subject")
@@ -61,12 +63,34 @@ Partial Module Utilities
         Return 0
     End Function
 
-    <ExportAPI("/align", Usage:="/align /query <query.fasta> /subject <subject.fasta> [/blosum <matrix.txt> /out <out.xml>]")>
+    <ExportAPI("/NeedlemanWunsch.NT",
+               Usage:="/NeedlemanWunsch.NT /query <nt> /subject <nt>")>
+    Public Function NWNT(args As CommandLine) As Integer
+        Dim query As New FastaToken With {
+            .Attributes = {"query_nt"},
+            .SequenceData = args <= "/query"
+        }
+        Dim target As New FastaToken With {
+            .Attributes = {"target_nt"},
+            .SequenceData = args <= "/subject"
+        }
+
+        Dim score# = RunNeedlemanWunsch.RunAlign(query, target, False, echo:=True)
+
+        Call println()
+        Call println("------------------> alignment_score:=" & score)
+
+        Return 0
+    End Function
+
+    <ExportAPI("/align.SmithWaterman", 
+               Usage:="/align.SmithWaterman /query <query.fasta> /subject <subject.fasta> [/blosum <matrix.txt> /out <out.xml>]")>
+    <Group(CLIGrouping.Aligner)>
     Public Function Align2(args As CommandLine) As Integer
         Dim query As String = args("/query")
         Dim subject As String = args("/subject")
         Dim blosum As String = args("/blosum")
-        Dim out As String = args.GetValue("/out", query.TrimSuffix & "-" & IO.Path.GetFileNameWithoutExtension(subject) & ".xml")
+        Dim out As String = args.GetValue("/out", query.TrimSuffix & "-" & BaseName(subject) & ".xml")
         Dim queryFa As New FASTA.FastaToken(query)
         Dim subjectFa As New FASTA.FastaToken(subject)
         Dim mat = If(String.IsNullOrEmpty(blosum), Nothing, SequenceTools.Blosum.LoadMatrix(blosum))
@@ -77,6 +101,7 @@ Partial Module Utilities
     End Function
 
     <ExportAPI("--align", Usage:="--align /query <query.fasta> /subject <subject.fasta> [/out <out.DIR> /cost <0.7>]")>
+    <Group(CLIGrouping.Aligner)>
     Public Function Align(args As CommandLine) As Integer
         Dim cost As Double = args.GetValue(Of Double)("/cost", 0.7)
         Dim query = FASTA.FastaFile.Read(args("/query"))
@@ -109,7 +134,7 @@ Partial Module Utilities
             For Each result As AlignmentResult In alignSet
                 Dim path As String =
                     outDIR & $"/Views/{result.Reference.Split.First.NormalizePathString(False)}_vs_{result.Hypotheses.Split.First.NormalizePathString(False)}.html"
-                Call result.Visualize.SaveTo(path)
+                Call result.HTMLVisualize.SaveTo(path)
             Next
 
             Call queryToken.Title.__DEBUG_ECHO
@@ -120,6 +145,7 @@ Partial Module Utilities
     End Function
 
     <ExportAPI("--align.Self", Usage:="--align.Self /query <query.fasta> /out <out.DIR> [/cost 0.75]")>
+    <Group(CLIGrouping.Aligner)>
     Public Function AlignSelf(args As CommandLine) As Integer
         Dim query As New FASTA.FastaFile(args("/query"))
         Dim outDIR As String = args("/out")
@@ -147,7 +173,7 @@ Partial Module Utilities
                 cost As Double)
             Dim result = LevenshteinDistance.ComputeDistance(queryArray, subject.SequenceData, cost)
 
-            Me.CSS = result.CSS
+            Me.Path = result.Path
             Me.DistEdits = result.DistEdits
             Me.DistTable = result.TrimMatrix(1)
             Me.Hypotheses = subject.Title
@@ -184,6 +210,7 @@ Partial Module Utilities
     ''' <param name="args"></param>
     ''' <returns></returns>
     <ExportAPI("/Clustal.Cut", Usage:="/Clustal.Cut /in <in.fasta> [/left 0.1 /right 0.1 /out <out.fasta>]")>
+    <Group(CLIGrouping.Aligner)>
     Public Function CutMlAlignment(args As CommandLine) As Integer
         Dim aln As New Patterns.Clustal.Clustal(args("/in"))
         Dim left As Double = args.GetValue("/left", 0.1)
@@ -208,37 +235,4 @@ Partial Module Utilities
             args.GetValue("/out", aln.FilePath.TrimSuffix & $"{leftOffset}-{rightOffset}.fasta")
         Return out.Save(-1, outFile, Encodings.ASCII).CLICode
     End Function
-
-    <ExportAPI("/gwANI", Usage:="/gwANI /in <in.fasta> [/fast /out <out.Csv>]")>
-    Public Function gwANI(args As CommandLine) As Integer
-        Dim [in] As String = args("/in")
-        Dim out As String = args.GetValue("/out", [in].TrimSuffix & ".gwANI.Csv")
-        Dim fast As Boolean = args.GetBoolean("/fast")
-
-        Call gwANIExtensions.Evaluate([in], out, fast)
-        Return 0
-    End Function
-
-    <ExportAPI("/Sigma",
-               Usage:="/Sigma /in <in.fasta> [/out <out.Csv> /simple /round <-1>]")>
-    Public Function Sigma(args As CommandLine) As Integer
-        Dim [in] As String = args("/in")
-        Dim out As String = args.GetValue("/out", [in].TrimSuffix & ".Sigma.Csv")
-        Dim fasta As New FastaFile([in])
-        Dim simple As Boolean = args.GetBoolean("/simple")
-        Dim round As Integer = args.GetValue("/round", -1)
-        Dim keys As String() =
-            If(simple,
-            fasta.ToArray(AddressOf IdentityResult.SimpleTag),
-            fasta.ToArray(Function(x) x.Title))
-
-        Using writer As New WriteStream(Of IdentityResult)(out, metaKeys:=keys)
-            For Each x As IdentityResult In IdentityResult.SigmaMatrix(fasta, round, simple)
-                Call writer.Flush(x)
-            Next
-
-            Return 0
-        End Using
-    End Function
 End Module
-

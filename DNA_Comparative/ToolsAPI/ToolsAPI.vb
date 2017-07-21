@@ -1,27 +1,28 @@
-﻿#Region "Microsoft.VisualBasic::5252853a350fe477ce3f85fd87d3c4fa, ..\GCModeller\analysis\SequenceToolkit\DNA_Comparative\ToolsAPI\ToolsAPI.vb"
+﻿#Region "Microsoft.VisualBasic::06f0a389c88210c9a54026f7c62d0f1c, ..\GCModeller\analysis\SequenceToolkit\DNA_Comparative\ToolsAPI\ToolsAPI.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+'       xie (genetics@smrucc.org)
+' 
+' Copyright (c) 2016 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
@@ -30,13 +31,14 @@ Imports System.Text.RegularExpressions
 Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.ComponentModel
-Imports Microsoft.VisualBasic.ComponentModel.DataStructures
+Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel
+Imports Microsoft.VisualBasic.ComponentModel.Algorithm.base
 Imports Microsoft.VisualBasic.ComponentModel.Ranges
-Imports Microsoft.VisualBasic.DocumentFormat.Csv
-Imports Microsoft.VisualBasic.DocumentFormat.Csv.DocumentStream
-Imports Microsoft.VisualBasic.DocumentFormat.Csv.Extensions
-Imports Microsoft.VisualBasic.DocumentFormat.Csv.StorageProvider.ComponentModels
-Imports Microsoft.VisualBasic.DocumentFormat.Csv.StorageProvider.Reflection
+Imports Microsoft.VisualBasic.Data.csv
+Imports Microsoft.VisualBasic.Data.csv.IO
+Imports Microsoft.VisualBasic.Data.csv.Extensions
+Imports Microsoft.VisualBasic.Data.csv.StorageProvider.ComponentModels
+Imports Microsoft.VisualBasic.Data.csv.StorageProvider.Reflection
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Scripting.MetaData
@@ -56,6 +58,9 @@ Imports SMRUCC.genomics.SequenceModel
 Imports SMRUCC.genomics.SequenceModel.FASTA
 Imports SMRUCC.genomics.SequenceModel.NucleotideModels
 Imports SMRUCC.genomics.SequenceModel.NucleotideModels.NucleicAcid
+Imports SMRUCC.genomics.Analysis.SequenceTools.DNA_Comparative.DeltaSimilarity1998
+Imports SMRUCC.genomics.Analysis.SequenceTools.DNA_Comparative.DeltaSimilarity1998.CAI.XML
+Imports SMRUCC.genomics.Analysis.SequenceTools.DNA_Comparative.DeltaSimilarity1998.CAI
 
 <[PackageNamespace]("ComparativeGenomics.Sigma-Difference",
                     Description:="Calculates the nucleotide sequence Delta similarity to measure how closed between the two sequence.",
@@ -95,7 +100,7 @@ Public Module ToolsAPI
 
     <ExportAPI("Simple.Partition.Create")>
     Public Function CreateSimplePartition(genbank As GBFF.File, data As IEnumerable(Of ChromosomePartitioningEntry)) As PartitioningData()
-        Dim Reader As New SegmentReader(genbank.Origin.ToFasta)
+        Dim Reader As IPolymerSequenceModel = genbank.Origin.ToFasta
         Dim dGroup = From x As ChromosomePartitioningEntry
                      In data
                      Select x
@@ -113,7 +118,7 @@ Public Module ToolsAPI
                                                    Select p.PartitioningTag).FirstOrDefault
                             Select ORF,
                                  InternalGetPTag,
-                                 SequenceData = Reader.TryParse(ORF.Location)
+                                 SequenceData = Reader.CutSequenceLinear(ORF.Location)
                             Group By InternalGetPTag Into Group
         Dim LQuery As PartitioningData() =
             LinqAPI.Exec(Of PartitioningData) <= From pInfo
@@ -121,10 +126,10 @@ Public Module ToolsAPI
                                                  Let Loci = New IntRange((From ORF As GeneBrief
                                                                           In pInfo.Group.Select(Function(x) x.ORF)
                                                                           Let pt As NucleotideLocation = ORF.Location
-                                                                          Select {pt.Left, pt.Right}).MatrixAsIterator)
+                                                                          Select {pt.Left, pt.Right}).IteratesALL)
                                                  Let St As Integer = Loci.Max
                                                  Let SP As Integer = Loci.Min
-                                                 Let Sequence As String = Reader.GetSegmentSequence(SP, St)
+                                                 Let Sequence As String = Reader.CutSequenceLinear(SP, St).SequenceData
                                                  Select New PartitioningData With {
                                                      .GenomeID = genbank.Accession.AccessionId,
                                                      .LociLeft = SP,
@@ -143,8 +148,8 @@ Public Module ToolsAPI
     ''' <returns></returns>
     ''' <remarks></remarks>
     <ExportAPI("Partition.Similarity.Calculates")>
-    Public Function PartitionSimilarity(<Parameter("Partitioning.Data")> data As IEnumerable(Of PartitioningData)) As <FunctionReturns("")> DocumentStream.File
-        Dim DF As DataFrame = DocumentStream.DataFrame.CreateObject(data.ToCsvDoc(False))
+    Public Function PartitionSimilarity(<Parameter("Partitioning.Data")> data As IEnumerable(Of PartitioningData)) As <FunctionReturns("")> IO.File
+        Dim DF As DataFrame = IO.DataFrame.CreateObject(data.ToCsvDoc(False))
         Dim DataSource = DF.CreateDataSource
         Dim DeltaLQuery = (From i As Integer
                            In data.Sequence
@@ -154,8 +159,8 @@ Public Module ToolsAPI
                                    In data.Sequence
                                    Let pInfo2 As PartitioningData = data(j)
                                    Let nt2 = New NucleotideModels.NucleicAcid(pInfo2)
-                                   Let Delta As String = (1000 * DNA_Comparative.Sigma(nt1, nt2)).ToString
-                                   Select Idx = i, j, Delta)).MatrixToList '为了保证顺序，这里也不可以使用并行化
+                                   Let Delta As String = (1000 * DeltaSimilarity1998.Sigma(nt1, nt2)).ToString
+                                   Select Idx = i, j, Delta)).Unlist '为了保证顺序，这里也不可以使用并行化
 
         For Each Row In DeltaLQuery
             Call Row.GetJson.__DEBUG_ECHO
@@ -166,23 +171,23 @@ Public Module ToolsAPI
     End Function
 
     <ExportAPI("Partitions.Creates")>
-    Public Function PartionDataCreates(<Parameter("Raw.Partitions")> PartitionRaw As DocumentStream.DataFrame,
+    Public Function PartionDataCreates(<Parameter("Raw.Partitions")> PartitionRaw As IO.DataFrame,
                                        <Parameter("Column.Tag")> TagCol As String,
                                        <Parameter("Column.Start")> StartTag As String,
                                        <Parameter("Column.Stop")> StopTag As String,
                                        <Parameter("Nt.Source")> Nt As FastaToken) As PartitioningData()
-        Dim Reader As New SegmentReader(Nt)
+
         Dim LQuery As PartitioningData() =
             LinqAPI.Exec(Of PartitioningData) <= From row As DynamicObjectLoader
                                                  In PartitionRaw.CreateDataSource
                                                  Let Tag As String = row(TagCol)
-                                                 Select __getSequence(row, Tag, Reader, StartTag, StopTag, Nt)
+                                                 Select __getSequence(row, Tag, Nt, StartTag, StopTag, Nt)
         Return LQuery
     End Function
 
     Private Function __getSequence(row As DynamicObjectLoader,
                                    tag As String,
-                                   Reader As SegmentReader,
+                                   Reader As IPolymerSequenceModel,
                                    StartTag As String,
                                    <Parameter("Column.Stop")> StopTag As String,
                                    Nt As FastaToken) As PartitioningData
@@ -196,7 +201,10 @@ Public Module ToolsAPI
             Right = Right.Split.Last
         End If
 
-        Dim Seq As String = If(Join, Reader.ReadJoinLocation(Val(Left), Val(Right)), Reader.TryParse(Val(Left), Val(Right) - Val(Left)))
+        Dim Seq As String ' = If(Join,
+        '   Reader.CutSequenceCircular(Val(Left), Val(Right)),
+        '    Reader.CutSequenceLinear(Val(Left), Val(Right) - Val(Left))).SequenceData
+
         Return New PartitioningData With {
             .PartitioningTag = tag,
             .GenomeID = Nt.Title,
@@ -217,13 +225,13 @@ Public Module ToolsAPI
     Public Function MeasureHomogeneity(PartitionData As IEnumerable(Of PartitioningData),
                                        <Parameter("With.Rule")> Rule As FastaToken,
                                        St As Integer,
-                                       Sp As Integer) As DocumentStream.DataFrame
-        Dim Reader As New SegmentReader(Rule)
+                                       Sp As Integer) As IO.DataFrame
+        Dim Reader As IPolymerSequenceModel = Rule
         Dim fa As New FastaToken With {
-            .SequenceData = Reader.TryParse(St, Sp - St)
+            .SequenceData = Reader.CutSequenceLinear(St, Sp - St).SequenceData
         }
         Dim RuleSegment As New NucleotideModels.NucleicAcid(fa)
-        Dim Df = DocumentStream.DataFrame.CreateObject(PartitionData.ToCsvDoc(False))
+        Dim Df = IO.DataFrame.CreateObject(PartitionData.ToCsvDoc(False))
         Dim i As Integer
 
         For Each Partition As DynamicObjectLoader In Df.CreateDataSource
@@ -271,61 +279,23 @@ Public Module ToolsAPI
         Return pData
     End Function
 
+
+
     ''' <summary>
-    ''' 获取默认的外标尺：基因组之中的dnaA-gyrB之间的序列
+    ''' 批量计算比较基因组序列之间的同质性
     ''' </summary>
+    ''' <param name="PartitionData"></param>
+    ''' <param name="RuleSource"></param>
     ''' <returns></returns>
-    ''' <remarks></remarks>
-    ''' 
-    <ExportAPI("Get.Ref_Rule",
-               Info:="Gets the segment betweens the dnaA and gyrB nucleotide sequence as the default reference rule for the homogeneity measuring.")>
-    Public Function GetReferenceRule(Nt As FastaToken, PTT As PTT) As FastaToken
-        Dim dnaA = MatchGene(PTT, "dnaA", {"chromosomal replication initiator protein DnaA", "chromosomal replication initiator"})
-        Dim gyrB = MatchGene(PTT, "gyrB", {"DNA gyrase B subunit", "DNA gyrase, B subunit"})
-
-        If (dnaA Is Nothing OrElse gyrB Is Nothing) Then
-            Call $"Could not found gene dnaA or gyrB on {Nt.Title}".PrintException
-            Return Nothing
-        End If
-
-        Dim Reader As New SegmentReader(Nt)
-        Dim St As Integer = dnaA.Location.Left
-        Dim Sp As Integer = gyrB.Location.Right
-
-        If dnaA.Location.Strand = Strands.Reverse Then
-            St = gyrB.Location.Left
-            Sp = dnaA.Location.Right
-        End If
-
-        Dim RuleSegment As NucleotideModels.NucleicAcid
-
-        Try
-            RuleSegment = New NucleotideModels.NucleicAcid(New FastaToken With {.SequenceData = Reader.TryParse(St, Sp - St)})
-            If RuleSegment.Length > 10 * 1000 Then
-                Call $"Location exception on (""{Nt.Title}"") parsing segment.".PrintException
-                Return Nothing
-            End If
-        Catch ex As Exception
-            Call App.LogException(ex)
-            Call ex.PrintException
-            Return Nothing
-        End Try
-
-        Return New FastaToken With {
-            .Attributes = New String() {"dnaA-gyrB", Nt.Title},
-            .SequenceData = RuleSegment.SequenceData
-        }
-    End Function
-
     <ExportAPI("Measure.Homogeneity", Info:="Batch measuring the homogeneity property using a specific rule sequence between the dnaA and gyrB gene.")>
     Public Function MeasureHomogeneity(PartitionData As IEnumerable(Of PartitioningData),
                                        <Parameter("Dir.Rule.Source",
                                                   "The original GenBank dowunload data directory which should contains the *.ptt " &
                                                   "file for parsing the rule sequence between dnaA and gyrB gene and the *.fna file for parsing the " &
                                                   "genome nt fasta sequence.")>
-                                       RuleSource As String) As DocumentStream.DataFrame
+                                       RuleSource As String) As IO.DataFrame
 
-        Dim Df = DocumentStream.DataFrame.CreateObject(PartitionData.ToCsvDoc(False))
+        Dim Df = IO.DataFrame.CreateObject(PartitionData.ToCsvDoc(False))
         Call Df.AppendLine({"GC%"})
         Dim Ddf = Df.CreateDataSource
 
@@ -353,7 +323,7 @@ Public Module ToolsAPI
                     Continue For
                 End If
 
-                Dim Reader As New SegmentReader(Rule)
+                Dim Reader As IPolymerSequenceModel = Rule
                 Dim St As Integer = locus.dnaA.Location.Left
                 Dim Sp As Integer = locus.gyrB.Location.Right
 
@@ -365,10 +335,7 @@ Public Module ToolsAPI
                 Dim RuleSegment As NucleotideModels.NucleicAcid
 
                 Try
-                    Dim fa As New FastaToken With {
-                        .SequenceData = Reader.TryParse(St, Sp - St)
-                    }
-                    RuleSegment = New NucleotideModels.NucleicAcid(fa)
+                    RuleSegment = New NucleotideModels.NucleicAcid(Reader.CutSequenceLinear(St, Sp - St))
                     If RuleSegment.Length > 10 * 1000 Then
                         Continue For
                     End If
@@ -394,17 +361,6 @@ Public Module ToolsAPI
         Return Df
     End Function
 
-    Private Function __safeCreates(fa As FastaToken) As SegmentReader
-        Try
-            Dim Reader = New SegmentReader(fa, False)
-            Return Reader
-        Catch ex As Exception
-            ex = New Exception(fa.Title, ex)
-            Call ex.PrintException
-            Return Nothing
-        End Try
-    End Function
-
     <ExportAPI("partition_data.create")>
     Public Function CreateChromesomePartitioningData(besthit As BestHit,
                                                      partitions As IEnumerable(Of ChromosomePartitioningEntry),
@@ -416,7 +372,7 @@ Public Module ToolsAPI
                            In resource.AsParallel
                            Let fa = FastaToken.Load(entry.Value)
                            Select ID = entry.Key,
-                               Reader = __safeCreates(fa)) _
+                               Reader = fa) _
                               .ToDictionary(Function(item) item.ID,
                                             Function(item) item.Reader)
         Dim pSource = (From part In partitions
@@ -435,7 +391,7 @@ Public Module ToolsAPI
         Dim CreatePartitionLQuery = (From item In pData.AsParallel
                                      Let Create = ToolsAPI.__group(item.besthits)
                                      Select item.PartitioningTag,
-                                         Data = (From hit In Create Select GenomeID = hit.Key, ORF = (From h In hit.Value Select CDSInfo(h.HitName)).ToArray).ToList) _
+                                         Data = (From hit In Create Select GenomeID = hit.Key, ORF = (From h In hit.Value Select CDSInfo(h.HitName)).ToArray).AsList) _
                                          .ToDictionary(Function(item) item.PartitioningTag,
                                                        Function(item) item.Data) '根据参数partition之中的参照数据进行创建基因组分区数据的创建
         Dim LQuery = (From item In CreatePartitionLQuery
@@ -449,7 +405,7 @@ Public Module ToolsAPI
                                   .LociRight = right,
                                   .SequenceData = seq,
                                   .ORFList = (From nnnn In genome.ORF Select nnnn.LocusID).ToArray,
-                                  .PartitioningTag = item.Key}).ToArray).MatrixToList
+                                  .PartitioningTag = item.Key}).ToArray).Unlist
 
         Dim removed = CType((From item In LQuery.AsParallel Where String.Equals(CType(item.GenomeID, String), CType(besthit.sp, String), CType(StringComparison.OrdinalIgnoreCase, StringComparison)) Select item).ToArray, PartitioningData())
         For Each item In removed
@@ -474,7 +430,7 @@ Public Module ToolsAPI
         Return LQuery.ToArray
     End Function
 
-    Private Function __readSeq(left As Integer, right As Integer, faReader As Dictionary(Of String, SegmentReader), genomeId As String) As String
+    Private Function __readSeq(left As Integer, right As Integer, faReader As Dictionary(Of String, FastaToken), genomeId As String) As String
         If Not faReader.ContainsKey(genomeId) Then
             Call $"The genome id ""{genomeId}"" is not exists in the fasta source...".__DEBUG_ECHO
             Return ""
@@ -490,11 +446,11 @@ Public Module ToolsAPI
         End If
 
         Dim reader = faReader(genomeId)
-        Dim seq As String = If(reader Is Nothing, "", reader.GetSegmentSequence(l, r))
+        Dim seq As String = If(reader Is Nothing, "", reader.CutSequenceLinear(l, r))
         Return seq
     End Function
 
-    Private Function __readSequence(fastaReader As Dictionary(Of String, SegmentReader),
+    Private Function __readSequence(fastaReader As Dictionary(Of String, FastaToken),
                                     genomeId As String,
                                     left As Integer,
                                     right As Integer) As String
@@ -514,7 +470,7 @@ Public Module ToolsAPI
         End If
 
         Dim reader = fastaReader(genomeId)
-        Dim seq As String = If(reader Is Nothing, "", reader.GetSegmentSequence(l, r))
+        Dim seq As String = If(reader Is Nothing, "", reader.CutSequenceLinear(l, r))
         Return seq
     End Function
 
@@ -556,7 +512,7 @@ Public Module ToolsAPI
     Private Function __query(querySource As PartitioningData, subject As Dictionary(Of String, PartitioningData), windowsSize As Integer, EXPORT As String, ptag As String) As Boolean
         Dim Windows = New NucleotideModels.NucleicAcid(querySource.SequenceData).ToArray.CreateSlideWindows(windowsSize)
         Dim InternalCache As Cache() = (From Window In Windows
-                                        Let cacheData = New NucleicAcid(Window.Elements)
+                                        Let cacheData = New DeltaSimilarity1998.NucleicAcid(Window.Items)
                                         Select New Cache With {
                                             .Cache = cacheData,
                                             .SlideWindow = Window}).ToArray 'Internal create cache data.
@@ -599,7 +555,7 @@ Public Module ToolsAPI
     Private Function __group(besthits As HitCollection()) As KeyValuePair(Of String, Hit())()
         Dim gr = (From o In (From nn As HitCollection
                              In besthits
-                             Select (From nnnnnnnn In nn.Hits Select nnnnnnnn).ToArray).MatrixToList
+                             Select (From nnnnnnnn In nn.Hits Select nnnnnnnn).ToArray).Unlist
                   Select o
                   Group o By o.tag Into Group).ToArray
         Dim gd = (From iteddm In gr Select iteddm.tag, hits = (From fd In iteddm.Group.ToArray Where Not String.IsNullOrEmpty(fd.HitName) Select fd).ToArray).ToArray
@@ -608,12 +564,12 @@ Public Module ToolsAPI
     End Function
 
     <ExportAPI("CAI")>
-    Public Function CAI(ORF As FastaToken) As CAITable
-        Return New CAITable(New RelativeCodonBiases(ORF))
+    Public Function CAI(ORF As FastaToken) As CodonAdaptationIndex
+        Return New CodonAdaptationIndex(New RelativeCodonBiases(ORF))
     End Function
 
     <ExportAPI("write.xml.cai")>
-    Public Function SaveCAI(dat As CAITable, saveXml As String) As Boolean
+    Public Function SaveCAI(dat As CodonAdaptationIndex, saveXml As String) As Boolean
         Return dat.GetXml.SaveTo(saveXml)
     End Function
 
@@ -630,16 +586,16 @@ Public Module ToolsAPI
     ''' ......
     ''' </remarks>
     <ExportAPI("compile.cai")>
-    Public Function CompileCABIAS(genes As String, Optional workTEMP As String = "./CAI_Xml") As DocumentStream.File
+    Public Function CompileCABIAS(genes As String, Optional workTEMP As String = "./CAI_Xml") As IO.File
         Dim LQueryLoadFasta = (From path As String
                                In FileIO.FileSystem.GetFiles(genes, FileIO.SearchOption.SearchTopLevelOnly, "*.fasta", "*.fsa").AsParallel
                                Let FASTA = FastaFile.LoadNucleotideData(path, True)
                                Where Not FASTA.IsNullOrEmpty
-                               Select ID = IO.Path.GetFileNameWithoutExtension(path),
+                               Select ID = BaseName(path),
                                    FASTA)
         Dim CAILQuery = (From item In LQueryLoadFasta.AsParallel
                          Let InternalId As String = item.ID
-                         Select __compileCAIBIASCalculationThread(item.FASTA, workTEMP, InternalId)).MatrixToVector
+                         Select __compileCAIBIASCalculationThread(item.FASTA, workTEMP, InternalId)).ToVector
 
         Dim Csv = __compileCAI(data:=CAILQuery)
         Return Csv
@@ -662,58 +618,62 @@ Public Module ToolsAPI
     <ExportAPI("diff.create_report", Info:="The source parameter is the source directory of the Delta query export dirtectory.")>
     Public Function GenerateDeltaDiffReport(source As String,
                                             partitions As IEnumerable(Of ChromosomePartitioningEntry),
-                                            CDSInfo As IEnumerable(Of GeneDumpInfo)) As DocumentStream.File
+                                            CDSInfo As IEnumerable(Of GeneDumpInfo)) As IO.File
 
         Dim p = (From item In partitions Select item Group By item.PartitioningTag Into Group).ToArray  '分组，选择蛋白质
-        Dim DeltaQuery = (From path As KeyValuePair(Of String, String)
-                          In gbExportService.LoadGbkSource(source).AsParallel
-                          Select ID = path.Key, dat = path.Value.LoadCsv(Of SiteSigma)(False).ToArray).ToArray
+        Dim DeltaQuery = (From path As NamedValue(Of String)
+                          In gbExportService _
+                              .LoadGbkSource(source) _
+                              .Values _
+                              .AsParallel
+                          Select ID = path.Name,
+                              dat = path.Value.LoadCsv(Of SiteSigma)(False).ToArray).ToArray
         Throw New NotImplementedException
     End Function
 
-    Public Function __compileCAIBIASCalculationThread(gene_source As FastaFile, WorkTemp As String, InternalID As String) As KeyValuePair(Of String, CAITable)()
-        Dim ResultList = New List(Of KeyValuePair(Of String, CAITable))
+    Public Function __compileCAIBIASCalculationThread(gene_source As FastaFile, WorkTemp As String, InternalID As String) As KeyValuePair(Of String, CodonAdaptationIndex)()
+        Dim ResultList = New List(Of KeyValuePair(Of String, CodonAdaptationIndex))
 
         For i As Integer = 0 To gene_source.Count - 1
-            Dim Sequence As SMRUCC.genomics.SequenceModel.FASTA.FastaToken = gene_source(i)
+            Dim Sequence As FastaToken = gene_source(i)
             Dim Path As String = String.Format("({0}){1}", InternalID, Sequence.Attributes.First.NormalizePathString)
             Dim SeqID As String = Path
-            Dim CAIData As CAITable
+            Dim CAIData As CodonAdaptationIndex
 
             Path = WorkTemp & "/" & Path & ".xml"
 
             If FileIO.FileSystem.FileExists(Path) Then
-                CAIData = Path.LoadXml(Of CAITable)()
+                CAIData = Path.LoadXml(Of CodonAdaptationIndex)()
             Else
-                CAIData = New CAITable(New RelativeCodonBiases(Sequence))
+                CAIData = New CodonAdaptationIndex(New RelativeCodonBiases(Sequence))
                 Call CAIData.GetXml.SaveTo(Path)
             End If
 
-            Call ResultList.Add(New KeyValuePair(Of String, CAITable)(SeqID, CAIData))
+            Call ResultList.Add(New KeyValuePair(Of String, CodonAdaptationIndex)(SeqID, CAIData))
             Call Console.Write("{0}  ==>{1}%", SeqID, i / gene_source.Count * 100)
         Next
 
         Return ResultList.ToArray
     End Function
 
-    Public Function CompileCAIBIASCalculationThread_p(gene_source As FastaFile, WorkTemp As String, InternalID As String) As KeyValuePair(Of String, CAITable)()
+    Public Function CompileCAIBIASCalculationThread_p(gene_source As FastaFile, WorkTemp As String, InternalID As String) As KeyValuePair(Of String, CodonAdaptationIndex)()
         Dim ResultList = (From Sequence As FastaToken
                           In gene_source.AsParallel
                           Let Path As String = String.Format("({0}){1}", InternalID, Sequence.Attributes.First.NormalizePathString)
                           Let SeqID As String = Path
-                          Let CAIData As CAITable = __createTable(WorkTemp, Path, Sequence, SeqID)
-                          Select New KeyValuePair(Of String, CAITable)(SeqID, CAIData)).ToArray
+                          Let CAIData As CodonAdaptationIndex = __createTable(WorkTemp, Path, Sequence, SeqID)
+                          Select New KeyValuePair(Of String, CodonAdaptationIndex)(SeqID, CAIData)).ToArray
         Return ResultList.ToArray
     End Function
 
-    Private Function __createTable(workTMP As String, path As String, Sequence As FastaToken, seqId As String) As CAITable
+    Private Function __createTable(workTMP As String, path As String, Sequence As FastaToken, seqId As String) As CodonAdaptationIndex
         Dim XMLPath = workTMP & "/" & path & ".xml"
-        Dim da As CAITable
+        Dim da As CodonAdaptationIndex
 
         If FileIO.FileSystem.FileExists(XMLPath) Then
-            da = XMLPath.LoadXml(Of CAITable)()
+            da = XMLPath.LoadXml(Of CodonAdaptationIndex)()
         Else
-            da = New CAITable(New RelativeCodonBiases(Sequence))
+            da = New CodonAdaptationIndex(New RelativeCodonBiases(Sequence))
             Call da.GetXml.SaveTo(XMLPath)
         End If
 
@@ -723,26 +683,27 @@ Public Module ToolsAPI
     End Function
 
     <ExportAPI("Compile.CAI")>
-    Public Function CompileCAIBIASCalculationThread(genes As FastaFile, Optional WorkTemp As String = "./CAI_Xml") As DocumentStream.File
-        Dim CompiledData = CompileCAIBIASCalculationThread_p(genes, WorkTemp, InternalID:=IO.Path.GetFileNameWithoutExtension(genes.FilePath))
+    Public Function CompileCAIBIASCalculationThread(genes As FastaFile, Optional WorkTemp As String = "./CAI_Xml") As IO.File
+        Dim CompiledData = CompileCAIBIASCalculationThread_p(genes, WorkTemp, InternalID:=BaseName(genes.FilePath))
         Return __compileCAI(CompiledData)
     End Function
 
-    Private Function __compileCAI(data As Generic.IEnumerable(Of KeyValuePair(Of String, CAITable))) As DocumentStream.File
-        Dim CSV As DocumentStream.File = New DocumentStream.File
-        Dim Head = New DocumentStream.RowObject From {"SpeciesID", "CAI"}
+    Private Function __compileCAI(data As IEnumerable(Of KeyValuePair(Of String, CodonAdaptationIndex))) As IO.File
+        Dim CSV As IO.File = New IO.File
+        Dim Head = New IO.RowObject From {"SpeciesID", "CAI"}
 
         Call CSV.Add(Head)
 
-        For Each item In data.First.Value.BiasList
-            Call Head.Add(item.Value.Key.ToString)
+        For Each item In data.First.Value.GetCodonBiasList
+            Call Head.Add(item.Value.CodonString)
         Next
 
         For Each item In data
-            Dim row As New DocumentStream.RowObject From {item.Key, item.Value.CAI}
+            Dim row As New IO.RowObject From {item.Key, item.Value.CAI}
+            Dim biasData = item.Value.GetCodonBiasList
 
-            For i As Integer = 0 To item.Value.BiasList.Count - 1
-                Call row.Add(item.Value.BiasList(i).Value.Value)
+            For i As Integer = 0 To biasData.Length - 1
+                Call row.Add(biasData(i).Value.Bias)
             Next
 
             Call CSV.Add(row)
@@ -768,7 +729,7 @@ Public Module ToolsAPI
 
         Using pb As New CBusyIndicator(_start:=True)
             Dim LQuery = (From segment In Windows.AsParallel
-                          Let x = New NucleotideModels.NucleicAcid(segment.Elements)
+                          Let x = New NucleotideModels.NucleicAcid(segment.Items)
                           Let y = New NucleotideModels.NucleicAcid(compare)
                           Let Sigma = DifferenceMeasurement.Sigma(x, y)
                           Let p = New SiteSigma With {
@@ -783,9 +744,9 @@ Public Module ToolsAPI
         End Using
     End Function
 
-    Private Function __echo(segment As SlideWindowHandle(Of DNA), numWins As Integer) As Integer
-        Call $"{100 * segment.p / numWins}%".__DEBUG_ECHO
-        Return segment.p
+    Private Function __echo(segment As SlideWindow(Of DNA), numWins As Integer) As Integer
+        Call $"{100 * segment.Index / numWins}%".__DEBUG_ECHO
+        Return segment.Index
     End Function
 
     ''' <summary>
@@ -797,20 +758,20 @@ Public Module ToolsAPI
     ''' <remarks></remarks>
     Private Function __genomeSigmaDiff(cache As Cache(), compare As FastaToken) As SiteSigma()
         Call "Creating compare cache..... ".__DEBUG_ECHO
-        Dim CompareCache = New NucleicAcid(compare)
+        Dim CompareCache = New DeltaSimilarity1998.NucleicAcid(compare)
         Call "Compare cache creating job done!".__DEBUG_ECHO
         Dim LQuery = (From segment As Cache In cache
                       Let Sigma = DifferenceMeasurement.Sigma(segment.Cache, CompareCache)
                       Select New SiteSigma With {
-                          .Site = segment.SlideWindow.p,
+                          .Site = segment.SlideWindow.Index,
                           .Sigma = Sigma,
                           .Similarity = DifferenceMeasurement.SimilarDescription(Sigma)}).ToArray
         Return LQuery
     End Function
 
     Private Structure Cache
-        Dim SlideWindow As SlideWindowHandle(Of DNA)
-        Dim Cache As NucleicAcid
+        Dim SlideWindow As SlideWindow(Of DNA)
+        Dim Cache As DeltaSimilarity1998.NucleicAcid
     End Structure
 
     ''' <summary>
@@ -823,7 +784,7 @@ Public Module ToolsAPI
     Public Function MergeDelta(source As String, query As IEnumerable(Of IGeneBrief), render_source As String, saveto As String, Optional samples As Integer = 1) As Boolean
         Dim LoadData = (From path As String
                         In FileIO.FileSystem.GetFiles(source, FileIO.SearchOption.SearchTopLevelOnly, "*.csv").AsParallel
-                        Select New KeyValuePair(Of String, SiteSigma())(IO.Path.GetFileNameWithoutExtension(path).Split(CChar("_")).Last,
+                        Select New KeyValuePair(Of String, SiteSigma())(BaseName(path).Split(CChar("_")).Last,
                              value:=path.LoadCsv(Of SiteSigma)(False).ToArray)).ToArray
 
         Return __mergeDelta(LoadData, query, render_source, saveto, samples)
@@ -852,18 +813,18 @@ Public Module ToolsAPI
         Dim sitesData = (From site In LoadData.First.Value.AsParallel
                          Let lstName As String() = (From item As IGeneBrief
                                                     In Query.GetObjects(site.Site, direction:=Strands.Unknown)
-                                                    Select item.Identifier).ToArray
+                                                    Select item.Key).ToArray
                          Select New KeyValuePair(Of Integer, String())(site.Site, lstName)).ToArray
         '加载基因组双向BLAST同源片段染色数据
         Dim LoadCRendering = render_source.LoadXml(Of BestHit)() ' (From path As String In FileIO.FileSystem.GetFiles(render_source, FileIO.SearchOption.SearchTopLevelOnly, "*.xml").AsParallel
-        '                      Select id = IO.Path.GetFileNameWithoutExtension(path),
+        '                      Select id = basename(path),
         '                      data = path.LoadXml(Of SMRUCC.genomics.AnalysisTools.DataVisualization.VennDiagram.ShellScriptAPI.BestHit)()).ToArray
         '基因按照正向进行标识 ，当比对上去的时候，会进行delta染色，即基因号为相应的比对上的基因号，当没有比对上去的时候，基因号为空
         '   Dim LQuery = (From item In LoadData Let ptt = LoadPTT(item.Key) Let render = LoadCRendering(item.Key) Select ID = item.Key, renderData = InternalColorRender(item.Key, item.Value.ToArray, ptt, render.data, sitesData)).ToArray
         '合并数据，得到染色矩阵，并写入文件
 
-        Dim CsvData As New DocumentStream.File
-        Dim Head As New DocumentStream.RowObject From {"Site", "QUERY_ID"}
+        Dim CsvData As New IO.File
+        Dim Head As New IO.RowObject From {"Site", "QUERY_ID"}
         For Each item In LoadData
             Call Head.Add("")
             Call Head.Add(item.Key)
@@ -873,7 +834,7 @@ Public Module ToolsAPI
         Call CsvData.Add(Head)
 
         For i As Integer = 0 To LoadData.First.Value.Count - 1 '都是使用同一个基因组进行比对，所以长度都是一样的
-            Dim row As New DocumentStream.RowObject From {sitesData(i).Key}
+            Dim row As New IO.RowObject From {sitesData(i).Key}
             Call row.Add(String.Join("; ", sitesData(i).Value))
 
             For Each item In LoadData
@@ -938,14 +899,14 @@ Public Module ToolsAPI
         Dim QueryFasta = FastaToken.LoadNucleotideData(query)
         Dim Windows = New NucleotideModels.NucleicAcid(QueryFasta).ToArray.CreateSlideWindows(windowsSize)
         Dim InternalCache = (From Window In Windows.AsParallel
-                             Let cacheData = New NucleicAcid(Window.Elements)
+                             Let cacheData = New DeltaSimilarity1998.NucleicAcid(Window.Items)
                              Select New Cache With {
                                  .Cache = cacheData,
                                  .SlideWindow = Window}).ToArray 'Internal create cache data.
         Call Console.WriteLine("[INFO] query for the Sigma difference calculation in length of {0}KB...", QueryFasta.Length / 1000)
 
         Dim LQuery = (From SubjectFasta In FastaObjects.AsParallel Select __process(SubjectFasta, QueryFasta, EXPORT, InternalCache)).ToArray
-        Dim FileName As String = String.Format("{0}/Compiled/{1}.csv", EXPORT, IO.Path.GetFileNameWithoutExtension(query))
+        Dim FileName As String = String.Format("{0}/Compiled/{1}.csv", EXPORT, BaseName(query))
         Dim File = __compile(LQuery)
 
         Call Console.WriteLine("[JOB DONE]")
@@ -964,9 +925,9 @@ Public Module ToolsAPI
         Return New KeyValuePair(Of String, SiteSigma())(g, sigma)
     End Function
 
-    Private Function __compile(LQuery As KeyValuePair(Of String, SiteSigma())()) As DocumentStream.File
-        Dim File As DocumentStream.File = New DocumentStream.File
-        Dim Head As New DocumentStream.RowObject     '为了保持一一对应关系，这里不能够再使用并行化
+    Private Function __compile(LQuery As KeyValuePair(Of String, SiteSigma())()) As IO.File
+        Dim File As IO.File = New IO.File
+        Dim Head As New IO.RowObject     '为了保持一一对应关系，这里不能够再使用并行化
 
         Call Console.WriteLine("Compiling data....")
         Call Head.Add("Site")
@@ -980,7 +941,7 @@ Public Module ToolsAPI
         Call File.Add(Head)
 
         For i As Integer = 0 To LQuery.First.Value.Count - 1
-            Dim Row As New DocumentStream.RowObject
+            Dim Row As New IO.RowObject
             Call Row.Add(i)
 
             For Each item In LQuery
@@ -999,7 +960,9 @@ Public Module ToolsAPI
     <ExportAPI("compile.delta_query")>
     Public Function Compile(source As String, saveCsv As String) As Boolean
         Dim Entry = gbExportService.LoadGbkSource(source)
-        Dim LQuery = (From item In Entry.AsParallel Select New KeyValuePair(Of String, SiteSigma())(item.Key, item.Value.LoadCsv(Of SiteSigma)(False).ToArray)).ToArray
+        Dim LQuery = (From item
+                      In Entry.Values.AsParallel
+                      Select New KeyValuePair(Of String, SiteSigma())(item.Name, item.Value.LoadCsv(Of SiteSigma)(False).ToArray)).ToArray
         Dim File = __compile(LQuery)
         Return File.Save(saveCsv, False)
     End Function
@@ -1025,8 +988,9 @@ Public Module ToolsAPI
             Call Console.WriteLine("[DEBUG] fasta data load done!, start to calculates the sigma differences in window_size {0}KB....", windowsSize / 1000)
 
             Dim MAT = Comb(Of FastaToken).CreateCompleteObjectPairs(FastaObjects)
-            Dim ChunkBuffer = (From pairedList In MAT
-                               Select pairedList.__calculates(windowsSize, EXPORT)).MatrixToList
+            Dim ChunkBuffer = (From pairedList
+                               In MAT
+                               Select pairedList.__calculates(windowsSize, EXPORT)).Unlist
 
             Call Console.WriteLine("All data calculation job done!, grouping data!")
             Dim grouped = (From item In ChunkBuffer Select item Group By item.Key Into Group).ToArray
@@ -1038,15 +1002,15 @@ Public Module ToolsAPI
         Return True
     End Function
 
-    <Extension> Private Function __calculates(pairedList As KeyValuePair(Of FastaToken, FastaToken)(),
+    <Extension> Private Function __calculates(pairedList As Tuple(Of FastaToken, FastaToken)(),
                                               windowsSize As Integer,
                                               EXPORT As String) As KeyValuePair(Of String, String)()
         Dim InternalList As New List(Of KeyValuePair(Of String, String))
 
         For Each paired In pairedList
-            Dim sigma = GenomeSigmaDifference_p(paired.Key, paired.Value, windowsSize)
+            Dim sigma = GenomeSigmaDifference_p(paired.Item1, paired.Item2, windowsSize)
             Call Console.WriteLine("[DEBUG] Calculation job done, trying to export data to filesystem " & EXPORT)
-            Dim f = paired.Key.Title, g = paired.Value.Title
+            Dim f = paired.Item1.Title, g = paired.Item2.Title
             Dim dat = New KeyValuePair(Of String, String)(f.Split(CChar("|")).First, g.Split(CChar("|")).First)
             Call sigma.SaveTo(String.Format("{0}/{1}-{2}.csv", EXPORT, dat.Key, dat.Value), False)
             Call InternalList.Add(dat)
@@ -1075,7 +1039,7 @@ Public Module ToolsAPI
 
         Dim MAT = Comb(Of FastaToken).CreateCompleteObjectPairs(FastaObjects)
         Dim ChunkBuffer = (From pairedList In MAT.AsParallel
-                           Select __calculate(windowsSize, EXPORT, pairedList)).MatrixToList
+                           Select __calculate(windowsSize, EXPORT, pairedList)).Unlist
 
         Call Console.WriteLine("All data calculation job done!, grouping data!")
         Dim grouped = (From item In ChunkBuffer Select item Group By item.Key Into Group).ToArray
@@ -1087,13 +1051,13 @@ Public Module ToolsAPI
         Return True
     End Function
 
-    Private Function __calculate(windowsSize As Integer, EXPORT As String, paireds As KeyValuePair(Of FastaToken, FastaToken)()) As KeyValuePair(Of String, String)()
+    Private Function __calculate(windowsSize As Integer, EXPORT As String, paireds As Tuple(Of FastaToken, FastaToken)()) As KeyValuePair(Of String, String)()
         Dim InternalList As New List(Of KeyValuePair(Of String, String))
 
         For Each paired In paireds
-            Dim sigma = GenomeSigmaDifference_p(paired.Key, paired.Value, windowsSize)
+            Dim sigma = GenomeSigmaDifference_p(paired.Item1, paired.Item2, windowsSize)
             Call Console.WriteLine("[DEBUG] Calculation job done, trying to export data to filesystem " & EXPORT)
-            Dim f = paired.Key.Title, g = paired.Value.Title
+            Dim f = paired.Item1.Title, g = paired.Item2.Title
             Dim dat = New KeyValuePair(Of String, String)(f.Split(CChar("|")).First, g.Split(CChar("|")).First)
             Call sigma.SaveTo(String.Format("{0}/{1}-{2}.csv", EXPORT, dat.Key, dat.Value), False)
             Call InternalList.Add(dat)
@@ -1118,9 +1082,9 @@ Public Module ToolsAPI
     ''' <remarks></remarks>
     Private Function __compileSigma(dat As KeyValuePair(Of String, String)(), export As String) As Boolean
         Dim FileName As String = String.Format("{0}/Compiled/{1}.csv", export, dat.First.Key)
-        Dim File As DocumentStream.File = New DocumentStream.File
+        Dim File As IO.File = New IO.File
         Dim Data = (From path In dat Select String.Format("{0}/{1}-{2}.csv", export, path.Key, path.Value).LoadCsv(Of SiteSigma)(False)).ToArray ' 为了保持一一对应关系，这里不能够再使用并行化
-        Dim Head As New DocumentStream.RowObject
+        Dim Head As New IO.RowObject
 
         Call Head.Add("Site")
 
@@ -1133,7 +1097,7 @@ Public Module ToolsAPI
         Call File.Add(Head)
 
         For i As Integer = 0 To Data.First.Count - 1
-            Dim Row As New DocumentStream.RowObject
+            Dim Row As New IO.RowObject
             Call Row.Add(i)
 
             For Each item In Data
@@ -1149,4 +1113,3 @@ Public Module ToolsAPI
         Return File.Save(FileName, False)
     End Function
 End Module
-

@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::b1bf4fc74144a114806a647c60d08751, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\SequenceLogo\DrawingDevice.vb"
+﻿#Region "Microsoft.VisualBasic::7e8a99a38afc6f578e8e4cd78381bd8c, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\SequenceLogo\DrawingDevice.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -124,7 +125,7 @@ For example, we identified a new domain, likely to have a role downstream of the
                                                                   In rsd.PWM.SeqIterator
                                                                   Select New Alphabet With {
                                                                       .Alphabet = PWM.Alphabets(x.i),
-                                                                      .RelativeFrequency = x.obj
+                                                                      .RelativeFrequency = x.value
                                                                   }  ' alphabets
             }  ' residues
             Return InvokeDrawing(Model, True)
@@ -169,7 +170,7 @@ For example, we identified a new domain, likely to have a role downstream of the
 
             Dim n As Integer = model.Alphabets
             Dim gSize As New Size(model.Residues.Length * WordSize + 2 * margin, 2 * margin + n * Height)
-            Dim gdi As GDIPlusDeviceHandle = gSize.CreateGDIDevice(Color.Transparent)
+            Dim gdi As Graphics2D = gSize.CreateGDIDevice(Color.Transparent)
             Dim X, Y As Integer
             Dim font As New Font(MicrosoftYaHei, CInt(WordSize * 0.6), FontStyle.Bold)
             Dim size As SizeF

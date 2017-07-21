@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::a1109fc06ad60490a02c388c8c812d97, ..\GCModeller\analysis\SequenceToolkit\SNP\SangerSNPs\SNPsPhylib.vb"
+﻿#Region "Microsoft.VisualBasic::dca6b4978f3fb055d99af5a7bc2fd079, ..\GCModeller\analysis\SequenceToolkit\SNP\SangerSNPs\SNPsPhylib.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -27,11 +28,12 @@
 
 Imports System.IO
 Imports System.Text
-Imports SMRUCC.genomics.SequenceModel.FASTA
 Imports Microsoft.VisualBasic
+Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Serialization
 Imports Microsoft.VisualBasic.Serialization.JSON
+Imports SMRUCC.genomics.SequenceModel.FASTA
 Imports FILE = System.IO.StreamWriter
 
 Namespace SangerSNPs
@@ -132,4 +134,3 @@ Namespace SangerSNPs
         End Function
     End Structure
 End Namespace
-

@@ -1,35 +1,36 @@
-﻿#Region "Microsoft.VisualBasic::d9442dd0b6a4da69d7da77cd7c6a38df, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\Topologically\Exactly\RepeatsLoci.vb"
+﻿#Region "Microsoft.VisualBasic::b896887548c61e2687f7fca7a801a91a, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\Topologically\Exactly\RepeatsLoci.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+'       xie (genetics@smrucc.org)
+' 
+' Copyright (c) 2016 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
-Imports SMRUCC.genomics.SequenceModel
-Imports SMRUCC.genomics.SequenceModel.NucleotideModels
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq.Extensions
-Imports Microsoft.VisualBasic.Scripting
+Imports Microsoft.VisualBasic.Scripting.Runtime
+Imports SMRUCC.genomics.SequenceModel
+Imports SMRUCC.genomics.SequenceModel.NucleotideModels
 
 Namespace Topologically
 
@@ -63,8 +64,8 @@ Namespace Topologically
         ''' <returns></returns>
         ''' <remarks></remarks>
         Public Overrides Function GenerateDocumentSegment() As Topologically.RepeatsLoci()
-            Dim LQuery As RepeatsLoci() =
-                LinqAPI.Exec(Of RepeatsLoci) <=
+            Dim LQuery As RepeatsLoci() = LinqAPI.Exec(Of RepeatsLoci) <=
+ _
                 From revLoci As Integer
                 In Me.Locations
                 Select From loci As Integer
@@ -76,6 +77,7 @@ Namespace Topologically
                            .RevLociLeft = revLoci
                        }
                        Select DirectCast(site, Topologically.RepeatsLoci)
+
             Return LQuery
         End Function
 
@@ -97,7 +99,7 @@ Namespace Topologically
     ''' The sequence segment of the nucleotide repeats.(重复的核酸片段)
     ''' </summary>
     ''' <remarks></remarks>
-    Public Class Repeats : Implements I_PolymerSequenceModel
+    Public Class Repeats : Implements IPolymerSequenceModel
 
         ''' <summary>
         ''' The Repeats sequence data.(重复序列)
@@ -105,7 +107,7 @@ Namespace Topologically
         ''' <value></value>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public Property SequenceData As String Implements I_PolymerSequenceModel.SequenceData
+        Public Property SequenceData As String Implements IPolymerSequenceModel.SequenceData
 
         Public ReadOnly Property Length As Integer
             Get
@@ -147,10 +149,10 @@ Namespace Topologically
                     .RepeatLoci = Me.SequenceData})
         End Function
 
-        Public Shared Function CreateDocument(data As Generic.IEnumerable(Of Repeats)) As Topologically.RepeatsLoci()
+        Public Shared Function CreateDocument(data As IEnumerable(Of Repeats)) As Topologically.RepeatsLoci()
             Dim LQuery = (From line As Repeats
                           In data.AsParallel
-                          Select line.GenerateDocumentSegment).ToArray.MatrixToList
+                          Select line.GenerateDocumentSegment).ToArray.Unlist
             Return (From loci As RepeatsLoci
                     In LQuery
                     Where Not loci Is Nothing

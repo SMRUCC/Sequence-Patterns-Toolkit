@@ -1,34 +1,35 @@
-﻿#Region "Microsoft.VisualBasic::766354960447d26dd243b448964d1b28, ..\GCModeller\analysis\SequenceToolkit\SmithWaterman\GSW.vb"
+﻿#Region "Microsoft.VisualBasic::afc79cd46936ff68cb75a59eed940ee5, ..\GCModeller\analysis\SequenceToolkit\SmithWaterman\GSW.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2016 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xieguigang (xie.guigang@live.com)
+'       xie (genetics@smrucc.org)
+' 
+' Copyright (c) 2016 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
-Imports System.Collections.Generic
-Imports System.Drawing
 Imports System.Linq
 Imports Microsoft.VisualBasic.ComponentModel
+Imports Microsoft.VisualBasic.Text.Levenshtein.LevenshteinDistance
+Imports Microsoft.VisualBasic.Text.Xml.Models
 
 Public Delegate Function ISimilarity(Of T)(x As T, y As T) As Integer
 
@@ -384,16 +385,16 @@ Public Class GSW(Of T)
     ''' As the article states, the decision at that point depends largely On context (you have several options).
     ''' </summary>
     ''' <returns></returns>
-    Public Function GetTraceback() As Coords()
-        Dim path As New List(Of Coords)
-        Call path.Add(New Coords(queryLength, subjectLength))
+    Public Function GetTraceback() As Coordinate()
+        Dim path As New List(Of Coordinate)
+        Call path.Add(New Coordinate(queryLength, subjectLength))
         Call __getTrackback(path, queryLength, subjectLength)
         Return path.ToArray
     End Function
 
-    Private Sub __getTrackback(ByRef path As List(Of Coords), i As Integer, j As Integer)
+    Private Sub __getTrackback(ByRef path As List(Of Coordinate), i As Integer, j As Integer)
         If i = 0 OrElse j = 0 Then
-            Call path.Add(New Coords(i, j))
+            Call path.Add(New Coordinate(i, j))
             Return
         End If
 
@@ -405,15 +406,15 @@ Public Class GSW(Of T)
         If s = diagScore Then
             i -= 1
             j -= 1
-            Call path.Add(New Coords(i, j))
+            Call path.Add(New Coordinate(i, j))
         End If
         If s = upScore Then
             j -= 1
-            Call path.Add(New Coords(i, j))
+            Call path.Add(New Coordinate(i, j))
         End If
         If s = leftScore Then
             i -= 1
-            Call path.Add(New Coords(i, j))
+            Call path.Add(New Coordinate(i, j))
         End If
 
         If s = 0 Then
@@ -463,4 +464,3 @@ Public Class GSW(Of T)
         Return (From x As Match In matchList Select x Order By x.Score Descending).ToArray
     End Function
 End Class
-

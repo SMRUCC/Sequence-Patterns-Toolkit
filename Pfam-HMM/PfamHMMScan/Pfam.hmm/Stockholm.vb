@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::3f4706ee847ba3ff08c93aa29ca15706, ..\GCModeller\analysis\SequenceToolkit\Pfam-HMM\PfamHMMScan\Pfam.hmm\Stockholm.vb"
+﻿#Region "Microsoft.VisualBasic::0bb8305fc56045b176a89bbdae7b4476, ..\GCModeller\analysis\SequenceToolkit\Pfam-HMM\PfamHMMScan\Pfam.hmm\Stockholm.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -33,7 +34,7 @@ Imports Microsoft.VisualBasic.Serialization.JSON
 ''' <summary>
 ''' Pfam-A.hmm.dat
 ''' </summary>
-Public Class Stockholm : Implements sIdEnumerable
+Public Class Stockholm : Implements INamedValue
 
     ''' <summary>
     ''' Identifier
@@ -44,7 +45,7 @@ Public Class Stockholm : Implements sIdEnumerable
     ''' Pfam accession ID
     ''' </summary>
     ''' <returns></returns>
-    Public Property AC As String Implements sIdEnumerable.Identifier
+    Public Property AC As String Implements INamedValue.Key
     ''' <summary>
     ''' Definition
     ''' </summary>
@@ -80,7 +81,7 @@ Public Class Stockholm : Implements sIdEnumerable
 
             Dim tmp As String = hash.TryGetValue(NameOf(x.GA)).DefaultFirst
             If Not String.IsNullOrEmpty(tmp) Then
-                x.GA = Strings.Split(tmp, ";").ToArray(Function(s) Val(s), where:=Function(s) Not s.IsBlank)
+                x.GA = Strings.Split(tmp, ";").ToArray(Function(s) Val(s), where:=Function(s) Not s.StringEmpty)
             End If
 
             x.ID = hash.TryGetValue(NameOf(x.ID)).DefaultFirst
@@ -107,4 +108,3 @@ Public Class Stockholm : Implements sIdEnumerable
         Return hash
     End Function
 End Class
-

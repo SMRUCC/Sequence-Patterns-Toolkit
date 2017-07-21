@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::975c7e7ff790a60dbacc76707dfe502d, ..\GCModeller\analysis\SequenceToolkit\Pfam-HMM\PfamHMMScan\hmmer\hmmscan.vb"
+﻿#Region "Microsoft.VisualBasic::3d62a826f8245581db0f0a2c00dc2b20, ..\GCModeller\analysis\SequenceToolkit\Pfam-HMM\PfamHMMScan\hmmer\hmmscan.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -215,9 +216,9 @@ Namespace hmmscan
         End Function
     End Structure
 
-    Public Class Alignment : Implements sIdEnumerable
+    Public Class Alignment : Implements INamedValue
 
-        Public Property model As String Implements sIdEnumerable.Identifier
+        Public Property model As String Implements INamedValue.Key
         Public Property describ As String
         Public Property Aligns As Align()
 

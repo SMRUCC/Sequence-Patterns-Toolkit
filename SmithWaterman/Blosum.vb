@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::48f698e8a21c3d4987a0c73b4d6cc4ca, ..\GCModeller\analysis\SequenceToolkit\SmithWaterman\Blosum.vb"
+﻿#Region "Microsoft.VisualBasic::deb2017e8ce81fa99b39a7b3363f3ed4, ..\GCModeller\analysis\SequenceToolkit\SmithWaterman\Blosum.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -112,7 +113,9 @@ Public Class Blosum
     '''N -2  0  6  1 -3  0  0  0  1 -3 -3  0 -2 [rest of string was truncated]&quot;;.
     '''</summary>
     Public Shared Function FromInnerBlosum62() As Blosum
-        Return LoadFromStream(My.Resources.BLOSUM62)
+        SyncLock My.Resources.BLOSUM62
+            Return LoadFromStream(My.Resources.BLOSUM62)
+        End SyncLock
     End Function
 
     ' quick and dirty equivalent of typesafe enum pattern, can also use HashMap
@@ -188,4 +191,3 @@ Public Class Blosum
         Return getDistance(getIndex(a1), getIndex(a2))
     End Function
 End Class
-

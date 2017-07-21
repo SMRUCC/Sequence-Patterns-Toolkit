@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::f2fcaa567933079396a14bce85bd6442, ..\GCModeller\analysis\SequenceToolkit\DNA_Comparative\ToolsAPI\PartitioningData.vb"
+﻿#Region "Microsoft.VisualBasic::949c17c91b6253d64f2c06cc31dec32e, ..\GCModeller\analysis\SequenceToolkit\DNA_Comparative\ToolsAPI\PartitioningData.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -25,7 +26,7 @@
 
 #End Region
 
-Imports Microsoft.VisualBasic.DocumentFormat.Csv.StorageProvider.Reflection
+Imports Microsoft.VisualBasic.Data.csv.StorageProvider.Reflection
 Imports SMRUCC.genomics.SequenceModel
 Imports SMRUCC.genomics.SequenceModel.FASTA
 
@@ -87,7 +88,7 @@ Public Class PartitioningData : Implements IAbstractFastaToken
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    <Ignored> Public Property SequenceData As String Implements I_PolymerSequenceModel.SequenceData
+    <Ignored> Public Property SequenceData As String Implements IPolymerSequenceModel.SequenceData
 
     Public Property Attributes As String() Implements IAbstractFastaToken.Attributes
 
@@ -102,4 +103,3 @@ Public Class PartitioningData : Implements IAbstractFastaToken
         }
     End Function
 End Class
-

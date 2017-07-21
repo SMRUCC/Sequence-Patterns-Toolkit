@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::0ff49e854678dadef8227461aeaa5b17, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\LociExtensions.vb"
+﻿#Region "Microsoft.VisualBasic::93882e6cc87e16fb747ce9a13fbdef51, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\LociExtensions.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -26,8 +27,8 @@
 #End Region
 
 Imports System.Runtime.CompilerServices
-Imports Microsoft.VisualBasic.DocumentFormat.Csv
-Imports Microsoft.VisualBasic.DocumentFormat.Csv.DocumentStream
+Imports Microsoft.VisualBasic.Data.csv
+Imports Microsoft.VisualBasic.Data.csv.IO
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns.Topologically
@@ -91,11 +92,24 @@ Public Module LociExtensions
 
     <Extension>
     Public Function ToLoci(x As Topologically.ImperfectPalindrome) As SimpleSegment
+        Dim id As String = ""
+
+        If Not x.Data Is Nothing Then
+            If x.Data.ContainsKey("seq") Then
+                id = x.Data("seq") & "-"
+            End If
+        Else
+
+        End If
+
+        id = id & $"{x.Left},{x.Paloci}"
+
         Return New SimpleSegment With {
             .Start = x.MappingLocation.Left,
             .Ends = x.MappingLocation.Right,
             .Strand = x.MappingLocation.Strand.GetBriefCode,
-            .SequenceData = x.Palindrome
+            .SequenceData = x.Palindrome,
+            .ID = id
         }
     End Function
 
@@ -135,42 +149,68 @@ Public Module LociExtensions
     ''' <param name="df"></param>
     ''' <returns></returns>
     <Extension>
-    Public Function ConvertsAuto(df As DocumentStream.File) As SimpleSegment()
-        Dim types As Type() = {GetType(ImperfectPalindrome), GetType(RevRepeats), GetType(Repeats), GetType(PalindromeLoci)}
+    Public Function ConvertsAuto(df As IO.File) As SimpleSegment()
+        Dim types As Type() = {
+            GetType(ImperfectPalindrome),
+            GetType(RevRepeatsView),
+            GetType(RevRepeats),
+            GetType(RepeatsView),
+            GetType(Repeats),
+            GetType(PalindromeLoci)
+        }
         Dim type As Type = df.GetType(types)
-        Dim handler As Func(Of DocumentStream.File, SimpleSegment()) = __types(type)
+        Dim handler As Func(Of IO.File, SimpleSegment()) = __types(type)
         Dim result As SimpleSegment() = handler(df)
 
         Return result
     End Function
 
-    Private Function __ip(df As DocumentStream.File) As SimpleSegment()
+    Private Function __ip(df As IO.File) As SimpleSegment()
         Return df.AsDataSource(Of ImperfectPalindrome).ToLocis
     End Function
 
-    Private Function __revp(df As DocumentStream.File) As SimpleSegment()
+    Private Function __revp(df As IO.File) As SimpleSegment()
         Return df.AsDataSource(Of RevRepeats).ToLocis
     End Function
 
-    Private Function __rps(df As DocumentStream.File) As SimpleSegment()
+    Private Function __rps(df As IO.File) As SimpleSegment()
         Return df.AsDataSource(Of Repeats).ToLocis
     End Function
 
-    Private Function __pl(df As DocumentStream.File) As SimpleSegment()
+    Private Function __revpcsv(df As IO.File) As SimpleSegment()
+        Return df.AsDataSource(Of RevRepeatsView).ToLocis
+    End Function
+
+    Private Function __rpscsv(df As IO.File) As SimpleSegment()
+        Return df.AsDataSource(Of RepeatsView).ToLocis
+    End Function
+
+    <Extension>
+    Public Function ToLocis(locis As IEnumerable(Of RepeatsView)) As SimpleSegment()
+        Return locis.Select(Function(l) l.ToLoci).ToArray
+    End Function
+
+    <Extension>
+    Public Function ToLocis(locis As IEnumerable(Of RevRepeatsView)) As SimpleSegment()
+        Return locis.Select(Function(l) l.ToLoci).ToArray
+    End Function
+
+    Private Function __pl(df As IO.File) As SimpleSegment()
         Return df.AsDataSource(Of PalindromeLoci).ToLocis
     End Function
 
-    ReadOnly __types As IReadOnlyDictionary(Of Type, Func(Of DocumentStream.File, SimpleSegment()))
+    ReadOnly __types As IReadOnlyDictionary(Of Type, Func(Of IO.File, SimpleSegment()))
 
     Sub New()
-        Dim hash As New Dictionary(Of Type, Func(Of DocumentStream.File, SimpleSegment()))
+        Dim hash As New Dictionary(Of Type, Func(Of IO.File, SimpleSegment()))
 
         Call hash.Add(GetType(ImperfectPalindrome), AddressOf __ip)
         Call hash.Add(GetType(RevRepeats), AddressOf __revp)
         Call hash.Add(GetType(Repeats), AddressOf __rps)
         Call hash.Add(GetType(PalindromeLoci), AddressOf __pl)
+        Call hash.Add(GetType(RepeatsView), AddressOf __rpscsv)
+        Call hash.Add(GetType(RevRepeatsView), AddressOf __revpcsv)
 
         __types = hash
     End Sub
 End Module
-

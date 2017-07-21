@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::878187c5605f9c2a8c3aad72ada68070, ..\GCModeller\analysis\SequenceToolkit\NeedlemanWunsch\NeedlemanWunschArguments.vb"
+﻿#Region "Microsoft.VisualBasic::13cb2c89a1947dbc830fa00d3c313209, ..\GCModeller\analysis\SequenceToolkit\NeedlemanWunsch\NeedlemanWunschArguments.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -126,7 +127,7 @@ Public Class NeedlemanWunschArguments(Of T)
         __toChar = toChar
     End Sub
 
-    ReadOnly __toChar As Func(Of T, Char)
+    Protected ReadOnly __toChar As Func(Of T, Char)
     ReadOnly __equals As IEquals(Of T)
 
     ''' <summary>

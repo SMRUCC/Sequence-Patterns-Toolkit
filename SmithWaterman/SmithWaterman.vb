@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::5efefa820f448a002b018aaad67b92d8, ..\GCModeller\analysis\SequenceToolkit\SmithWaterman\SmithWaterman.vb"
+﻿#Region "Microsoft.VisualBasic::313f6ceae19eb4b9a651f96893bff66f, ..\GCModeller\analysis\SequenceToolkit\SmithWaterman\SmithWaterman.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -65,9 +66,17 @@ Public Class SmithWaterman : Inherits GSW(Of Char)
         Return Output.CreateObject(Me, Function(x) x, cutoff, minW)
     End Function
 
-    Public Shared Function Align(query As FASTA.FastaToken, subject As FASTA.FastaToken, Optional blosum As Blosum = Nothing) As SmithWaterman
+    ''' <summary>
+    ''' Default using ``Blosum62`` matrix.
+    ''' </summary>
+    ''' <param name="query"></param>
+    ''' <param name="subject"></param>
+    ''' <param name="blosum"></param>
+    ''' <returns></returns>
+    Public Shared Function Align(query As FASTA.FastaToken,
+                                 subject As FASTA.FastaToken,
+                                 Optional blosum As Blosum = Nothing) As SmithWaterman
         Dim sw As New SmithWaterman(query.SequenceData, subject.SequenceData, blosum)
         Return sw
     End Function
 End Class
-

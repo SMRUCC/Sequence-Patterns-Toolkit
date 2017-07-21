@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::ada583d427d7614a7d2c1eab453ed049, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\Topologically\Exactly\RepeatsSearchAPI.vb"
+﻿#Region "Microsoft.VisualBasic::63d04383d28186b5756ac47e02302783, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\Topologically\Exactly\RepeatsSearchAPI.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -27,7 +28,7 @@
 
 Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.CommandLine.Reflection
-Imports Microsoft.VisualBasic.DocumentFormat.Csv.Extensions
+Imports Microsoft.VisualBasic.Data.csv.Extensions
 Imports Microsoft.VisualBasic.Linq.Extensions
 Imports Microsoft.VisualBasic.Scripting.MetaData
 Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns.Pattern
@@ -62,37 +63,37 @@ Namespace Topologically
         ''' <returns></returns>
         ''' <remarks></remarks>
         <ExportAPI("Invoke.Search")>
-        Public Function SearchRepeats(SequenceData As I_PolymerSequenceModel,
+        Public Function SearchRepeats(SequenceData As IPolymerSequenceModel,
                                       <Parameter("Min.Len", "The minimum length of the repeat sequence loci.")> Min As Integer,
                                       <Parameter("Max.Len", "The maximum length of the repeat sequence loci.")> Max As Integer,
                                       Optional MinAppeared As Integer = 2) As Repeats()
 
-            Dim Search As New RepeatsSearchs(SequenceData, Min, Max, MinAppeared)
-            Call Search.InvokeSearch()
+            Dim Search As New RepeatsSearcher(SequenceData, Min, Max, MinAppeared)
+            Call Search.DoSearch()
             Call Search.CountStatics.Save("./Random.Sequence.Matches.Counts.csv", False)
 
             Return Search.ResultSet.ToArray
         End Function
 
         <ExportAPI("Save")>
-        Public Function SaveDocument(data As Generic.IEnumerable(Of Repeats), <Parameter("Path.Csv")> SaveTo As String) As Boolean
+        Public Function SaveDocument(data As IEnumerable(Of Repeats), <Parameter("Path.Csv")> SaveTo As String) As Boolean
             Return Repeats.CreateDocument(data).SaveTo(SaveTo)
         End Function
 
         <ExportAPI("Save")>
-        Public Function SaveDocument(data As Generic.IEnumerable(Of RevRepeats), <Parameter("Path.Csv")> SaveTo As String) As Boolean
+        Public Function SaveDocument(data As IEnumerable(Of RevRepeats), <Parameter("Path.Csv")> SaveTo As String) As Boolean
             Return RevRepeats.CreateDocument(RevData:=data).SaveTo(SaveTo)
         End Function
 
         <ExportAPI("Save.Rev.Views")>
-        Public Function SaveRevViews(data As Generic.IEnumerable(Of RevRepeats),
+        Public Function SaveRevViews(data As IEnumerable(Of RevRepeats),
                                      <Parameter("Path.Csv")> SaveTo As String) As Boolean
             Dim view = RevRepeatsView.TrimView(data)
             Return view.SaveTo(SaveTo)
         End Function
 
         <ExportAPI("Save.Rep.Views")>
-        Public Function SaveRepeatsViews(data As Generic.IEnumerable(Of Repeats), <Parameter("Path.Csv")> SaveTo As String) As Boolean
+        Public Function SaveRepeatsViews(data As IEnumerable(Of Repeats), <Parameter("Path.Csv")> SaveTo As String) As Boolean
             Dim locis = Repeats.CreateDocument(data)
             Dim views = RepeatsView.TrimView(locis)
             Return views.SaveTo(SaveTo)
@@ -132,13 +133,12 @@ RETURN_VALUE:
         End Function
 
         <ExportAPI("Invoke.Search.Reversed")>
-        Public Function SearchReversedRepeats(SequenceData As I_PolymerSequenceModel,
+        Public Function SearchReversedRepeats(SequenceData As IPolymerSequenceModel,
                                               Min As Integer,
                                               Max As Integer,
                                               Optional MinAppeared As Integer = 2) As RevRepeats()
-            Dim revSearchs As New SearchReversedRepeats(SequenceData, Min, Max, MinAppeared)
-            Call revSearchs.InvokeSearch()
-            Call revSearchs.CountStatics.Save("./Reversed.Random.Sequence.Matches.Counts.csv", False)
+            Dim revSearchs As New ReversedRepeatSeacher(SequenceData, Min, Max, MinAppeared)
+            Call revSearchs.DoSearch()
             Return revSearchs.ResultSet.ToArray
         End Function
 
@@ -155,8 +155,8 @@ RETURN_VALUE:
                                        Optional MinAppeared As Integer = 2) As KeyValuePair(Of Double(), Double())
             Dim LQuery = (From genome As FastaToken
                           In Mla
-                          Select repeats = Topologically.RepeatsSearchAPI.SearchRepeats(genome, Min, Max, MinAppeared),
-                              rev = Topologically.RepeatsSearchAPI.SearchReversedRepeats(genome, Min, Max, MinAppeared)).ToArray
+                          Select repeats = RepeatsSearchAPI.SearchRepeats(genome, Min, Max, MinAppeared),
+                              rev = RepeatsSearchAPI.SearchReversedRepeats(genome, Min, Max, MinAppeared)).ToArray
             Dim Vecotrs = (From genome In LQuery
                            Let repeatsViews = RepeatsView.TrimView(Repeats.CreateDocument(genome.repeats)),
                                revViews = RevRepeatsView.TrimView(genome.rev)
@@ -201,7 +201,7 @@ RETURN_VALUE:
         Public Function Density(Of TView As RepeatsView)(DIR As String, size As Integer, ref As String, cutoff As Double) As Double()
             Dim files = FileIO.FileSystem.GetFiles(DIR, FileIO.SearchOption.SearchTopLevelOnly, "*.csv") _
                 .ToArray(Function(file) New With {
-                    .ID = IO.Path.GetFileNameWithoutExtension(file),
+                    .ID = basename(file),
                     .context = file.LoadCsv(Of TView)})
 
             VBDebugger.Mute = True
@@ -253,7 +253,7 @@ RETURN_VALUE:
         ''' <param name="max"></param>
         ''' <param name="minappear"></param>
         ''' <returns></returns>
-        <Extension> Public Function Trim(Of TRepeats As RepeatsView)(data As Generic.IEnumerable(Of TRepeats),
+        <Extension> Public Function Trim(Of TRepeats As RepeatsView)(data As IEnumerable(Of TRepeats),
                                                                      min As Integer,
                                                                      max As Integer,
                                                                      minappear As Integer) As TRepeats()
@@ -291,7 +291,7 @@ RETURN_VALUE:
         End Sub
 
         ''' <summary>
-        ''' Batch search for the repeats and reversed repeats sequence feature sites.
+        ''' Batch search for the repeats and reversed repeats sequence feature sites. ``<see cref="RepeatsView"/>`` and ``<see cref="RevRepeatsView"/>``
         ''' </summary>
         ''' <param name="Mla"></param>
         ''' <param name="Min"></param>

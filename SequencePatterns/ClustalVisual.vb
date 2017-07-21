@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::ee5d7d4d04db25ce354e3875aee9fd4d, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\ClustalVisual.vb"
+﻿#Region "Microsoft.VisualBasic::4115425a7046c1dad932c9b234204b15, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\ClustalVisual.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -27,14 +28,14 @@
 
 Imports System.Drawing
 Imports System.Runtime.CompilerServices
-Imports SMRUCC.genomics.SequenceModel
-Imports SMRUCC.genomics.SequenceModel.Patterns
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.ComponentModel.DataSourceModel.SchemaMaps
 Imports Microsoft.VisualBasic.Imaging
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Scripting.MetaData
+Imports SMRUCC.genomics.SequenceModel
+Imports SMRUCC.genomics.SequenceModel.Patterns
 
 ''' <summary>
 ''' Visualization for the result of Clustal multiple sequence alignment.
@@ -119,14 +120,14 @@ Public Module ClustalVisual
             aln.Max(Function(fa) fa.Length) * DotSize + StringSize.Width + 2 * Margin,
             (aln.NumberOfFasta + 1) * DotSize + 2.5 * Margin)
 
-        Dim gdi As GDIPlusDeviceHandle = grSize.CreateGDIDevice
+        Dim gdi As Graphics2D = grSize.CreateGDIDevice
         Dim X As Integer = 0.5 * Margin + StringSize.Width + 10
         Dim Y As Integer = Margin
         Dim DotFont As New Font(Ubuntu, FontSize + 1, FontStyle.Bold)
         Dim ConservedSites As Integer() =
             LinqAPI.Exec(Of Integer) <= From site As SeqValue(Of SimpleSite)
                                         In Patterns.Frequency(aln).Residues.SeqIterator
-                                        Where site.obj.IsConserved
+                                        Where site.value.IsConserved
                                         Select site.i
         Dim idx As Integer = 0
 
@@ -169,4 +170,3 @@ Public Module ClustalVisual
         Return gdi.ImageResource
     End Function
 End Module
-

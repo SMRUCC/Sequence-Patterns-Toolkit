@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::b07080a854bb3092a7f84ce8fe9f2e95, ..\GCModeller\analysis\SequenceToolkit\SmithWaterman\MotifScanner.vb"
+﻿#Region "Microsoft.VisualBasic::ff4271080512669e07e6b518bfab8445, ..\GCModeller\analysis\SequenceToolkit\SmithWaterman\MotifScanner.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -27,29 +28,34 @@
 
 Imports System.Linq
 Imports Microsoft.VisualBasic
+Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.ListExtensions
+Imports Microsoft.VisualBasic.Text
 Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns.Motif
 Imports SMRUCC.genomics.SequenceModel
 Imports SMRUCC.genomics.SequenceModel.NucleotideModels
 
 Public Class MotifScanner : Inherits IScanner
 
-    Sub New(nt As I_PolymerSequenceModel)
+    Sub New(nt As IPolymerSequenceModel)
         Call MyBase.New(nt)
     End Sub
 
     Public Overrides Function Scan(pattern As String) As SimpleSegment()
-        Return (Scan(__nt, pattern, AddressOf Equals).ToList + Scan(__nt, Complement(pattern), AddressOf Equals)).OrderBy(Function(x) x.Start).ToArray
+        Return (Scan(__nt, pattern, AddressOf Equals).AsList +
+            Scan(__nt, Complement(pattern), AddressOf Equals)) _
+            .OrderBy(Function(x) x.Start) _
+            .ToArray
     End Function
 
     ReadOnly __rand As Random = New Random
 
     Public Overloads Function Equals(pattern As String, residue As String) As Integer
-        Dim r As Char = residue.FirstOrDefault(NIL)
+        Dim r As Char = residue.FirstOrDefault(ASCII.NUL)
 
         If pattern.Length = 1 Then
-            Dim p As Char = pattern.FirstOrDefault(NIL)
+            Dim p As Char = pattern.FirstOrDefault(ASCII.NUL)
             If p = "."c OrElse p = "N"c Then
                 Return 10
             End If
@@ -87,7 +93,14 @@ Public Class MotifScanner : Inherits IScanner
         Dim subject As String() = nt.ToArray(Function(c) CStr(c))
         Dim GSW As New GSW(Of String)(words, subject, equals, AddressOf ToChar)
         Dim out As Output = GetOutput(GSW, 0, (2 / 3) * words.Length)
-        Return (From x In out.HSP Select New SimpleSegment With {.SequenceData = x.Subject, .Start = x.FromB, .Ends = x.ToB}).ToArray
+
+        Return LinqAPI.Exec(Of SimpleSegment) <= From x As HSP
+                                                 In out.HSP
+                                                 Select New SimpleSegment With {
+                                                     .SequenceData = x.Subject,
+                                                     .Start = x.FromB,
+                                                     .Ends = x.ToB
+                                                 }
     End Function
 
     ''' <summary>
@@ -101,16 +114,15 @@ Public Class MotifScanner : Inherits IScanner
 
     Public Shared Function ToChar(s As String) As Char
         If s.Length = 1 Then
-            Dim c As Char = s.FirstOrDefault(NIL)
+            Dim c As Char = s.FirstOrDefault(ASCII.NUL)
             If c = "." Then
                 Return "N"c
             Else
                 Return c
             End If
         Else
-            Dim c As Char = s.FirstOrDefault(NIL)
+            Dim c As Char = s.FirstOrDefault(ASCII.NUL)
             Return Char.ToLower(c)
         End If
     End Function
 End Class
-

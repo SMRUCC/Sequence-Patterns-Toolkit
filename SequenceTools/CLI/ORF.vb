@@ -1,27 +1,28 @@
-﻿#Region "Microsoft.VisualBasic::232674d596f2ee561a0d13be6391bb75, ..\GCModeller\analysis\SequenceToolkit\SequenceTools\CLI\ORF.vb"
+﻿#Region "Microsoft.VisualBasic::a343869e0a77fd833e8db1c4dc9e2148, ..\GCModeller\analysis\SequenceToolkit\SequenceTools\CLI\ORF.vb"
 
-' Author:
-' 
-'       asuka (amethyst.asuka@gcmodeller.org)
-'       xieguigang (xie.guigang@live.com)
-' 
-' Copyright (c) 2016 GPL3 Licensed
-' 
-' 
-' GNU GENERAL PUBLIC LICENSE (GPL3)
-' 
-' This program is free software: you can redistribute it and/or modify
-' it under the terms of the GNU General Public License as published by
-' the Free Software Foundation, either version 3 of the License, or
-' (at your option) any later version.
-' 
-' This program is distributed in the hope that it will be useful,
-' but WITHOUT ANY WARRANTY; without even the implied warranty of
-' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-' GNU General Public License for more details.
-' 
-' You should have received a copy of the GNU General Public License
-' along with this program. If not, see <http://www.gnu.org/licenses/>.
+    ' Author:
+    ' 
+    '       asuka (amethyst.asuka@gcmodeller.org)
+    '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
+    ' 
+    ' Copyright (c) 2016 GPL3 Licensed
+    ' 
+    ' 
+    ' GNU GENERAL PUBLIC LICENSE (GPL3)
+    ' 
+    ' This program is free software: you can redistribute it and/or modify
+    ' it under the terms of the GNU General Public License as published by
+    ' the Free Software Foundation, either version 3 of the License, or
+    ' (at your option) any later version.
+    ' 
+    ' This program is distributed in the hope that it will be useful,
+    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ' GNU General Public License for more details.
+    ' 
+    ' You should have received a copy of the GNU General Public License
+    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #End Region
 
@@ -38,9 +39,10 @@ Partial Module Utilities
     <ExportAPI("--translates",
                Info:="Translates the ORF gene as protein sequence. If any error was output from the console, please using > operator dump the output to a log file for the analysis.",
                Usage:="--translates /orf <orf.fasta> [/transl_table 1 /force]")>
-    <ParameterInfo("/orf", False, Description:="ORF gene nt sequence should be completely complement and reversed as forwards strand if it is complement strand.")>
-    <ParameterInfo("/force", True, Description:="This force parameter will force the translation program ignore of the stop code and continute sequence translation.")>
-    <ParameterInfo("/transl_table", True, Description:="Available index value was described at http://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/index.cgi?chapter=tgencodes#SG25")>
+    <Argument("/orf", False, CLITypes.File, PipelineTypes.std_in, Description:="ORF gene nt sequence should be completely complement and reversed as forwards strand if it is complement strand.")>
+    <Argument("/force", True, CLITypes.Boolean, PipelineTypes.undefined, Description:="This force parameter will force the translation program ignore of the stop code and continute sequence translation.")>
+    <Argument("/transl_table", True, Description:="Available index value was described at 
+    http://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/index.cgi?chapter=tgencodes#SG25")>
     Public Function Translates(<Parameter("args",
                                           "/transl_table Available index value was described at http://www.ncbi.nlm.nih.gov/Taxonomy/taxonomyhome.html/index.cgi?chapter=tgencodes#SG25")>
                                args As CommandLine) As Integer

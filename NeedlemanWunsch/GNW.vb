@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::c7e30cdcaad553f03d80fa6c9b87ec20, ..\GCModeller\analysis\SequenceToolkit\NeedlemanWunsch\GNW.vb"
+﻿#Region "Microsoft.VisualBasic::93ef32378e9e16be9d1b902a1d222b3c, ..\GCModeller\analysis\SequenceToolkit\NeedlemanWunsch\GNW.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -26,6 +27,8 @@
 #End Region
 
 Imports System.IO
+Imports Microsoft.VisualBasic.Math
+Imports Microsoft.VisualBasic.Linq
 
 ''' <summary>
 ''' Needleman-Wunsch Algorithm
@@ -157,7 +160,7 @@ Public Class NeedlemanWunsch(Of T)
                 Dim a As Integer = matrix(i - 1)(j - 1) + Me.match(___sequence1(j - 1), ___sequence2(i - 1))
                 Dim b As Integer = matrix(i)(j - 1) - Me.GapPenalty
                 Dim c As Integer = matrix(i - 1)(j) - Me.GapPenalty
-                Dim max As Integer = VBMathExtensions.Max(a, b, c)
+                Dim max As Integer = VBMath.Max(a, b, c)
 
                 ' fill cell of the scoring matrix
                 matrix(i)(j) = max
@@ -186,7 +189,7 @@ Public Class NeedlemanWunsch(Of T)
     ''' <param name="upper"> </param>
     ''' <returns> code for the maximizing cell(s) </returns>
     Private Function fillTracebackMatrix(upperLeft As Integer, left As Integer, upper As Integer) As Integer
-        Dim max As Integer = VBMathExtensions.Max(upperLeft, left, upper)
+        Dim max As Integer = VBMath.Max(upperLeft, left, upper)
 
         If upperLeft = left AndAlso left = upper Then
             Return 7
@@ -207,41 +210,36 @@ Public Class NeedlemanWunsch(Of T)
 
     ''' <summary>
     ''' This funktion provide a easy way to write a computed alignment into a fasta file </summary>
-    ''' <param name="outFile"> </param>
+    ''' <param name="output"> </param>
     ''' <param name="single"> </param>
-    Public Sub writeAlignment(outFile As String, [single] As Boolean)
-        Using outputFile As New FileStream(outFile, FileMode.OpenOrCreate)
-            Using output As New StreamWriter(outputFile)
-
-                If [single] Then
-                    output.Write(">SEQUENCE_1|Score:")
-                    output.Write(Me.Score)
-                    output.WriteLine()
-                    output.Write(Me.getAligned1(0))
-                    output.WriteLine()
-                    output.Write(">SEQUENCE_2|Score:")
-                    output.Write(Me.Score)
-                    output.WriteLine()
-                    output.Write(Me.getAligned2(0))
-                Else
-                    For i As Integer = 0 To Me.NumberOfAlignments - 1
-                        output.Write(">SEQUENCE_1|Alignment:")
-                        output.Write(i + 1)
-                        output.Write("|Score:")
-                        output.Write(Me.Score)
-                        output.WriteLine()
-                        output.Write(Me.getAligned1(0))
-                        output.WriteLine()
-                        output.Write(">SEQUENCE_2|Alignment:")
-                        output.Write(i + 1)
-                        output.Write("|Score:")
-                        output.Write(Me.Score)
-                        output.WriteLine()
-                        output.Write(Me.getAligned2(0))
-                        output.WriteLine()
-                    Next
-                End If
-            End Using
-        End Using
+    Public Sub writeAlignment(output As StreamWriter, [single] As Boolean)
+        If [single] Then
+            output.Write(">SEQUENCE_1|Score:")
+            output.Write(Me.Score)
+            output.WriteLine()
+            output.Write(New String(Me.getAligned1(0).ToArray(__toChar)))
+            output.WriteLine()
+            output.Write(">SEQUENCE_2|Score:")
+            output.Write(Me.Score)
+            output.WriteLine()
+            output.Write(New String(Me.getAligned2(0).ToArray(__toChar)))
+        Else
+            For i As Integer = 0 To Me.NumberOfAlignments - 1
+                output.Write(">SEQUENCE_1|Alignment:")
+                output.Write(i + 1)
+                output.Write("|Score:")
+                output.Write(Me.Score)
+                output.WriteLine()
+                output.Write(New String(Me.getAligned1(i).ToArray(__toChar)))
+                output.WriteLine()
+                output.Write(">SEQUENCE_2|Alignment:")
+                output.Write(i + 1)
+                output.Write("|Score:")
+                output.Write(Me.Score)
+                output.WriteLine()
+                output.Write(New String(Me.getAligned2(i).ToArray(__toChar)))
+                output.WriteLine()
+            Next
+        End If
     End Sub
 End Class

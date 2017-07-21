@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::2b8a9e9c97f440080d4d2859e92b9529, ..\GCModeller\analysis\SequenceToolkit\SequenceTools\CLI\Repeats.vb"
+﻿#Region "Microsoft.VisualBasic::b3f20cd45ef20ca0661bd685baf0245a, ..\GCModeller\analysis\SequenceToolkit\SequenceTools\CLI\Repeats.vb"
 
 ' Author:
 ' 
 '       asuka (amethyst.asuka@gcmodeller.org)
 '       xieguigang (xie.guigang@live.com)
+'       xie (genetics@smrucc.org)
 ' 
 ' Copyright (c) 2016 GPL3 Licensed
 ' 
@@ -27,32 +28,122 @@
 
 Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.Reflection
+Imports Microsoft.VisualBasic.ComponentModel.Ranges
+Imports Microsoft.VisualBasic.Data.csv
+Imports Microsoft.VisualBasic.Data.csv.IO.Linq
+Imports Microsoft.VisualBasic.Language
 Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns
 Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns.Topologically
+Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns.Topologically.Seeding
 Imports SMRUCC.genomics.SequenceModel.FASTA
 Imports SMRUCC.genomics.SequenceModel.Polypeptides
 
 Partial Module Utilities
 
+    ''' <summary>
+    ''' 這個函數會將文件夾之中的文件都合并到一個文件之中
+    ''' </summary>
+    ''' <param name="args"></param>
+    ''' <returns></returns>
+    <ExportAPI("/Screen.sites",
+               Usage:="/Screen.sites /in <DIR/sites.csv> /range <min_bp>,<max_bp> [/type <type,default:=RepeatsView,alt:RepeatsView,RevRepeatsView,PalindromeLoci,ImperfectPalindrome> /out <out.csv>]")>
+    <Argument("/in", AcceptTypes:={
+        GetType(RepeatsView),
+        GetType(RevRepeatsView),
+        GetType(PalindromeLoci),
+        GetType(ImperfectPalindrome)
+    })>
+    Public Function ScreenRepeats(args As CommandLine) As Integer
+        Dim [in] As String = args("/in")
+        Dim range As String() = args("/range").Split(","c)
+        Dim loci As New IntRange(Val(range(Scan0)), Val(range(1)))
+        Dim type As String = args.GetValue("/type", "RepeatsView")
+        Dim out As String = If(
+            [in].FileExists,
+            [in].TrimSuffix,
+            [in].TrimDIR) & $"-range={args("/range")}.csv"
+
+        out = args.GetValue("/out", out)
+
+        If type.TextEquals(NameOf(RepeatsView)) Then
+            Dim result As New List(Of RepeatsView)
+
+            For Each part In loci.RangeSelects([in].RequestFiles(Of RepeatsView))
+                For Each x In part.Value
+                    x.Data.Add("seq", part.Name)
+                Next
+
+                result += part.Value
+            Next
+
+            Return result.SaveTo(out).CLICode
+
+        ElseIf type.TextEquals(NameOf(RevRepeatsView)) Then
+            Dim result As New List(Of RevRepeatsView)
+
+            For Each part In loci.RangeSelects([in].RequestFiles(Of RevRepeatsView))
+                For Each x In part.Value
+                    x.Data.Add("seq", part.Name)
+                Next
+
+                result += part.Value
+            Next
+
+            Return result.SaveTo(out).CLICode
+
+        ElseIf type.TextEquals(NameOf(PalindromeLoci)) Then
+            Dim result As New List(Of PalindromeLoci)
+
+            For Each part In loci.RangeSelects([in].RequestFiles(Of PalindromeLoci))
+                For Each x In part.Value
+                    x.Data.Add("seq", part.Name)
+                Next
+
+                result += part.Value
+            Next
+
+            Return result.SaveTo(out).CLICode
+
+        ElseIf type.TextEquals(NameOf(ImperfectPalindrome)) Then
+            Dim result As New List(Of ImperfectPalindrome)
+
+            For Each part In loci.RangeSelects([in].RequestFiles(Of ImperfectPalindrome))
+                For Each x In part.Value
+                    x.Data.Add("seq", part.Name)
+                Next
+
+                result += part.Value
+            Next
+
+            Return result.SaveTo(out).CLICode
+
+        Else
+            Throw New Exception("Type is invalid: " & type)
+        End If
+    End Function
+
     <ExportAPI("Search.Batch",
                Info:="Batch search for repeats.",
                Usage:="Search.Batch /aln <alignment.fasta> [/min 3 /max 20 /min-rep 2 /out <./>]")>
-    <ParameterInfo("/aln", False,
+    <Argument("/aln", False,
                    Description:="The input fasta file should be the output of the clustal multiple alignment fasta output.")>
+    <Argument("/out", True, AcceptTypes:={GetType(RepeatsView), GetType(RevRepeatsView)})>
+    <Group(CLIGrouping.RepeatsTools)>
     Public Function BatchSearch(args As CommandLine) As Integer
         Dim Mla As FastaFile = args.GetObject("/aln", AddressOf FastaFile.Read)
         Dim Min As Integer = args.GetValue("/min", 3)
         Dim Max As Integer = args.GetValue("/max", 20)
         Dim MinAppeared As Integer = args.GetValue("/min-rep", 2)
-        Dim SaveDir As String = args.GetValue("/out", "./")
+        Dim EXPORT As String = args.GetValue("/out", "./")
 
-        Call Topologically.BatchSearch(Mla, Min, Max, MinAppeared, SaveDir)
+        Call Topologically.BatchSearch(Mla, Min, Max, MinAppeared, EXPORT)
 
         Return 0
     End Function
 
     <ExportAPI("Repeats.Density",
                Usage:="Repeats.Density /dir <dir> /size <size> /ref <refName> [/out <out.csv> /cutoff <default:=0>]")>
+    <Group(CLIGrouping.RepeatsTools)>
     Public Function RepeatsDensity(args As CommandLine) As Integer
         Dim DIR As String = args("/dir")
         Dim size As Integer = args.GetInt32("/size")
@@ -62,6 +153,7 @@ Partial Module Utilities
     End Function
 
     <ExportAPI("rev-Repeats.Density", Usage:="rev-Repeats.Density /dir <dir> /size <size> /ref <refName> [/out <out.csv> /cutoff <default:=0>]")>
+    <Group(CLIGrouping.RepeatsTools)>
     Public Function revRepeatsDensity(args As CommandLine) As Integer
         Dim DIR As String = args("/dir")
         Dim size As Integer = args.GetInt32("/size")
@@ -72,6 +164,7 @@ Partial Module Utilities
 
     <ExportAPI("/Write.Seeds",
                Usage:="/Write.Seeds /out <out.dat> [/prot /max <20>]")>
+    <Group(CLIGrouping.RepeatsTools)>
     Public Function WriteSeeds(args As CommandLine) As Integer
         Dim isProt As Boolean = args.GetBoolean("/prot")
         Dim out As String = args("/out")

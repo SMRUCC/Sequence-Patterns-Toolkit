@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::01068a1885454e2317cc2bde1494ec5b, ..\GCModeller\analysis\SequenceToolkit\ClustalOmega\Clustal.vb"
+﻿#Region "Microsoft.VisualBasic::b06dd03b99a5011003c9491a45384d41, ..\GCModeller\analysis\SequenceToolkit\ClustalOmega\Clustal.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -30,6 +31,7 @@ Imports Microsoft.VisualBasic.CommandLine
 Imports Microsoft.VisualBasic.CommandLine.Reflection
 Imports Microsoft.VisualBasic.Parallel.Tasks
 Imports Microsoft.VisualBasic.Scripting.MetaData
+Imports CLI = Microsoft.VisualBasic.CommandLine.InteropService.InteropService
 
 ''' <summary>
 ''' Clustal Omega(多序列比对工具)
@@ -85,7 +87,7 @@ The accuracy of the package on smaller test cases is similar to that of the high
 Clustal Omega also has powerful features for adding sequences to and exploiting information in existing alignments, making use of the vast amount of precomputed information in public databases like Pfam.",
       AuthorAddress:="School of Medicine and Medical Science, UCD Conway Institute of Biomolecular and Biomedical Research, University College Dublin, Dublin, Ireland.",
       PubMed:=21988835)>
-Public Class Clustal : Inherits InteropService
+Public Class Clustal : Inherits CLI
 
     ''' <summary>
     ''' 
@@ -116,7 +118,7 @@ Public Class Clustal : Inherits InteropService
         Dim out As String = App.GetAppSysTempFile(".fasta")
         Dim args As String = String.Format(CLUSTAL_ARGUMENTS, source, out)
         Call Console.WriteLine("EXEC --> {0} {1}", MyBase._executableAssembly, args)
-        Call New IORedirectFile(MyBase._executableAssembly, args).Start(WaitForExit:=True)
+        Call New IORedirectFile(MyBase._executableAssembly, args).Start(waitForExit:=True)
 
         Dim result As FASTA.FastaFile = FASTA.FastaFile.Read(out, False)
         Return result
@@ -179,4 +181,3 @@ RELEASE_PACKAGE:
         Return My.Resources.AUTHORS
     End Function
 End Class
-

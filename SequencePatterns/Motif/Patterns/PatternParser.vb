@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::e718eeb2987193018e616d2c80e5c36d, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\Motif\Patterns\PatternParser.vb"
+﻿#Region "Microsoft.VisualBasic::d2d28e43e76d50bf9e743b2d3c3e2c12, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\Motif\Patterns\PatternParser.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -25,11 +26,12 @@
 
 #End Region
 
-Imports Microsoft.VisualBasic.Scripting.TokenIcer
-Imports Microsoft.VisualBasic
-Imports System.Text.RegularExpressions
 Imports System.Text
+Imports System.Text.RegularExpressions
+Imports Microsoft.VisualBasic
 Imports Microsoft.VisualBasic.Emit.Marshal
+Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Scripting.TokenIcer
 
 Namespace Motif.Patterns
 
@@ -65,7 +67,7 @@ Namespace Motif.Patterns
         End Function
 
         Public Function ExpressionParser(pattern As String) As PatternExpression
-            Dim tokens As List(Of Token(Of Tokens)) = TokenIcer(pattern).ToList
+            Dim tokens As List(Of Token(Of Tokens)) = TokenIcer(pattern).AsList
             Dim motif As New PatternExpression With {
                 .RangeExpr = (From x In tokens Where x.Type = Patterns.Tokens.Expression Select x).ToArray
             }

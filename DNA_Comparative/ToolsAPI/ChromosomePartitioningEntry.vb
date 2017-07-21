@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::4f9290a5cadbcc4b0d71a26d6d77b92c, ..\GCModeller\analysis\SequenceToolkit\DNA_Comparative\ToolsAPI\ChromosomePartitioningEntry.vb"
+﻿#Region "Microsoft.VisualBasic::d8fa0981d1a3fe9d5048da33d1338697, ..\GCModeller\analysis\SequenceToolkit\DNA_Comparative\ToolsAPI\ChromosomePartitioningEntry.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -25,7 +26,7 @@
 
 #End Region
 
-Imports Microsoft.VisualBasic.DocumentFormat.Csv.StorageProvider.Reflection
+Imports Microsoft.VisualBasic.Data.csv.StorageProvider.Reflection
 Imports Microsoft.VisualBasic.Language
 
 Public Class ChromosomePartitioningEntry : Inherits ClassObject

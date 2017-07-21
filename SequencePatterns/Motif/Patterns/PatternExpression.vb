@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::e2c6c8f5353559ee3940d8e2863d2a58, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\Motif\Patterns\PatternExpression.vb"
+﻿#Region "Microsoft.VisualBasic::b6bb036418365ed293200fd489ebb318, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\Motif\Patterns\PatternExpression.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -40,7 +41,7 @@ Namespace Motif.Patterns
     ''' 使用正则表达式来表示序列的模式
     ''' </summary>
     Public Class PatternExpression
-        Implements sIdEnumerable
+        Implements INamedValue
 
         Public Property RangeExpr As Token(Of Tokens)()
 
@@ -55,7 +56,7 @@ Namespace Motif.Patterns
             End Set
         End Property
 
-        Public Property Identifier As String Implements sIdEnumerable.Identifier
+        Public Property Identifier As String Implements INamedValue.Key
 
         Dim __motif As Residue()
         Dim __regex As Regex
@@ -64,7 +65,7 @@ Namespace Motif.Patterns
         ''' </summary>
         Dim __rc As Regex
 
-        Public Function Match(seq As I_PolymerSequenceModel) As SimpleSegment()
+        Public Function Match(seq As IPolymerSequenceModel) As SimpleSegment()
             Dim nt As String = seq.SequenceData.ToUpper
             Dim matches = __regex.Matches(nt).ToArray
 

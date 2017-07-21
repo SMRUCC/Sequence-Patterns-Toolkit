@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::66753f43779f06e0330bb81a9f415f4e, ..\GCModeller\analysis\SequenceToolkit\SequenceTools\ShellScriptAPI.vb"
+﻿#Region "Microsoft.VisualBasic::506248cadf9b1dd170e28ac350e64e31, ..\GCModeller\analysis\SequenceToolkit\SequenceTools\ShellScriptAPI.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -89,11 +90,11 @@ Public Module ShellScriptAPI
     ''' <remarks></remarks>
     <ExportAPI("-Pattern_Search", Info:="Parsing the sequence segment from the sequence source using regular expression.",
         Usage:="-pattern_search fasta <fasta_object> pattern <regex_pattern> output <output_directory>")>
-    <ParameterInfo("-p",
+    <Argument("-p",
         Description:="This switch specific the regular expression pattern for search the sequence segment,\n" &
                      "for more detail information about the regular expression please read the user manual.",
         Example:="N{1,5}TA")>
-    <ParameterInfo("-o", True,
+    <Argument("-o", True,
         Description:="Optional, this switch value specific the output directory for the result data, default is user Desktop folder.",
         Example:="~/Documents/")>
     Public Function PatternSearchA(fasta As FastaFile, pattern As String, outDIR As String) As Integer
@@ -133,4 +134,3 @@ Public Module ShellScriptAPI
         Return New AlignmentResult(query, subject, cost)
     End Function
 End Module
-

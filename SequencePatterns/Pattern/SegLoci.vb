@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::feb7c0273fee5dcb6afe6819cf3d7fe1, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\Pattern\SegLoci.vb"
+﻿#Region "Microsoft.VisualBasic::593a74e9ee5ec9a56b58aa31fb794efa, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\Pattern\SegLoci.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -25,11 +26,11 @@
 
 #End Region
 
-Imports Microsoft.VisualBasic.DocumentFormat.Csv.DocumentStream
 Imports System.Text.RegularExpressions
 Imports System.Xml.Serialization
-Imports SMRUCC.genomics.SequenceModel.FASTA.FastaFile
+Imports Microsoft.VisualBasic.Data.csv.IO
 Imports SMRUCC.genomics.ComponentModel.Loci.Abstract
+Imports SMRUCC.genomics.SequenceModel.FASTA.FastaFile
 
 Namespace Pattern
 

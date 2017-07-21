@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::9c81b738dd3aaea7a9334c6fd717ce9d, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\Motif\MotifPattern.vb"
+﻿#Region "Microsoft.VisualBasic::b5bcf3947a5db7b3e365d8558f18cf53, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\Motif\MotifPattern.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -34,9 +35,9 @@ Namespace Motif
     ''' <summary>
     ''' Regular expression model for the motifs
     ''' </summary>
-    Public Class MotifPattern : Implements sIdEnumerable
+    Public Class MotifPattern : Implements INamedValue
 
-        Public Property Id As String Implements sIdEnumerable.Identifier
+        Public Property Id As String Implements INamedValue.Key
         Public Property Expression As String
         Public Property Motif As String
         Public Property Width As Integer

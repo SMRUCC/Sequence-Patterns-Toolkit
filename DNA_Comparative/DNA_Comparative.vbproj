@@ -27,7 +27,7 @@
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\..\GCModeller\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>SMRUCC.genomics.Analysis.SequenceTools.DNA_Comparative.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
@@ -47,7 +47,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>G:\GCModeller\GCModeller\bin</OutputPath>
+    <OutputPath>bin\Debug</OutputPath>
     <DocumentationFile>SMRUCC.genomics.Analysis.SequenceTools.DNA_Comparative.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <DebugType>full</DebugType>
@@ -145,10 +145,22 @@
     <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2|AnyCPU'">
+    <OutputPath>bin\Release2\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2|x64'">
+    <OutputPath>bin\x64\Release2\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release2|x86'">
+    <OutputPath>bin\x86\Release2\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
+    <Reference Include="System.ValueTuple">
+      <HintPath>..\..\..\..\packages\System.ValueTuple.4.4.0-preview1-25305-02\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -166,10 +178,14 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeltaSimilarity1998\CAI\CodonBiasVector.vb" />
+    <Compile Include="DeltaSimilarity1998\ReferenceRule.vb" />
+    <Compile Include="DeltaSimilarity1998\SimilarDiscriptions.vb" />
     <Compile Include="IdentityResult.vb" />
-    <Compile Include="Sigma\CAI\CAITable.vb" />
-    <Compile Include="Sigma\CAI\CodonFrequency.vb" />
-    <Compile Include="Sigma\CAI\CodonFrequencyCAI.vb" />
+    <Compile Include="GCOutlier.vb" />
+    <Compile Include="DeltaSimilarity1998\CAI\XML\CodonAdaptationIndex.vb" />
+    <Compile Include="DeltaSimilarity1998\CAI\CodonFrequency.vb" />
+    <Compile Include="DeltaSimilarity1998\CAI\XML\CodonFrequency.vb" />
     <Compile Include="gwANI\gwANI.vb" />
     <Compile Include="gwANI\Const.vb" />
     <Compile Include="gwANI\gwANIExtensions.vb" />
@@ -177,11 +193,11 @@
     <Compile Include="ToolsAPI\SegmentRenderData.vb" />
     <Compile Include="ToolsAPI\SiteSigma.vb" />
     <Compile Include="ToolsAPI\PartitioningData.vb" />
-    <Compile Include="Sigma\NucleicAcid.vb" />
-    <Compile Include="Sigma\PlasmidComparative.vb" />
-    <Compile Include="Sigma\GenomeSignatures.vb" />
-    <Compile Include="Sigma\DifferenceMeasurement.vb" />
-    <Compile Include="Sigma\CAI\RelativeCodonBiases.vb" />
+    <Compile Include="DeltaSimilarity1998\NucleicAcid.vb" />
+    <Compile Include="ToolsAPI\PlasmidComparative.vb" />
+    <Compile Include="DeltaSimilarity1998\GenomeSignatures.vb" />
+    <Compile Include="DeltaSimilarity1998\DifferenceMeasurement.vb" />
+    <Compile Include="DeltaSimilarity1998\CAI\RelativeCodonBiases.vb" />
     <Compile Include="ToolsAPI\ToolsAPI.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -217,11 +233,20 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\runtime\visualbasic_App\DocumentFormats\VB_DataFrame\VB_DataFrame\+VB_DataFrame.vbproj">
+    <ProjectReference Include="..\..\..\..\runtime\sciBASIC#\Data\DataFrame\+VB_DataFrame.vbproj">
       <Project>{7283c179-f852-4ead-8d8f-b82ef2cbd7db}</Project>
       <Name>+VB_DataFrame</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\runtime\sciBASIC#\Data_science\Mathematical\Math\math-core.vbproj">
+      <Project>{e3367b88-5d0c-495a-8273-331656d4b5aa}</Project>
+      <Name>Microsoft.VisualBasic.Mathematical</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\runtime\sciBASIC#\Microsoft.VisualBasic.Architecture.Framework\+Microsoft.VisualBasic.Architecture.Framework.vbproj">
+      <Project>{fecce1fd-e1d4-49e3-a668-60bb5e7aed99}</Project>
+      <Name>+Microsoft.VisualBasic.Architecture.Framework</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\core\Bio.Assembly\Bio.Assembly.vbproj">
       <Project>{c699d311-9923-4c19-bf70-5048d0e2cf5d}</Project>
@@ -230,10 +255,6 @@
     <ProjectReference Include="..\..\..\..\interops\localblast\LocalBLAST\NCBI.Extensions.localblast.vbproj">
       <Project>{c6b843b8-f990-4faf-98de-a20efc8b69f7}</Project>
       <Name>NCBI.Extensions.localblast</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\runtime\visualbasic_App\Microsoft.VisualBasic.Architecture.Framework\+Microsoft.VisualBasic.Architecture.Framework.vbproj">
-      <Project>{fecce1fd-e1d4-49e3-a668-60bb5e7aed99}</Project>
-      <Name>+Microsoft.VisualBasic.Architecture.Framework</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

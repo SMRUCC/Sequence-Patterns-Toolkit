@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::1afa6f6dbc22e17a8a3735f2a50597aa, ..\GCModeller\analysis\SequenceToolkit\NeedlemanWunsch\RunNeedlemanWunsch.vb"
+﻿#Region "Microsoft.VisualBasic::42acc64fc79a57cd9e43ea270f5e2e8c, ..\GCModeller\analysis\SequenceToolkit\NeedlemanWunsch\RunNeedlemanWunsch.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -25,8 +26,8 @@
 
 #End Region
 
-Imports Microsoft.VisualBasic
-Imports System
+Imports System.IO
+Imports Microsoft.VisualBasic.Text
 Imports SMRUCC.genomics.SequenceModel
 
 ''' <summary>
@@ -40,33 +41,45 @@ Imports SMRUCC.genomics.SequenceModel
 Public Module RunNeedlemanWunsch
 
     ''' <summary>
-    ''' Run the Needleman-Wunsch Algorithm </summary>
+    ''' Run the Needleman-Wunsch Algorithm 
+    ''' </summary>
     ''' <param name="fasta1"> commandline arguments </param>
+    ''' <param name="output">假若这个参数为空，则会被输出到终端窗口，如果不想有任何输出，则可以重定向到<see cref="App.NullDevice"/></param>
     ''' <exception cref="Exception"> </exception>
-    Public Sub RunAlign(fasta1 As FASTA.FastaToken, fasta2 As FASTA.FastaToken, [single] As Boolean, outfile As String)
+    ''' <returns>This function returns the alignment score</returns>
+    Public Function RunAlign(fasta1 As FASTA.FastaToken,
+                             fasta2 As FASTA.FastaToken,
+                             [single] As Boolean,
+                             Optional output As StreamWriter = Nothing,
+                             Optional echo As Boolean = True) As Double
+
         Dim nw As New NeedlemanWunsch(fasta1.SequenceData, fasta2.SequenceData)
 
         ' display input
-        Console.WriteLine("Input:")
-        Console.WriteLine(vbTab & "seq1 = " & nw.Query)
-        Console.WriteLine(vbTab & "seq2 = " & nw.Subject)
-        Console.WriteLine()
+        If echo Then
+            Console.WriteLine("Input:")
+            Console.WriteLine(vbTab & "seq1 = " & nw.Query)
+            Console.WriteLine(vbTab & "seq2 = " & nw.Subject)
+            Console.WriteLine()
+        End If
 
         ' run algorithm
-        nw.compute()
+        Call nw.compute()
 
         If [single] Then
-            If outfile Is Nothing Then
+            If output Is Nothing Then
                 Console.WriteLine("Alignment :")
                 Console.WriteLine(vbTab & "aligned1 = " & nw.getAligned1(0))
                 Console.WriteLine(vbTab & "aligned2 = " & nw.getAligned2(0))
                 Console.WriteLine("--------------------------------")
                 Console.WriteLine("Alignment-Score = " & nw.Score)
             Else
-                nw.writeAlignment(outfile, True)
+                SyncLock output
+                    Call nw.writeAlignment(output, True)
+                End SyncLock
             End If
         Else
-            If outfile Is Nothing Then
+            If output Is Nothing Then
                 ' display all possible optimal alignments
                 For i As Integer = 0 To nw.NumberOfAlignments - 1
                     Console.WriteLine("Alignment " & (i + 1) & ":")
@@ -77,8 +90,29 @@ Public Module RunNeedlemanWunsch
                 Console.WriteLine("--------------------------------")
                 Console.WriteLine("Alignment-Score = " & nw.Score)
             Else
-                nw.writeAlignment(outfile, False)
+                SyncLock output
+                    Call nw.writeAlignment(output, False)
+                End SyncLock
             End If
         End If
-    End Sub
+
+        Return nw.Score
+    End Function
+
+    ''' <summary>
+    ''' Run the Needleman-Wunsch Algorithm 
+    ''' </summary>
+    ''' <param name="fasta1"> commandline arguments </param>
+    ''' <param name="outfile">假若文件路径的参数为空，则会被输出到终端</param>
+    ''' <exception cref="Exception"> </exception>
+    ''' <returns>This function returns the alignment score</returns>
+    Public Function RunAlign(fasta1 As FASTA.FastaToken, fasta2 As FASTA.FastaToken, [single] As Boolean, Optional outfile$ = Nothing) As Double
+        If String.IsNullOrEmpty(outfile) Then
+            Return RunAlign(fasta1, fasta2, [single], output:=Nothing)
+        Else
+            Using writer As StreamWriter = outfile.OpenWriter(Encodings.ASCII)
+                Return RunAlign(fasta1, fasta2, [single], writer)
+            End Using
+        End If
+    End Function
 End Module

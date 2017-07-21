@@ -4,6 +4,7 @@
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -40,7 +41,7 @@ Namespace Motif
 
         Protected ReadOnly __nt As String
 
-        Sub New(nt As I_PolymerSequenceModel)
+        Sub New(nt As IPolymerSequenceModel)
             __nt = nt.SequenceData.ToUpper
         End Sub
 
@@ -125,12 +126,12 @@ Namespace Motif
     ''' </summary>
     Public Class Scanner : Inherits IScanner
 
-        Sub New(nt As I_PolymerSequenceModel)
+        Sub New(nt As IPolymerSequenceModel)
             Call MyBase.New(nt)
         End Sub
 
         Public Overrides Function Scan(pattern As String) As SimpleSegment()
-            Return (Scan(__nt, pattern, "+"c).ToList + Scan(__nt, Complement(pattern), "-"c)).OrderBy(Function(x) x.Start).ToArray
+            Return (Scan(__nt, pattern, "+"c).AsList + Scan(__nt, Complement(pattern), "-"c)).OrderBy(Function(x) x.Start).ToArray
         End Function
 
         Public Overloads Shared Function Scan(nt As String, pattern As String, strand As Char) As SimpleSegment()

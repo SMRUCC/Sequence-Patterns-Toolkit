@@ -1,9 +1,10 @@
-﻿#Region "Microsoft.VisualBasic::fa830f72564f5d1681594b0907becc9e, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\Pattern\PatternSearch.vb"
+﻿#Region "Microsoft.VisualBasic::e22985cff605a8881ee29018b9e90723, ..\GCModeller\analysis\SequenceToolkit\SequencePatterns\Pattern\PatternSearch.vb"
 
     ' Author:
     ' 
     '       asuka (amethyst.asuka@gcmodeller.org)
     '       xieguigang (xie.guigang@live.com)
+    '       xie (genetics@smrucc.org)
     ' 
     ' Copyright (c) 2016 GPL3 Licensed
     ' 
@@ -25,15 +26,12 @@
 
 #End Region
 
-Imports Microsoft.VisualBasic.DocumentFormat.Csv.DocumentStream
-Imports Microsoft.VisualBasic
-Imports System.Text.RegularExpressions
-Imports SMRUCC.genomics.SequenceModel.FASTA.FastaFile
-Imports SMRUCC.genomics.ComponentModel.Loci
-Imports SMRUCC.genomics.SequenceModel.FASTA
-Imports Microsoft.VisualBasic.Linq
 Imports System.Runtime.CompilerServices
+Imports System.Text.RegularExpressions
+Imports Microsoft.VisualBasic.Data.csv.IO
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Linq
+Imports SMRUCC.genomics.SequenceModel.FASTA
 
 Namespace Pattern
 
@@ -58,7 +56,7 @@ Namespace Pattern
                          Select Segment
                          Order By Segment.First.First Ascending '
 
-            Dim df As New File(LQuery.MatrixAsIterator)
+            Dim df As New File(LQuery.IteratesALL)
 
             Return df
         End Function
@@ -69,8 +67,7 @@ Namespace Pattern
                                              In Match(Seq.SequenceData, pattern)
                                              Select Segment.ToRow).ToArray).ToArray
             Dim Head As RowObject = {Seq.ToString}, Count As RowObject = {"Hits count:", CStr(LQuery.Count)}
-            Dim RowList As List(Of RowObject) =
-                New List(Of RowObject) From {Head, Count}
+            Dim RowList As New List(Of RowObject) From {Head, Count}
 
             If LQuery.Length = 0 Then
                 Return Nothing
