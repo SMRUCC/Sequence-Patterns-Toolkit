@@ -29,6 +29,7 @@
 Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.ComponentModel
 Imports Microsoft.VisualBasic.Language
+Imports Microsoft.VisualBasic.Math.Information
 
 Namespace SequenceLogo
 
@@ -86,16 +87,10 @@ Namespace SequenceLogo
         ''' 但是频率是零的时候怎么处理？？？
         ''' </summary>
         ''' <returns></returns>
+        ''' 
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Function Hi() As Double
-            Dim LQuery As IEnumerable(Of Double) =
-                From alph As Alphabet
-                In Alphabets
-                Let log = Math.Log(alph.RelativeFrequency, newBase:=2)
-                Select alph.RelativeFrequency * log
-
-            Dim sm As Double = LQuery.Sum * -1
-
-            Return sm
+            Return Entropy.ShannonEntropy(Alphabets.Select(Function(a) a.RelativeFrequency))
         End Function
 
         ''' <summary>
