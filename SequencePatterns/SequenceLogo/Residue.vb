@@ -39,12 +39,13 @@ Namespace SequenceLogo
     Public Class Residue : Implements IAddressOf
 
         ''' <summary>
-        ''' ATGC, 4 characters for nt, and aa is 20.
+        ''' ``ATGC``, 4 characters for ``nt``, and ``aa`` is 20.
         ''' </summary>
         ''' <returns></returns>
         Public Property Alphabets As Alphabet()
         ''' <summary>
-        ''' The total height of the letters depicts the information content Of the position, In bits.
+        ''' The total height of the letters depicts the information content Of the position, 
+        ''' In bits.
         ''' (Bits的值是和比对的序列的数量是有关系的)
         ''' </summary>
         ''' <returns></returns>
@@ -57,7 +58,8 @@ Namespace SequenceLogo
         Public Property Position As Integer Implements IAddressOf.Address
 
         ''' <summary>
-        ''' Display this site as a single alphabet, and this property is used for generates the motif string.
+        ''' Display this site as a single alphabet, and this property is used 
+        ''' for generates the motif string.
         ''' </summary>
         ''' <returns></returns>
         Public ReadOnly Property AsChar As Char
@@ -78,11 +80,14 @@ Namespace SequenceLogo
         End Function
 
         ''' <summary>
-        ''' Hi is the uncertainty (sometimes called the Shannon entropy) of position i
+        ''' ``Hi`` is the uncertainty (sometimes called the Shannon entropy) of position i
         ''' 
-        '''    Hi = - Σ(f(a,i) x log2(f(a,i))
+        ''' ``
+        ''' Hi = - Σ(f(a,i) x log2(f(a,i))
+        ''' ```
         ''' 
-        ''' Here, f(a,i) is the relative frequency of base or amino acid a at position i (in this residue)
+        ''' Here, ``f(a,i)`` is the relative frequency of base or amino acid a at position i 
+        ''' (in this residue)
         ''' 
         ''' 但是频率是零的时候怎么处理？？？
         ''' </summary>
@@ -90,13 +95,18 @@ Namespace SequenceLogo
         ''' 
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Function Hi() As Double
-            Return Entropy.ShannonEntropy(Alphabets.Select(Function(a) a.RelativeFrequency))
+            Return Alphabets _
+                .Select(Function(a) a.RelativeFrequency) _
+                .ShannonEntropy()
         End Function
 
         ''' <summary>
         ''' The information content (y-axis) of position i is given by:
-        '''     Ri = log2(4) - (Hi + en)   //nt
-        '''     Ri = log2(20) - (Hi + en)  //prot 
+        ''' 
+        ''' ```
+        ''' Ri = log2(4) - (Hi + en)   //nt
+        ''' Ri = log2(20) - (Hi + en)  //prot 
+        ''' ```
         ''' 
         ''' 4 for DNA/RNA or 20 for protein. Consequently, the maximum sequence conservation 
         ''' per site Is log2 4 = 2 bits for DNA/RNA And log2 20 ≈ 4.32 bits for proteins.
