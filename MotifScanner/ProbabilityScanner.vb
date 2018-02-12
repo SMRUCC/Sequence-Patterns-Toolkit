@@ -10,11 +10,12 @@ Imports SMRUCC.genomics.SequenceModel.NucleotideModels
 Public Module ProbabilityScanner
 
     <Extension>
-    Public Function ScanSites(prob As IEnumerable(Of Residue), target As FastaSeq) As SimpleSegment()
+    Public Function ScanSites(prob As IEnumerable(Of Residue), target As FastaSeq, Optional cutoff# = 0.6, Optional minW% = 6) As SimpleSegment()
         Dim core As New GSW(Of Residue)(prob.ToArray, target.ToResidues, AddressOf Compare, AddressOf Residue.Max)
-        Dim result = core.GetMatches(0.3 * core.MaxScore)
+        Dim result = core.GetMatches(cutoff * core.MaxScore)
         Dim out = result _
             .OrderByDescending(Function(m) m.Score) _
+            .Where(Function(m) (m.ToB - m.FromB) >= minW) _
             .Select(Function(m)
                         Dim frag = target.CutSequenceLinear(m.RefLoci)
                         frag.ID = m.Score
