@@ -145,7 +145,12 @@ Public Module Protocol
 
         ' pvalue / scores
         ' 在这里score是这个motif的多重比对的结果的PWM矩阵对原始序列的扫描结果的最高得分值
-        Dim scores As Vector = Nothing
+        Dim scores As Vector = members _
+            .Select(Function(fa)
+                        Dim best# = Val(residues.ScanSites(fa).First.ID)
+                        Return best
+                    End Function) _
+            .AsVector
         Dim pvalue# = t.Test(scores, Vector.Zero(Dim:=scores.Length), Hypothesis.TwoSided).Pvalue
 
         Return New Probability With {
