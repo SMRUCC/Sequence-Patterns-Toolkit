@@ -118,7 +118,7 @@ Public Module Protocol
         ' 进行聚类分簇
         Dim clusters = matrix _
             .ToKMeansModels _
-            .Kmeans(expected:=expectedMotifs)
+            .Kmeans(expected:=expectedMotifs, debug:=False)
         Dim motifs = clusters _
             .GroupBy(Function(c) c.Cluster) _
             .ToArray
@@ -133,8 +133,11 @@ Public Module Protocol
                             }
                         End Function) _
                 .MultipleAlignment(Nothing)
+            Dim motif As Probability = MSA.MSA.PWM(members:=regions, param:=param)
 
-            Yield MSA.MSA.PWM(members:=regions, param:=param)
+            If motif.score > 0 Then
+                Yield motif
+            End If
         Next
     End Function
 

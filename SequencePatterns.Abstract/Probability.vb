@@ -58,7 +58,7 @@ Public Structure Probability
     Public Overrides Function ToString() As String
         Return region _
             .Select(Function(r) r.ToString) _
-            .JoinBy("")
+            .JoinBy("") & $" @ {score}, pvalue={pvalue.ToString("G4")}"
     End Function
 
     Public Structure Residue
