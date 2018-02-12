@@ -53,7 +53,7 @@ Imports SMRUCC.genomics.SequenceModel.FASTA
 Public Module Protocol
 
     <Extension>
-    Public Iterator Function PopulateMotifs(inputs As IEnumerable(Of FastaSeq)) As IEnumerable(Of Probability)
+    Public Iterator Function PopulateMotifs(inputs As IEnumerable(Of FastaSeq), Optional expectedMotifs% = 20) As IEnumerable(Of Probability)
         Dim regions As FastaSeq() = inputs.ToArray
         Dim seeds As New List(Of HSP)
 
@@ -94,7 +94,7 @@ Public Module Protocol
         Next
 
         ' 进行聚类分簇
-        Dim clusters = matrix.ToKMeansModels.Kmeans(10)
+        Dim clusters = matrix.ToKMeansModels.Kmeans(expected:=expectedMotifs)
         Dim motifs = clusters.GroupBy(Function(c) c.Cluster).ToArray
 
         ' 对聚类簇进行多重序列比对得到概率矩阵
@@ -158,7 +158,7 @@ Public Module Protocol
     <Extension>
     Public Function Consensus(pairwise As HSP) As String
         Dim globalAlign = LevenshteinDistance.ComputeDistance(pairwise.Query, pairwise.Subject)
-        Return globalAlign.DistEdits
+        Return globalAlign.Matches
     End Function
 End Module
 
