@@ -50,6 +50,7 @@ Imports Microsoft.VisualBasic.Text.Levenshtein
 Imports SMRUCC.genomics.Analysis.SequenceTools.MSA
 Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns.Abstract
 Imports SMRUCC.genomics.SequenceModel.FASTA
+Imports SMRUCC.genomics.SequenceModel.NucleotideModels
 
 Public Class Parameter
 
@@ -168,12 +169,15 @@ Public Module Protocol
         ' 在这里score是这个motif的多重比对的结果的PWM矩阵对原始序列的扫描结果的最高得分值
         Dim scores As Vector = members _
             .Select(Function(fa)
-                        Dim best# = residues _
+                        Dim best As SimpleSegment = residues _
                             .ScanSites(fa, param.ScanCutoff, param.ScanMinW) _
-                            .FirstOrDefault _
-                           ?.ID _
-                            .ParseDouble
-                        Return best
+                            .FirstOrDefault
+
+                        If best Is Nothing Then
+                            Return 0
+                        Else
+                            Return best.ID.ParseDouble
+                        End If
                     End Function) _
             .AsVector
         Dim pvalue# = t.Test(scores, Vector.Zero(Dim:=scores.Length), Hypothesis.TwoSided).Pvalue
