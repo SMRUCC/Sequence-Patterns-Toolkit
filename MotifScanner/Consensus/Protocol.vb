@@ -44,6 +44,7 @@ Imports Microsoft.VisualBasic.Data.csv.IO
 Imports Microsoft.VisualBasic.DataMining.KMeans
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Language.Default
+Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Math.LinearAlgebra
 Imports Microsoft.VisualBasic.Math.Statistics.Hypothesis
 Imports Microsoft.VisualBasic.Text.Levenshtein
@@ -73,18 +74,28 @@ End Class
 Public Module Protocol
 
     <Extension>
+    Private Function seeding(regions As IEnumerable(Of FastaSeq), q As FastaSeq, param As Parameter) As IEnumerable(Of HSP)
+        Dim seeds As New List(Of HSP)
+
+        For Each s As FastaSeq In regions.Where(Function(seq) Not seq Is q)
+            seeds += pairwiseSeeding(q, s, param)
+        Next
+
+        Return seeds
+    End Function
+
+    <Extension>
     Public Iterator Function PopulateMotifs(inputs As IEnumerable(Of FastaSeq), Optional expectedMotifs% = 10, Optional param As Parameter = Nothing) As IEnumerable(Of Probability)
         Dim regions As FastaSeq() = inputs.ToArray
-        Dim seeds As New List(Of HSP)
 
         param = param Or Parameter.DefaultParameter
 
         ' 先进行两两局部最优比对，得到最基本的种子
-        For Each q As FastaSeq In regions
-            For Each s As FastaSeq In regions.Where(Function(seq) Not seq Is q)
-                seeds += pairwiseSeeding(q, s, param)
-            Next
-        Next
+        Dim seeds As List(Of HSP) = regions _
+            .AsParallel _
+            .Select(Function(q) regions.seeding(q, param)) _
+            .IteratesALL _
+            .AsList
 
         ' 之后对得到的种子序列进行两两全局比对，得到距离矩阵
         Dim matrix As New List(Of DataSet)

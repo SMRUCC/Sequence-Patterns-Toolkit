@@ -48,7 +48,7 @@ Module Module1
 
     Sub Main()
 
-        Call msaTest2()
+        '  Call msaTest2()
 
         Call seeding()
 
@@ -73,8 +73,10 @@ ATGAAT-"
     End Sub
 
     Sub seeding()
-        Dim test As FastaFile = FastaFile.LoadNucleotideData("E:\GCModeller\src\GCModeller\analysis\SequenceToolkit\data\Xanthomonadales_MetR___Xanthomonadales.fasta")
+        Dim test As FastaFile = FastaFile.LoadNucleotideData("E:\GCModeller\src\GCModeller\analysis\SequenceToolkit\data\K03406.fasta")
         Dim result = test.PopulateMotifs.ToArray
+
+        Call result.GetXml.SaveTo("./motifs.xml")
 
         Pause()
     End Sub
@@ -85,7 +87,11 @@ ATGAAT-"
         Dim models = ModelLoader.LoadGenomic("P:\XCC\assembly", "P:\XCC\models").ToArray
 
         Dim scaner As New ConsensusScanner(models)
+        '  Dim result = scaner.PopulateMotifs("K03406").ToArray
 
+        Call scaner.DumpSequence("K03406", "./K03406.fasta")
+
+        Pause()
     End Sub
 
 
