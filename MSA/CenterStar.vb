@@ -222,13 +222,14 @@ Public Class CenterStar
     ''' <param name="seq2$"></param>
     ''' <returns></returns>
     Public Function calculateEditDistance(seq1$, seq2$) As Integer
+        Dim l1 = seq1.Length
+        Dim l2 = seq2.Length
+        Dim match = 0
+
         If (seq1 = seq2) Then
             Return 0
         End If
 
-        Dim l1 = seq1.Length
-        Dim l2 = seq2.Length
-        Dim match = 0
         Dim i, j, k As Integer
         Dim score()() = MAT(Of Integer)(l1 + 1, l2 + 1)
         Dim trace()() = MAT(Of Integer)(l1 + 1, l2 + 1)
@@ -244,6 +245,7 @@ Public Class CenterStar
             score(j)(0) = j
             trace(j)(0) = 2
         Next
+
         ' Filling the remaining cells in the matrix
         For i = 1 To l1 - 1
             For j = 1 To l2 - 1
