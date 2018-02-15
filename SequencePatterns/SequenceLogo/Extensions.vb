@@ -1,4 +1,5 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports Microsoft.VisualBasic.Language
 Imports ScannerMotif = SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns.Motif.Motif
 
 Namespace SequenceLogo
@@ -7,6 +8,9 @@ Namespace SequenceLogo
 
         <Extension>
         Public Function CreateDrawingModel(motif As ScannerMotif) As DrawingModel
+            Dim n% = motif.seeds.MSA.Length
+            Dim E# = (1 / Math.Log(2)) * ((4 - 1) / (2 * n))
+
             Return New DrawingModel With {
                 .Residues = motif _
                     .region _
@@ -20,10 +24,12 @@ Namespace SequenceLogo
                                                     }
                                                 End Function) _
                                         .ToArray,
-                                    .Position = r.index
+                                    .Position = r.index,
+                                    .Bits = Residue.CalculatesBits(.ByRef, E, NtMol:=True).Bits
                                 }
                             End Function) _
-                    .ToArray
+                    .ToArray,
+                .En = E
             }
         End Function
     End Module

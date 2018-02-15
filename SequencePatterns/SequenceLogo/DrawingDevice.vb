@@ -111,9 +111,10 @@ For example, we identified a new domain, likely to have a role downstream of the
         ''' <param name="title">The sequence logo display title.</param>
         ''' <returns></returns>
         <ExportAPI("Drawing.Frequency")>
-        Public Function DrawFrequency(Fasta As FastaFile, Optional title As String = "", Optional ByRef getModel As MotifPWM = Nothing) As Image
-            Dim PWM As MotifPWM = Motif.PWM.FromMla(Fasta)
-            Dim Model As DrawingModel = New DrawingModel
+        <Extension>
+        Public Function DrawFrequency(fasta As FastaFile, Optional title$ = "", Optional ByRef getModel As MotifPWM = Nothing) As Image
+            Dim PWM As MotifPWM = Motif.PWM.FromMla(fasta)
+            Dim model As New DrawingModel
 
 #If DEBUG Then
             Dim m As String = New String(PWM.PWM.Select(Function(r) r.AsChar))
@@ -121,17 +122,17 @@ For example, we identified a new domain, likely to have a role downstream of the
 #End If
 
             If String.IsNullOrEmpty(title) Then
-                If Not String.IsNullOrEmpty(Fasta.FilePath) Then
-                    Model.ModelsId = Fasta.FilePath.BaseName
+                If Not String.IsNullOrEmpty(fasta.FilePath) Then
+                    model.ModelsId = fasta.FilePath.BaseName
                 Else
-                    Model.ModelsId = New String(PWM.PWM.Select(Function(r) r.AsChar).ToArray)
+                    model.ModelsId = New String(PWM.PWM.Select(Function(r) r.AsChar).ToArray)
                 End If
             Else
-                Model.ModelsId = title
+                model.ModelsId = title
             End If
 
             getModel = PWM
-            Model.Residues =
+            model.Residues =
                 LinqAPI.Exec(Of ResidueSite, Residue)(PWM.PWM) <=
                     Function(rsd As ResidueSite) New Residue With {
                         .Bits = rsd.Bits,
@@ -143,7 +144,7 @@ For example, we identified a new domain, likely to have a role downstream of the
                                                                       .RelativeFrequency = x.value
                                                                   }  ' alphabets
             }  ' residues
-            Return InvokeDrawing(Model, True)
+            Return InvokeDrawing(model, True)
         End Function
 
         ''' <summary>

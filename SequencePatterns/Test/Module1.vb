@@ -39,13 +39,20 @@
 
 #End Region
 
+Imports Microsoft.VisualBasic.Serialization.JSON
+Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns
 Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns.Abstract.Motif
 Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns.Abstract.Motif.Patterns
+Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns.SequenceLogo
 Imports SMRUCC.genomics.SequenceModel.FASTA
+Imports scanerMotif = SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns.Motif.Motif
 
 Module Module1
 
     Sub Main()
+
+        Call plotTest()
+
 
         Dim s = "[AG]CGTT[AC]G[ATC]"
         Dim st = PatternParser.SimpleTokens(s)
@@ -60,4 +67,11 @@ Module Module1
         Dim tokens = PatternParser.ExpressionParser(motif)
     End Sub
 
+    Sub plotTest()
+
+        Dim motifs = "E:\GCModeller\src\GCModeller\analysis\SequenceToolkit\data\K03406_small.json".ReadAllText.LoadObject(Of scanerMotif())
+        Dim test = motifs(0).CreateDrawingModel
+
+        Pause()
+    End Sub
 End Module
