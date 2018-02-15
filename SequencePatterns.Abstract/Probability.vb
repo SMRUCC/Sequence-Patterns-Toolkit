@@ -64,6 +64,7 @@ Public Structure Probability
     Public Structure Residue
 
         Public Property frequency As Dictionary(Of Char, Double)
+        Public Property index As Integer
 
         <MethodImpl(MethodImplOptions.AggressiveInlining)>
         Public Overrides Function ToString() As String

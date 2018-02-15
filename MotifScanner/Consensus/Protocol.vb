@@ -199,7 +199,8 @@ Public Module Protocol
                 Function(base) P.TryGetValue(base))
 
             residues += New Probability.Residue With {
-                .frequency = Pi
+                .frequency = Pi,
+                .index = i
             }
         Next
 
