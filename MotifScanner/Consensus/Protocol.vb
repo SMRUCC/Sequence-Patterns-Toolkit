@@ -56,6 +56,7 @@ Imports SMRUCC.genomics.SequenceModel.NucleotideModels
 Public Class Parameter
 
     Public Property minW As Integer
+    Public Property maxW As Integer
     Public Property seedingCutoff As Double
     Public Property ScanMinW As Integer
     Public Property ScanCutoff As Double
@@ -63,7 +64,8 @@ Public Class Parameter
     Public Shared Function DefaultParameter() As DefaultValue(Of Parameter)
         Return New Parameter With {
             .minW = 10,
-            .seedingCutoff = 0.85,
+            .maxW = 30,
+            .seedingCutoff = 0.35,
             .ScanCutoff = 0.6,
             .ScanMinW = 6
         }
@@ -87,9 +89,9 @@ Public Module Protocol
     <Extension>
     Private Function matrixRow(q As HSP, i%, seeds As IEnumerable(Of HSP)) As DataSet
         Dim row As New DataSet With {
-                .ID = i,
-                .Properties = New Dictionary(Of String, Double)
-            }
+            .ID = i,
+            .Properties = New Dictionary(Of String, Double)
+        }
         Dim j As int = 1
 
         For Each s As HSP In seeds
@@ -122,13 +124,11 @@ Public Module Protocol
             .AsList
 
         ' 之后对得到的种子序列进行两两全局比对，得到距离矩阵
-        Dim i As int = 1
-        Dim repSeq As New Dictionary(Of String, String)
-
-        For Each q As HSP In seeds
-            repSeq(CStr(++i)) = q.Consensus
-        Next
-
+        Dim repSeq As Dictionary(Of String, String) = seeds _
+            .SeqIterator _
+            .AsParallel _
+            .ToDictionary(Function(i) CStr(i.i),
+                          Function(q) q.value.Consensus)
         Dim matrix As DataSet() = seeds _
             .SeqIterator _
             .AsParallel _
@@ -219,7 +219,7 @@ Public Module Protocol
     Public Function pairwiseSeeding(q As FastaSeq, s As FastaSeq, param As Parameter) As IEnumerable(Of HSP)
         Dim smithWaterman As New SmithWaterman(q.SequenceData, s.SequenceData)
         Dim result = smithWaterman.GetOutput(param.seedingCutoff, param.minW)
-        Return result.HSP
+        Return result.HSP.Where(Function(seed) seed.LengthHit <= param.maxW)
     End Function
 
     <Extension>
