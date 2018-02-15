@@ -177,8 +177,6 @@ For example, we identified a new domain, likely to have a role downstream of the
         <ExportAPI("Invoke.Drawing", Info:="Drawing a sequence logo from a generated sequence motif model.")>
         <Extension>
         Public Function InvokeDrawing(model As DrawingModel,
-                                      <Parameter("Order.Frequency",
-                                                 "Does the alphabets in a residue position will be ordered its drawing order based on their relative frequency in the residue site?")>
                                       Optional frequencyOrder As Boolean = True,
                                       Optional margin As Integer = 100,
                                       Optional reverse As Boolean = False) As Image
