@@ -39,6 +39,7 @@
 
 #End Region
 
+Imports Microsoft.VisualBasic.Imaging
 Imports Microsoft.VisualBasic.Serialization.JSON
 Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns
 Imports SMRUCC.genomics.Analysis.SequenceTools.SequencePatterns.Abstract.Motif
@@ -71,6 +72,8 @@ Module Module1
 
         Dim motifs = "E:\GCModeller\src\GCModeller\analysis\SequenceToolkit\data\K03406_small.json".ReadAllText.LoadObject(Of scanerMotif())
         Dim test = motifs(0).CreateDrawingModel
+
+        Call test.InvokeDrawing(True).SaveAs("./test.png")
 
         Pause()
     End Sub
