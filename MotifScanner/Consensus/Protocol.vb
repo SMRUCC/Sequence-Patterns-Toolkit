@@ -116,6 +116,8 @@ Public Module Protocol
 
         param = param Or Parameter.DefaultParameter
 
+        Call "seeding...".__DEBUG_ECHO
+
         ' 先进行两两局部最优比对，得到最基本的种子
         Dim seeds As List(Of HSP) = regions _
             .AsParallel _
@@ -123,12 +125,17 @@ Public Module Protocol
             .IteratesALL _
             .AsList
 
+        Call "Get consensus for the pairwise seeding...".__DEBUG_ECHO
+
         ' 之后对得到的种子序列进行两两全局比对，得到距离矩阵
         Dim repSeq As Dictionary(Of String, String) = seeds _
             .SeqIterator _
             .AsParallel _
             .ToDictionary(Function(i) CStr(i.i),
                           Function(q) q.value.Consensus)
+
+        Call "Build global distance matrix for the seeds...".__DEBUG_ECHO
+
         Dim matrix As DataSet() = seeds _
             .SeqIterator _
             .AsParallel _
@@ -139,6 +146,8 @@ Public Module Protocol
                     End Function) _
             .ToArray
 
+        Call "Kmeans...".__DEBUG_ECHO
+
         ' 进行聚类分簇
         Dim clusters = matrix _
             .ToKMeansModels _
@@ -146,6 +155,8 @@ Public Module Protocol
         Dim motifs = clusters _
             .GroupBy(Function(c) c.Cluster) _
             .ToArray
+
+        Call "Populate motifs...".__DEBUG_ECHO
 
         ' 对聚类簇进行多重序列比对得到概率矩阵
         For Each group As IGrouping(Of String, EntityClusterModel) In motifs
