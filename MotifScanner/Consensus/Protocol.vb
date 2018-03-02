@@ -207,7 +207,8 @@ Public Module Protocol
             .region = residues,
             .pvalue = pvalue,
             .score = scores.Sum,
-            .seeds = alignment
+            .seeds = alignment,
+            .length = MSA(Scan0).Length
         }
     End Function
 
