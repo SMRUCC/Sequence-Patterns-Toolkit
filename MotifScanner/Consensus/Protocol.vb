@@ -132,7 +132,7 @@ Public Module Protocol
         ' 进行聚类分簇
         Dim clusters = matrix _
             .ToKMeansModels _
-            .Kmeans(expected:=expectedMotifs, debug:=False)
+            .Kmeans(expected:=expectedMotifs, debug:=True)
         Dim motifs = clusters _
             .GroupBy(Function(c) c.Cluster) _
             .ToArray
