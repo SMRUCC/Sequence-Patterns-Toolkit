@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::0e16942fbaccb81afbb11bbf1f7df8ea, analysis\SequenceToolkit\SequenceTools\CLI\FastaTools.vb"
+﻿#Region "Microsoft.VisualBasic::c146b3e4154e220362f26d1a2488600b, analysis\SequenceToolkit\SequenceTools\CLI\FastaTools.vb"
 
     ' Author:
     ' 
@@ -232,7 +232,8 @@ Partial Module Utilities
             LQuery = New List(Of FastaSeq)
 
             For Each seq In fasta.GroupBy(Function(x) x.GetLocusTag)
-                If index.IndexOf(seq.Key) = -1 Then  ' 不在列表之中的
+                If index.IndexOf(seq.Key) = -1 Then
+                    ' 不在列表之中的
                     ' 反选就是将不在列表之中的添加进去
                     LQuery += seq
                 End If
@@ -529,9 +530,9 @@ Partial Module Utilities
 
         If region.MappingLocation.Strand = Strands.Reverse Then
             If Complement Then
-                region.Complement = NucleotideModels.NucleicAcid.Complement(seq)
+                ' region.Complement = NucleotideModels.NucleicAcid.Complement(seq)
                 If Reversed Then
-                    region.Complement = New String(region.Complement.Reverse.ToArray)
+                    '  region.Complement = New String(region.Complement.Reverse.ToArray)
                 End If
             End If
 

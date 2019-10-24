@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::5d3f93ea4aa0a01264dc6061cbf13cff, analysis\SequenceToolkit\SequencePatterns.Abstract\Scanner.vb"
+﻿#Region "Microsoft.VisualBasic::c2498a01e7939eb2ac7e6c40d53df7a2, analysis\SequenceToolkit\SequencePatterns.Abstract\Scanner.vb"
 
     ' Author:
     ' 
@@ -58,14 +58,14 @@ Namespace Motif
 
     Public MustInherit Class IScanner
 
-        Protected ReadOnly __nt As String
+        Protected ReadOnly nt As String
 
         Sub New(nt As IPolymerSequenceModel)
-            __nt = nt.SequenceData.ToUpper
+            Me.nt = nt.SequenceData.ToUpper
         End Sub
 
         Public Overrides Function ToString() As String
-            Return $"{__nt.Length}bp...."
+            Return $"{nt.Length}bp...."
         End Function
 
         Public MustOverride Function Scan(pattern As String) As SimpleSegment()
@@ -150,7 +150,7 @@ Namespace Motif
         End Sub
 
         Public Overrides Function Scan(pattern As String) As SimpleSegment()
-            Return (Scan(__nt, pattern, "+"c).AsList + Scan(__nt, Complement(pattern), "-"c)).OrderBy(Function(x) x.Start).ToArray
+            Return (Scan(nt, pattern, "+"c).AsList + Scan(nt, Complement(pattern), "-"c)).OrderBy(Function(x) x.Start).ToArray
         End Function
 
         Public Overloads Shared Function Scan(nt As String, pattern As String, strand As Char) As SimpleSegment()
@@ -171,8 +171,7 @@ Namespace Motif
                                      .Ends = ind + m.Length,
                                      .Start = ind,
                                      .SequenceData = m,
-                                     .Strand = strand.ToString,
-                                     .Complement = rc
+                                     .Strand = strand.ToString  ' .Complement = rc
                                  }
                              End Function
 

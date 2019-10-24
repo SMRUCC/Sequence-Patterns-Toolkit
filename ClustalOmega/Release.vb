@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::3574629a187e00c7f8051ccd764dce58, analysis\SequenceToolkit\ClustalOmega\Release.vb"
+﻿#Region "Microsoft.VisualBasic::65f361e8200a501b3401fc642797fccb, analysis\SequenceToolkit\ClustalOmega\Release.vb"
 
     ' Author:
     ' 
@@ -39,7 +39,7 @@
 
 #End Region
 
-Imports Microsoft.VisualBasic.ApplicationServices
+Imports Microsoft.VisualBasic.ApplicationServices.Zip
 Imports Microsoft.VisualBasic.Language
 
 Public Module Release
@@ -58,7 +58,7 @@ Public Module Release
 
         With App.GetAppSysTempFile(".zip", App.PID)
             Call My.Resources.clustal_omega_1_2_2_win64.FlushStream(.ByRef)
-            Call ZipLib.ImprovedExtractToDirectory(.ByRef, DIR, Overwrite.Always)
+            Call UnZip.ImprovedExtractToDirectory(.ByRef, DIR, Overwrite.Always)
         End With
 
         Return DIR & "/clustalo.exe"

@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::4d7e7d648135088f20bae5a8830e8050, analysis\SequenceToolkit\SNP\SNP.vb"
+﻿#Region "Microsoft.VisualBasic::4390af87de7fa23466762ebeab219102, analysis\SequenceToolkit\SNP\SNP.vb"
 
     ' Author:
     ' 
@@ -78,7 +78,7 @@ Imports SMRUCC.genomics.ComponentModel.Loci
 ''' + Variant Raw Frequency	
 ''' + Variant Sequences
 ''' </remarks>
-Public Class SNP : Inherits BaseClass
+Public Class SNP
     Implements IMotifSite
     Implements IMotifScoredSite
 
@@ -95,7 +95,7 @@ Public Class SNP : Inherits BaseClass
     <Column("Length (with gaps)")>
     Public Property TotalLength As Integer
     <Column("Polymorphism Type")>
-    Public Property PolymorphismType As String Implements IMotifSite.Type
+    Public Property PolymorphismType As String Implements IMotifSite.family
     <Column("Variant Nucleotide(s)")>
     Public Property VariantNucleotides As String
 

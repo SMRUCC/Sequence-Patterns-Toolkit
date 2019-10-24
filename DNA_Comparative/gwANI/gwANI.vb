@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::ce13e4ad5bfb63884c10bc066afdb0dc, analysis\SequenceToolkit\DNA_Comparative\gwANI\gwANI.vb"
+﻿#Region "Microsoft.VisualBasic::7c5389ee6f24ffba02c13a223e2754c3, analysis\SequenceToolkit\DNA_Comparative\gwANI\gwANI.vb"
 
     ' Author:
     ' 
@@ -37,7 +37,7 @@
     ' 
     '         Constructor: (+1 Overloads) Sub New
     '         Sub: __calculate_and_output_gwani, __fast_calculate_gwani, calc_gwani_between_a_sample_and_everything_afterwards, calc_gwani_between_a_sample_and_everything_afterwards_memory, calculate_and_output_gwani
-    '              check_input_file_and_calc_dimensions, fast_calculate_gwani, print_header
+    '              check_input_file_and_calc_dimensions, Evaluate, fast_calculate_gwani, print_header
     ' 
     ' 
     ' /********************************************************************************/
@@ -45,6 +45,7 @@
 #End Region
 
 Imports System.IO
+Imports System.Runtime.CompilerServices
 Imports Microsoft.VisualBasic.Language.C
 Imports Microsoft.VisualBasic.Terminal.STDIO
 Imports SMRUCC.genomics.SequenceModel.FASTA
@@ -166,6 +167,11 @@ Namespace gwANI
         Public ReadOnly Property length_of_genome As Integer
         Public ReadOnly Property number_of_samples As Integer
         Public ReadOnly Property sequence_names As String()
+
+        <MethodImpl(MethodImplOptions.AggressiveInlining)>
+        Public Shared Sub Evaluate(in$, out$, fast As Boolean)
+            Call gwANIExtensions.Evaluate([in], out, fast)
+        End Sub
 
         Private Sub check_input_file_and_calc_dimensions(ByRef filename As String)
             _number_of_samples = 0

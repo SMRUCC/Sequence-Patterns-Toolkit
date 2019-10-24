@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::c1f301aff9fa90c8e6398da851470d04, analysis\SequenceToolkit\DNA_Comparative\IdentityResult.vb"
+﻿#Region "Microsoft.VisualBasic::088b5a69f436b04f4723b3c67a91593c, analysis\SequenceToolkit\DNA_Comparative\IdentityResult.vb"
 
     ' Author:
     ' 
@@ -76,7 +76,7 @@ Public Class IdentityResult : Implements INamedValue
     ''' <param name="simple"></param>
     ''' <returns></returns>
     Public Shared Iterator Function SigmaMatrix(source As FastaFile, Optional round% = -1, Optional simple As Boolean = True) As IEnumerable(Of IdentityResult)
-        Dim nts As NucleicAcid() = source.Select(Function(x) New NucleicAcid(x)).ToArray
+        Dim nts As NucleicAcid() = source.Select(Function(seq) New NucleicAcid(seq)).ToArray
         Dim getTag As Func(Of NucleicAcid, String)
 
         If simple Then

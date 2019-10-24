@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::0da03f044efb5992011bd53701120710, analysis\SequenceToolkit\SNP\DiffVariation.vb"
+﻿#Region "Microsoft.VisualBasic::8e6b3e281713781083bb4d275adf3b92, analysis\SequenceToolkit\SNP\DiffVariation.vb"
 
     ' Author:
     ' 
@@ -186,11 +186,11 @@ Public Module DiffVariation
 
     <Extension>
     Public Function [Date](x As KSeq) As PropertyValue(Of String)
-        Return PropertyValue(Of String).Read(Of KSeq)(x, NameOf([Date]))
+        Return PropertyValue(Of Object).Read(Of KSeq, String)(x, NameOf([Date]))
     End Function
 End Module
 
-Public Class KSeq : Inherits BaseClass
+Public Class KSeq : Inherits DynamicPropertyBase(Of Object)
 
     Public Property attrs As String()
     Public Property Diffs As Dictionary(Of Integer, NamedValue(Of Integer))

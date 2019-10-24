@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::254fe5f07302a6ffc3c996e39b1c69ff, analysis\SequenceToolkit\Pfam-HMM\PfamHMMScan\Pfam.hmm\HMMParser\HMMParser.vb"
+﻿#Region "Microsoft.VisualBasic::ff5389cd302bcb430de6affb2a4b38dc, analysis\SequenceToolkit\Pfam-HMM\PfamHMMScan\Pfam.hmm\HMMParser\HMMParser.vb"
 
     ' Author:
     ' 
@@ -58,7 +58,7 @@ Imports Microsoft.VisualBasic.Serialization.JSON
 ''' <summary>
 ''' HMMER3/f [3.1b2 | February 2015]
 ''' </summary>
-Public Class HMMParser : Inherits BaseClass
+Public Class HMMParser
 
     ''' <summary>
     ''' Model name; &lt;s> is a single word containing no spaces or tabs. The name is normally picked up

@@ -1,54 +1,54 @@
-﻿#Region "Microsoft.VisualBasic::93a13b6eeb1fba00b5633e2dcd0d3de1, analysis\SequenceToolkit\DNA_Comparative\ToolsAPI\ToolsAPI.vb"
+﻿#Region "Microsoft.VisualBasic::73d38344e2253c0f261605a4ff9efd3d, analysis\SequenceToolkit\DNA_Comparative\ToolsAPI\ToolsAPI.vb"
 
-    ' Author:
-    ' 
-    '       asuka (amethyst.asuka@gcmodeller.org)
-    '       xie (genetics@smrucc.org)
-    '       xieguigang (xie.guigang@live.com)
-    ' 
-    ' Copyright (c) 2018 GPL3 Licensed
-    ' 
-    ' 
-    ' GNU GENERAL PUBLIC LICENSE (GPL3)
-    ' 
-    ' 
-    ' This program is free software: you can redistribute it and/or modify
-    ' it under the terms of the GNU General Public License as published by
-    ' the Free Software Foundation, either version 3 of the License, or
-    ' (at your option) any later version.
-    ' 
-    ' This program is distributed in the hope that it will be useful,
-    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ' GNU General Public License for more details.
-    ' 
-    ' You should have received a copy of the GNU General Public License
-    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
+' Author:
+' 
+'       asuka (amethyst.asuka@gcmodeller.org)
+'       xie (genetics@smrucc.org)
+'       xieguigang (xie.guigang@live.com)
+' 
+' Copyright (c) 2018 GPL3 Licensed
+' 
+' 
+' GNU GENERAL PUBLIC LICENSE (GPL3)
+' 
+' 
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+' 
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+' 
+' You should have received a copy of the GNU General Public License
+' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-    ' /********************************************************************************/
+' /********************************************************************************/
 
-    ' Summaries:
+' Summaries:
 
-    ' Module ToolsAPI
-    ' 
-    '     Function: __calculate, __calculates, __colorRender, __compile, __compileCAI
-    '               __compileCAIBIASCalculationThread, __compileSigma, __createTable, __echo, __genomeSigmaDiff
-    '               __getSequence, __group, __mergeDelta, (+2 Overloads) __process, __query
-    '               __readSeq, __readSequence, __regionMetaParser, __samples, __sigmaCompareWith
-    '               BatchCalculation, BatchCalculation2, CAI, Compile, CompileCABIAS
-    '               CompileCAIBIASCalculationThread, CompileCAIBIASCalculationThread_p, CreateChromesomePartitioningData, CreateSimplePartition, GenerateDeltaDiffReport
-    '               GenomeSigmaDifference_p, (+2 Overloads) MeasureHomogeneity, MergeDelta, PartionDataCreates, PartitioningDataFromFasta
-    '               PartitioningSigmaCompareWith, PartitionSimilarity, ReadPartitionalData, ReadPartitioningData, SaveCAI
-    '               SigmaCompareWith, SiteDataLoad, WritePartionalData
-    '     Structure Cache
-    ' 
-    ' 
-    ' 
-    ' 
-    ' 
-    ' /********************************************************************************/
+' Module ToolsAPI
+' 
+'     Function: __calculate, __calculates, __colorRender, __compile, __compileCAI
+'               __compileCAIBIASCalculationThread, __compileSigma, __createTable, __echo, __genomeSigmaDiff
+'               __getSequence, __group, __mergeDelta, (+2 Overloads) __process, __query
+'               __readSeq, __readSequence, __regionMetaParser, __samples, __sigmaCompareWith
+'               BatchCalculation, BatchCalculation2, CAI, Compile, CompileCABIAS
+'               CompileCAIBIASCalculationThread, CompileCAIBIASCalculationThread_p, CreateChromesomePartitioningData, CreateSimplePartition, GenerateDeltaDiffReport
+'               GenomeSigmaDifference_p, (+2 Overloads) MeasureHomogeneity, MergeDelta, PartionDataCreates, PartitioningDataFromFasta
+'               PartitioningSigmaCompareWith, PartitionSimilarity, ReadPartitionalData, ReadPartitioningData, SaveCAI
+'               SigmaCompareWith, SiteDataLoad, WritePartionalData
+'     Structure Cache
+' 
+' 
+' 
+' 
+' 
+' /********************************************************************************/
 
 #End Region
 
@@ -75,9 +75,9 @@ Imports SMRUCC.genomics.Assembly.NCBI.GenBank.CsvExports
 Imports SMRUCC.genomics.Assembly.NCBI.GenBank.Extensions
 Imports SMRUCC.genomics.Assembly.NCBI.GenBank.TabularFormat
 Imports SMRUCC.genomics.Assembly.NCBI.GenBank.TabularFormat.ComponentModels
-Imports SMRUCC.genomics.ComponentModel
+Imports SMRUCC.genomics.ComponentModel.Annotation
 Imports SMRUCC.genomics.ComponentModel.Loci
-Imports SMRUCC.genomics.Interops.NCBI.Extensions.Analysis
+Imports SMRUCC.genomics.Interops.NCBI.Extensions.Tasks.Models
 Imports SMRUCC.genomics.SequenceModel
 Imports SMRUCC.genomics.SequenceModel.FASTA
 Imports SMRUCC.genomics.SequenceModel.NucleotideModels
@@ -147,7 +147,7 @@ Public Module ToolsAPI
                                                  Let Loci = New IntRange((From ORF As GeneBrief
                                                                           In pInfo.Group.Select(Function(x) x.ORF)
                                                                           Let pt As NucleotideLocation = ORF.Location
-                                                                          Select {pt.Left, pt.Right}).IteratesALL)
+                                                                          Select {pt.left, pt.right}).IteratesALL)
                                                  Let St As Integer = Loci.Max
                                                  Let SP As Integer = Loci.Min
                                                  Let Sequence As String = Reader.CutSequenceLinear(SP, St).SequenceData
@@ -348,12 +348,12 @@ Public Module ToolsAPI
                 End If
 
                 Dim Reader As IPolymerSequenceModel = Rule
-                Dim St As Integer = locus.dnaA.Location.Left
-                Dim Sp As Integer = locus.gyrB.Location.Right
+                Dim St As Integer = locus.dnaA.Location.left
+                Dim Sp As Integer = locus.gyrB.Location.right
 
                 If locus.dnaA.Location.Strand = Strands.Reverse Then
-                    St = locus.gyrB.Location.Left
-                    Sp = locus.dnaA.Location.Right
+                    St = locus.gyrB.Location.left
+                    Sp = locus.dnaA.Location.right
                 End If
 
                 Dim RuleSegment As NucleotideModels.NucleicAcid
@@ -386,9 +386,9 @@ Public Module ToolsAPI
     End Function
 
     <ExportAPI("partition_data.create")>
-    Public Function CreateChromesomePartitioningData(besthit As BestHit,
+    Public Function CreateChromesomePartitioningData(besthit As SpeciesBesthit,
                                                      partitions As IEnumerable(Of ChromosomePartitioningEntry),
-                                                     allCDSInfo As IEnumerable(Of GeneDumpInfo),
+                                                     allCDSInfo As IEnumerable(Of GeneTable),
                                                      faDIR As String) As PartitioningData()
 
         Dim resource = faDIR.LoadSourceEntryList({}) '加载Fasta资源数据
@@ -408,27 +408,29 @@ Public Module ToolsAPI
                          besthits = (From item As HitCollection In besthit.hits
                                      Where Array.IndexOf(queryEntries, item.QueryName) > -1
                                      Select item).ToArray).ToArray
-        Dim CDSInfo = (From g As GeneDumpInfo
+        Dim CDSInfo = (From g As GeneTable
                        In allCDSInfo
-                       Where Not String.IsNullOrEmpty(g.LocusID)
-                       Select g).ToDictionary(Function(obj) obj.LocusID)
+                       Where Not String.IsNullOrEmpty(g.locus_id)
+                       Select g).ToDictionary(Function(obj)
+                                                  Return obj.locus_id
+                                              End Function)
         Dim CreatePartitionLQuery = (From item In pData.AsParallel
                                      Let Create = ToolsAPI.__group(item.besthits)
                                      Select item.PartitioningTag,
-                                         Data = (From hit In Create Select GenomeID = hit.Key, ORF = (From h In hit.Value Select CDSInfo(h.HitName)).ToArray).AsList) _
+                                         Data = (From hit In Create Select GenomeID = hit.Key, ORF = (From h In hit.Value Select CDSInfo(h.hitName)).ToArray).AsList) _
                                          .ToDictionary(Function(item) item.PartitioningTag,
                                                        Function(item) item.Data) '根据参数partition之中的参照数据进行创建基因组分区数据的创建
         Dim LQuery = (From item In CreatePartitionLQuery
                       Select (From genome In item.Value
-                              Let left As Integer = (From nn In genome.ORF Select nn.Left).Min
-                              Let right As Integer = (From nn In genome.ORF Select nn.Right).Max
+                              Let left As Integer = (From nn In genome.ORF Select nn.left).Min
+                              Let right As Integer = (From nn In genome.ORF Select nn.right).Max
                               Let seq As String = __readSeq(left, right, FastaReader, genome.GenomeID)
                               Select New PartitioningData With {
                                   .GenomeID = genome.GenomeID,
                                   .LociLeft = left,
                                   .LociRight = right,
                                   .SequenceData = seq,
-                                  .ORFList = (From nnnn In genome.ORF Select nnnn.LocusID).ToArray,
+                                  .ORFList = (From nnnn In genome.ORF Select nnnn.locus_id).ToArray,
                                   .PartitioningTag = item.Key}).ToArray).Unlist
 
         Dim removed = CType((From item In LQuery.AsParallel Where String.Equals(CType(item.GenomeID, String), CType(besthit.sp, String), CType(StringComparison.OrdinalIgnoreCase, StringComparison)) Select item).ToArray, PartitioningData())
@@ -437,8 +439,8 @@ Public Module ToolsAPI
         Next
 
         For Each p In (From item In partitions Select item Group item By item.PartitioningTag Into Group).ToArray
-            Dim left = (From nn In p.Group Let l = CDSInfo(nn.ORF).Left Select l).ToArray.Min
-            Dim Right = (From nn In p.Group Let r = CDSInfo(nn.ORF).Right Select r).ToArray.Max
+            Dim left = (From nn In p.Group Let l = CDSInfo(nn.ORF).left Select l).ToArray.Min
+            Dim Right = (From nn In p.Group Let r = CDSInfo(nn.ORF).right Select r).ToArray.Max
             Dim genomeID As String = besthit.sp
 
             Dim part As New PartitioningData With {
@@ -516,7 +518,7 @@ Public Module ToolsAPI
     ''' 
     <ExportAPI("delta_diff.partitioning_query", Info:="Please notice that the query parameter is sensitive to the character case.")>
     Public Function PartitioningSigmaCompareWith(source As IEnumerable(Of PartitioningData), query As String, EXPORT As String, Optional winSize As Integer = 1000) As Boolean
-        Using pb = New CBusyIndicator(_start:=True)
+        Using pb = New CBusyIndicator(start:=True)
             Dim MAT = (From nn In (From item In source Select item Group By item.PartitioningTag Into Group).ToArray
                        Select nn.PartitioningTag,
                            dict = nn.Group.ToDictionary(Function(item) item.GenomeID)) _
@@ -579,10 +581,10 @@ Public Module ToolsAPI
     Private Function __group(besthits As HitCollection()) As KeyValuePair(Of String, Hit())()
         Dim gr = (From o In (From nn As HitCollection
                              In besthits
-                             Select (From nnnnnnnn In nn.Hits Select nnnnnnnn).ToArray).Unlist
+                             Select (From nnnnnnnn In nn.hits Select nnnnnnnn).ToArray).Unlist
                   Select o
                   Group o By o.tag Into Group).ToArray
-        Dim gd = (From iteddm In gr Select iteddm.tag, hits = (From fd In iteddm.Group.ToArray Where Not String.IsNullOrEmpty(fd.HitName) Select fd).ToArray).ToArray
+        Dim gd = (From iteddm In gr Select iteddm.tag, hits = (From fd In iteddm.Group.ToArray Where Not String.IsNullOrEmpty(fd.hitName) Select fd).ToArray).ToArray
         Dim LQuery = (From item In gd Select New KeyValuePair(Of String, Hit())(item.tag, item.hits)).ToArray
         Return LQuery
     End Function
@@ -642,7 +644,7 @@ Public Module ToolsAPI
     <ExportAPI("diff.create_report", Info:="The source parameter is the source directory of the Delta query export dirtectory.")>
     Public Function GenerateDeltaDiffReport(source As String,
                                             partitions As IEnumerable(Of ChromosomePartitioningEntry),
-                                            CDSInfo As IEnumerable(Of GeneDumpInfo)) As IO.File
+                                            CDSInfo As IEnumerable(Of GeneTable)) As IO.File
 
         Dim p = (From item In partitions Select item Group By item.PartitioningTag Into Group).ToArray  '分组，选择蛋白质
         Dim DeltaQuery = (From path As NamedValue(Of String)
@@ -751,7 +753,7 @@ Public Module ToolsAPI
         Call Console.WriteLine("Creation job done!")
         Call Console.WriteLine("Start to create the sigma data collection...")
 
-        Using pb As New CBusyIndicator(_start:=True)
+        Using pb As New CBusyIndicator(start:=True)
             Dim LQuery = (From segment In Windows.AsParallel
                           Let x = New NucleotideModels.NucleicAcid(segment.Items)
                           Let y = New NucleotideModels.NucleicAcid(compare)
@@ -840,7 +842,7 @@ Public Module ToolsAPI
                                                     Select item.Key).ToArray
                          Select New KeyValuePair(Of Integer, String())(site.Site, lstName)).ToArray
         '加载基因组双向BLAST同源片段染色数据
-        Dim LoadCRendering = render_source.LoadXml(Of BestHit)() ' (From path As String In FileIO.FileSystem.GetFiles(render_source, FileIO.SearchOption.SearchTopLevelOnly, "*.xml").AsParallel
+        Dim LoadCRendering = render_source.LoadXml(Of SpeciesBesthit)() ' (From path As String In FileIO.FileSystem.GetFiles(render_source, FileIO.SearchOption.SearchTopLevelOnly, "*.xml").AsParallel
         '                      Select id = basename(path),
         '                      data = path.LoadXml(Of SMRUCC.genomics.AnalysisTools.DataVisualization.VennDiagram.ShellScriptAPI.BestHit)()).ToArray
         '基因按照正向进行标识 ，当比对上去的时候，会进行delta染色，即基因号为相应的比对上的基因号，当没有比对上去的时候，基因号为空
@@ -885,7 +887,7 @@ Public Module ToolsAPI
     Private Function __colorRender(UID As String,
                                    delta As SiteSigma(),
                                    PTT As PTT,
-                                   render As BestHit,
+                                   render As SpeciesBesthit,
                                    querySites As KeyValuePair(Of Integer, String())()) As SegmentRenderData()
         Dim LQuery = (From site In delta Let querySite = querySites(site.Site)
                       Select New SegmentRenderData With {
@@ -909,7 +911,7 @@ Public Module ToolsAPI
     Public Function SigmaCompareWith(query As String, sbjDIR As String, EXPORT As String, Optional windowsSize As Integer = 1000) As Boolean
         Call ("Start to load subject fasta data from " & sbjDIR).__DEBUG_ECHO
 
-        Using pb = New CBusyIndicator(_start:=True)
+        Using pb = New CBusyIndicator(start:=True)
             Return __sigmaCompareWith(query, sbjDIR, EXPORT, windowsSize)
         End Using
     End Function
@@ -1004,7 +1006,7 @@ Public Module ToolsAPI
     Public Function BatchCalculation2(source As String, EXPORT As String, Optional windowsSize As Integer = 1000) As Boolean
         Call Console.WriteLine("[DEBUG] start to load fasta data from " & source)
 
-        Using pb As New CBusyIndicator(_start:=True)
+        Using pb As New CBusyIndicator(start:=True)
             Dim FastaObjects = (From path As String
                                 In FileIO.FileSystem.GetFiles(source, FileIO.SearchOption.SearchTopLevelOnly, "*.fasta", "*.fsa").AsParallel
                                 Select FastaSeq.Load(path)).ToArray
@@ -1056,7 +1058,7 @@ Public Module ToolsAPI
     Public Function BatchCalculation(source As String, EXPORT As String, Optional windowsSize As Integer = 1000) As Boolean
 
         Call Console.WriteLine("[DEBUG] start to load fasta data from " & source)
-        Dim pb As New CBusyIndicator(_start:=True)
+        Dim pb As New CBusyIndicator(start:=True)
         Dim FastaObjects = (From path As String In FileIO.FileSystem.GetFiles(source, FileIO.SearchOption.SearchTopLevelOnly, "*.fasta", "*.fsa").AsParallel Select SMRUCC.genomics.SequenceModel.FASTA.FastaSeq.Load(path)).ToArray
 
         Call $"Fasta data load done!, start to calculates the sigma differences in window_size {windowsSize / 1000}KB....".__DEBUG_ECHO

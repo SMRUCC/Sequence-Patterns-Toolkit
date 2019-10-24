@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::7df85624c1d4d556c58be3130fffca07, analysis\SequenceToolkit\MotifScanner\PatternScanner.vb"
+﻿#Region "Microsoft.VisualBasic::8a95c1dad2a1f0e0ce3aaf19d8413890, analysis\SequenceToolkit\MotifScanner\PatternScanner.vb"
 
     ' Author:
     ' 
@@ -58,8 +58,8 @@ Public Class PatternScanner : Inherits IScanner
     End Sub
 
     Public Overrides Function Scan(pattern As String) As SimpleSegment()
-        Return (Scan(__nt, pattern, AddressOf Equals).AsList +
-            Scan(__nt, Complement(pattern), AddressOf Equals)) _
+        Return (Scan(nt, pattern, AddressOf Equals).AsList +
+            Scan(nt, Complement(pattern), AddressOf Equals)) _
             .OrderBy(Function(x) x.Start) _
             .ToArray
     End Function

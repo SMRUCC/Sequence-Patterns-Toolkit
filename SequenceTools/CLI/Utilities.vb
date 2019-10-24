@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::80832dee9ad31d558e28c7368a2c44a1, analysis\SequenceToolkit\SequenceTools\CLI\Utilities.vb"
+﻿#Region "Microsoft.VisualBasic::8bc7fb14e33d07a4792aa55ab934100c, analysis\SequenceToolkit\SequenceTools\CLI\Utilities.vb"
 
     ' Author:
     ' 
@@ -151,7 +151,7 @@ Imports SMRUCC.genomics.SequenceModel.FASTA.Reflection
     ''' <returns></returns>
     ''' <remarks></remarks>
     <ExportAPI("-pattern_search", Info:="Parsing the sequence segment from the sequence source using regular expression.",
-        Usage:="-pattern_search -i <file_name> -p <regex_pattern>[ -o <output_directory> -f <format:fsa/gbk>]",
+        Usage:="-pattern_search -i <file_name> -p <regex_pattern> [-o <output_directory> -f <format:fsa/gbk>]",
         Example:="-pattern_search -i ~/xcc8004.txt -p TTA{3}N{1,2} -f fsa")>
     <Argument("-i",
         Description:="The sequence input data source file, it can be a fasta or genbank file.")>
@@ -251,7 +251,7 @@ Imports SMRUCC.genomics.SequenceModel.FASTA.Reflection
             .SaveTo(out & "/data.json")
         ' Call motifs.GetXml.SaveTo(out & "/data.xml")
 
-        Dim i As VBInteger = 0
+        Dim i As i32 = 0
 
         For Each motif As Motif In motifs
             Call motif _

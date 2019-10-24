@@ -1,4 +1,4 @@
-﻿#Region "Microsoft.VisualBasic::76162a54843e0b6ce68bb80d401acc19, analysis\SequenceToolkit\DNA_Comparative\DeltaSimilarity1998\CAI\XML\CodonAdaptationIndex.vb"
+﻿#Region "Microsoft.VisualBasic::e42e902967ead72d43dc9fe560732460, analysis\SequenceToolkit\DNA_Comparative\DeltaSimilarity1998\CAI\XML\CodonAdaptationIndex.vb"
 
     ' Author:
     ' 
@@ -54,7 +54,7 @@ Namespace DeltaSimilarity1998.CAI.XML
     ''' </summary>
     ''' 
     <XmlRoot("codon-adaptation-index", [Namespace]:="http://gcmodeller.org/analysis/SequenceToolkit/DNA_Comparative/codon-adaptation-index.XML")>
-    Public Class CodonAdaptationIndex : Inherits BaseClass
+    Public Class CodonAdaptationIndex
 
         <XmlElement> Public Property Name As String
         <XmlElement> Public Property CAI As Double
