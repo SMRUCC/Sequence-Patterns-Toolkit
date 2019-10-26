@@ -246,11 +246,11 @@
     <Compile Include="Topologically\Seeds\SeedBox.vb" />
     <Compile Include="Topologically\Exactly\LociFilter.vb" />
     <Compile Include="Topologically\Seeds\SeedData.vb" />
-    <Compile Include="Topologically\Exactly\RepeatPlant.vb" />
-    <Compile Include="Topologically\Exactly\RepeatsLoci.vb" />
-    <Compile Include="Topologically\Exactly\RepeatsSearchAPI.vb" />
-    <Compile Include="Topologically\Exactly\RepeatsSearchs.vb" />
-    <Compile Include="Topologically\Exactly\SearchReversedRepeats.vb" />
+    <Compile Include="Topologically\Exactly\Repeats\Files\RepeatPlant.vb" />
+    <Compile Include="Topologically\Exactly\Repeats\Files\RepeatsLoci.vb" />
+    <Compile Include="Topologically\Exactly\Repeats\RepeatsSearchAPI.vb" />
+    <Compile Include="Topologically\Exactly\Repeats\RepeatsSearchs.vb" />
+    <Compile Include="Topologically\Exactly\Repeats\SearchReversedRepeats.vb" />
     <Compile Include="Topologically\Palindrome\SearchWorker\Imperfect.vb" />
     <Compile Include="Topologically\Palindrome\csv\ImperfectPalindrome.vb" />
     <Compile Include="Topologically\Palindrome\PalindromeAPI.vb" />
@@ -315,9 +315,7 @@
       <Name>SequencePatterns.Abstract</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Topologically\Exactly\Repeats\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
