@@ -240,7 +240,7 @@
     <Compile Include="Motif\ResidueSite.vb" />
     <Compile Include="Pattern\PatternSearch.vb" />
     <Compile Include="Pattern\SegLoci.vb" />
-    <Compile Include="SSR\SSRSearch.vb" />
+    <Compile Include="Pattern\SSR\SSRSearch.vb" />
     <Compile Include="Topologically\Palindrome\SearchWorker\MirrorPalindrome.vb" />
     <Compile Include="Topologically\Seeds\Seed.vb" />
     <Compile Include="Topologically\Seeds\SeedBox.vb" />
@@ -314,6 +314,9 @@
       <Project>{49219b69-7958-4bdb-b72b-9b72d7902a28}</Project>
       <Name>SequencePatterns.Abstract</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Topologically\Exactly\Repeats\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
