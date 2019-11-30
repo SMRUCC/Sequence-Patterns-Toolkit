@@ -1,54 +1,54 @@
-﻿#Region "Microsoft.VisualBasic::73d38344e2253c0f261605a4ff9efd3d, analysis\SequenceToolkit\DNA_Comparative\ToolsAPI\ToolsAPI.vb"
+﻿#Region "Microsoft.VisualBasic::27c06e1ff2703aeb1e2eccba01948f8e, analysis\SequenceToolkit\DNA_Comparative\ToolsAPI\ToolsAPI.vb"
 
-' Author:
-' 
-'       asuka (amethyst.asuka@gcmodeller.org)
-'       xie (genetics@smrucc.org)
-'       xieguigang (xie.guigang@live.com)
-' 
-' Copyright (c) 2018 GPL3 Licensed
-' 
-' 
-' GNU GENERAL PUBLIC LICENSE (GPL3)
-' 
-' 
-' This program is free software: you can redistribute it and/or modify
-' it under the terms of the GNU General Public License as published by
-' the Free Software Foundation, either version 3 of the License, or
-' (at your option) any later version.
-' 
-' This program is distributed in the hope that it will be useful,
-' but WITHOUT ANY WARRANTY; without even the implied warranty of
-' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-' GNU General Public License for more details.
-' 
-' You should have received a copy of the GNU General Public License
-' along with this program. If not, see <http://www.gnu.org/licenses/>.
+    ' Author:
+    ' 
+    '       asuka (amethyst.asuka@gcmodeller.org)
+    '       xie (genetics@smrucc.org)
+    '       xieguigang (xie.guigang@live.com)
+    ' 
+    ' Copyright (c) 2018 GPL3 Licensed
+    ' 
+    ' 
+    ' GNU GENERAL PUBLIC LICENSE (GPL3)
+    ' 
+    ' 
+    ' This program is free software: you can redistribute it and/or modify
+    ' it under the terms of the GNU General Public License as published by
+    ' the Free Software Foundation, either version 3 of the License, or
+    ' (at your option) any later version.
+    ' 
+    ' This program is distributed in the hope that it will be useful,
+    ' but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ' GNU General Public License for more details.
+    ' 
+    ' You should have received a copy of the GNU General Public License
+    ' along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 
-' /********************************************************************************/
+    ' /********************************************************************************/
 
-' Summaries:
+    ' Summaries:
 
-' Module ToolsAPI
-' 
-'     Function: __calculate, __calculates, __colorRender, __compile, __compileCAI
-'               __compileCAIBIASCalculationThread, __compileSigma, __createTable, __echo, __genomeSigmaDiff
-'               __getSequence, __group, __mergeDelta, (+2 Overloads) __process, __query
-'               __readSeq, __readSequence, __regionMetaParser, __samples, __sigmaCompareWith
-'               BatchCalculation, BatchCalculation2, CAI, Compile, CompileCABIAS
-'               CompileCAIBIASCalculationThread, CompileCAIBIASCalculationThread_p, CreateChromesomePartitioningData, CreateSimplePartition, GenerateDeltaDiffReport
-'               GenomeSigmaDifference_p, (+2 Overloads) MeasureHomogeneity, MergeDelta, PartionDataCreates, PartitioningDataFromFasta
-'               PartitioningSigmaCompareWith, PartitionSimilarity, ReadPartitionalData, ReadPartitioningData, SaveCAI
-'               SigmaCompareWith, SiteDataLoad, WritePartionalData
-'     Structure Cache
-' 
-' 
-' 
-' 
-' 
-' /********************************************************************************/
+    ' Module ToolsAPI
+    ' 
+    '     Function: __calculate, __calculates, __colorRender, __compile, __compileCAI
+    '               __compileCAIBIASCalculationThread, __compileSigma, __createTable, __echo, __genomeSigmaDiff
+    '               __getSequence, __group, __mergeDelta, (+2 Overloads) __process, __query
+    '               __readSeq, __readSequence, __regionMetaParser, __samples, __sigmaCompareWith
+    '               BatchCalculation, BatchCalculation2, CAI, Compile, CompileCABIAS
+    '               CompileCAIBIASCalculationThread, CompileCAIBIASCalculationThread_p, CreateChromesomePartitioningData, CreateSimplePartition, GenerateDeltaDiffReport
+    '               GenomeSigmaDifference_p, (+2 Overloads) MeasureHomogeneity, MergeDelta, PartionDataCreates, PartitioningDataFromFasta
+    '               PartitioningSigmaCompareWith, PartitionSimilarity, ReadPartitionalData, ReadPartitioningData, SaveCAI
+    '               SigmaCompareWith, SiteDataLoad, WritePartionalData
+    '     Structure Cache
+    ' 
+    ' 
+    ' 
+    ' 
+    ' 
+    ' /********************************************************************************/
 
 #End Region
 
@@ -62,6 +62,7 @@ Imports Microsoft.VisualBasic.Data.csv
 Imports Microsoft.VisualBasic.Data.csv.Extensions
 Imports Microsoft.VisualBasic.Data.csv.IO
 Imports Microsoft.VisualBasic.Data.csv.StorageProvider.ComponentModels
+Imports Microsoft.VisualBasic.Data.Repository
 Imports Microsoft.VisualBasic.Language
 Imports Microsoft.VisualBasic.Linq
 Imports Microsoft.VisualBasic.Scripting.MetaData
@@ -71,7 +72,6 @@ Imports SMRUCC.genomics.Analysis.SequenceTools.DNA_Comparative.DeltaSimilarity19
 Imports SMRUCC.genomics.Analysis.SequenceTools.DNA_Comparative.DeltaSimilarity1998.CAI
 Imports SMRUCC.genomics.Analysis.SequenceTools.DNA_Comparative.DeltaSimilarity1998.CAI.XML
 Imports SMRUCC.genomics.Assembly.NCBI.GenBank
-Imports SMRUCC.genomics.Assembly.NCBI.GenBank.CsvExports
 Imports SMRUCC.genomics.Assembly.NCBI.GenBank.Extensions
 Imports SMRUCC.genomics.Assembly.NCBI.GenBank.TabularFormat
 Imports SMRUCC.genomics.Assembly.NCBI.GenBank.TabularFormat.ComponentModels
