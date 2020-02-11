@@ -254,7 +254,6 @@ Public Class CenterStar
     Public Function calculateEditDistance(seq1$, seq2$) As Integer
         Dim l1 = seq1.Length
         Dim l2 = seq2.Length
-        Dim match = 0
 
         If (seq1 = seq2) Then
             Return 0
@@ -263,6 +262,7 @@ Public Class CenterStar
         Dim i, j, k As Integer
         Dim score()() = MAT(Of Integer)(l1 + 1, l2 + 1)
         Dim trace()() = MAT(Of Integer)(l1 + 1, l2 + 1)
+        Dim match = 0
 
         score(0)(0) = 0
         trace(0)(0) = 0
