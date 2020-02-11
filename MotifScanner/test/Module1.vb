@@ -67,7 +67,7 @@ ATGAAT-
 ATGAAT-
 ATGAAT-"
 
-        Dim c As New CenterStar(seqs.lTokens)
+        Dim c As New CenterStar(seqs.LineTokens)
         Dim r = c.Compute
     End Sub
 
